@@ -1097,7 +1097,7 @@ class Ui_MainWindow(object):
             self.systemofequationschoosevectorscreen_valuesgridLayout.addWidget(self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"], (x-1), 0, 1, 1, alignment=QtCore.Qt.AlignCenter)
             self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setHidden(True)
         self.systemofequationdecorativebackgroundLabel = QtWidgets.QLabel(self.systemofequationsframe)
-        self.systemofequationdecorativebackgroundLabel.setGeometry(QtCore.QRect(229, 51, 203, 149))
+        self.systemofequationdecorativebackgroundLabel.setGeometry(QtCore.QRect(229, 50, 203, 151))
         self.systemofequationdecorativebackgroundLabel.setStyleSheet(soetss.systemofequationdecorativebackgroundLabel_stylesheet)
         self.systemofequationdecorativebackgroundLabel.setText("")
         self.systemofequationdecorativebackgroundLabel.setObjectName("systemofequationdecorativebackgroundLabel")

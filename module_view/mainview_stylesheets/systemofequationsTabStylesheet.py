@@ -40,8 +40,8 @@ systemofequationschoosevectorScrollArea_stylesheet=("background-color: rgb(15, 1
 systemofequationschoosevectorScrollAreaWidgetContents_stylesheet=("border:none;\n"
 "background-color: rgb(17, 18, 17);\n"
 )
-systemofequationdecorativebackgroundLabel_stylesheet=("background-color: rgb(15, 16, 15);\n"
+systemofequationdecorativebackgroundLabel_stylesheet=("background-color: rgb(17, 18, 17);\n"
 "border-top: 1px solid;\n"
 "border-bottom: 1px solid;\n"
-"border-top-color: qlineargradient(spread:reflect, x1:0.488636, y1:0, x2:0, y2:0.00495455, stop:0.3125 rgba(32, 33, 32, 255), stop:1 rgba(25, 26, 25, 255));\n"
-"border-bottom-color: qlineargradient(spread:reflect, x1:0.488636, y1:0, x2:0, y2:0.00495455, stop:0.3125 rgba(32, 33, 32, 255), stop:1 rgba(25, 26, 25, 255))")
+"border-top-color: qlineargradient(spread:reflect, x1:0.488636, y1:0, x2:0, y2:0.00495455, stop:0.3125 rgba(27, 28, 27, 255), stop:1 rgba(52, 52, 52, 255));\n"
+"border-bottom-color: qlineargradient(spread:reflect, x1:0.488636, y1:0, x2:0, y2:0.00495455, stop:0.3125 rgba(27, 28, 27, 255), stop:1 rgba(52, 52, 52, 255))")

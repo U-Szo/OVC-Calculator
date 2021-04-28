@@ -2,12 +2,12 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 
 
-class Ui_LoadingScreen(object):
-    def setupUi(self, LoadingScreen):
-        LoadingScreen.setObjectName("LoadingScreen")
-        LoadingScreen.resize(629, 632)
-        LoadingScreen.setWindowIcon((QtGui.QIcon("icons/Windowicon.png")))
-        self.centralwidget = QtWidgets.QWidget(LoadingScreen)
+class Ui_splashScreen(object):
+    def setupUi(self, splashScreen):
+        splashScreen.setObjectName("splashScreen")
+        splashScreen.resize(629, 632)
+        splashScreen.setWindowIcon((QtGui.QIcon("icons/Windowicon.png")))
+        self.centralwidget = QtWidgets.QWidget(splashScreen)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
@@ -26,7 +26,7 @@ class Ui_LoadingScreen(object):
         self.backgroundLabel.setGeometry(QtCore.QRect(0, 0, 609, 612))
         self.backgroundLabel.setStyleSheet("")
         self.backgroundLabel.setText("")
-        self.backgroundLabel.setPixmap(QtGui.QPixmap("icons/Loadingscreenbackground.png"))
+        self.backgroundLabel.setPixmap(QtGui.QPixmap("icons/splashScreenbackground.png"))
         self.backgroundLabel.setScaledContents(True)
 
         
@@ -70,22 +70,22 @@ class Ui_LoadingScreen(object):
 
 
         self.verticalLayout.addWidget(self.loadingmainFrame)
-        LoadingScreen.setCentralWidget(self.centralwidget)
+        splashScreen.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(LoadingScreen)
-        QtCore.QMetaObject.connectSlotsByName(LoadingScreen)
+        self.retranslateUi(splashScreen)
+        QtCore.QMetaObject.connectSlotsByName(splashScreen)
 
-    def retranslateUi(self, LoadingScreen):
+    def retranslateUi(self, splashScreen):
         _translate = QtCore.QCoreApplication.translate
-        LoadingScreen.setWindowTitle(_translate("LoadingScreen", "MainWindow"))
-        self.loadingLabel.setText(_translate("LoadingScreen", "loading..."))
-        self.loadingprogressLabel.setText(_translate("LoadingScreen", "<strong>LOADING</strong> ASSETS"))
+        splashScreen.setWindowTitle(_translate("splashScreen", "MainWindow"))
+        self.loadingLabel.setText(_translate("splashScreen", "loading..."))
+        self.loadingprogressLabel.setText(_translate("splashScreen", "<strong>LOADING</strong> ASSETS"))
 
 
-class LoadingScreen(QtWidgets.QMainWindow):
+class splashScreen(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
-        self.ui = Ui_LoadingScreen()
+        self.ui = Ui_splashScreen()
         self.ui.setupUi(self)
 
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)

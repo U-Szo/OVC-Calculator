@@ -1,20 +1,19 @@
 import module_view.mainview as mainv
 import module_calc.calc as ccalc
-import loadingscreen as loadingscreen
+import splashScreen as sscreen
 import psutil
 import ctypes
 import os
 
 LOADINGCOUNTER = 0
 
-
 class Admin():
     def __init__(self):
-        self.timer = mainv.QtCore.QTimer()
-        self.timer.timeout.connect(self.loadingprogress)
-        self.timer.start(12)
-        self.loading=loadingscreen.LoadingScreen()
-        self.loading.show()
+        self.splash_screen_loading_timer = mainv.QtCore.QTimer()
+        self.splash_screen_loading_timer.timeout.connect(self.loadingprogress)
+        self.splash_screen_loading_timer.start(12)
+        self.splash_screen_window=sscreen.splashScreen()
+        self.splash_screen_window.show()
 
         self.window = mainv.MainWindow(self)
 
@@ -95,34 +94,34 @@ class Admin():
     def loadingprogress(self):
         global LOADINGCOUNTER
 
-        self.loading.ui.progressBar.setValue(LOADINGCOUNTER)
+        self.splash_screen_window.ui.progressBar.setValue(LOADINGCOUNTER)
         if LOADINGCOUNTER > 100:
-            self.timer.stop()
+            self.splash_screen_loading_timer.stop()
             self.window.show()
             self.window.ui.Setstylesheetspoststart()
 
-            self.loading.close()
+            self.splash_screen_window.close()
 
         if LOADINGCOUNTER >90:
-            self.loading.ui.loadingprogressLabel.setText("<strong>READY</strong>")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>READY</strong>")
 
         if LOADINGCOUNTER >80 and LOADINGCOUNTER <90:
-            self.loading.ui.loadingprogressLabel.setText("<strong>DOING</strong> EVEN MORE STUFF")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>DOING</strong> EVEN MORE STUFF")
 
         if LOADINGCOUNTER >70 and LOADINGCOUNTER <80:
-            self.loading.ui.loadingprogressLabel.setText("<strong>DOING</strong> STUFF")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>DOING</strong> STUFF")
 
         if LOADINGCOUNTER >45 and LOADINGCOUNTER <70:
-            self.loading.ui.loadingprogressLabel.setText("<strong>PREPARING</strong> LAUNCH")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>PREPARING</strong> LAUNCH")
 
         if LOADINGCOUNTER >30 and LOADINGCOUNTER <45:
-            self.loading.ui.loadingprogressLabel.setText("<strong>READING</strong> FILES")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>READING</strong> FILES")
 
         if LOADINGCOUNTER >20 and LOADINGCOUNTER <30:
-            self.loading.ui.loadingprogressLabel.setText("<strong>PARSING</strong> DATA")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>PARSING</strong> DATA")
 
         if LOADINGCOUNTER >10 and LOADINGCOUNTER <20:
-            self.loading.ui.loadingprogressLabel.setText("<strong>LOADING</strong> UI")
+            self.splash_screen_window.ui.loadingprogressLabel.setText("<strong>LOADING</strong> UI")
 
         LOADINGCOUNTER += 1
 

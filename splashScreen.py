@@ -2,39 +2,34 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 
 
-class Ui_splashScreen(object):
-    def setupUi(self, splashScreen):
-        splashScreen.setObjectName("splashScreen")
-        splashScreen.resize(629, 632)
-        splashScreen.setWindowIcon((QtGui.QIcon("icons/Windowicon.png")))
-        self.centralwidget = QtWidgets.QWidget(splashScreen)
-        self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.loadingmainFrame = QtWidgets.QFrame(self.centralwidget)
-        self.loadingmainFrame.setStyleSheet("QFrame {    \n"
+class Ui_SplashScreen(object):
+    def setupUi(self, SplashScreen):
+        SplashScreen.resize(629, 632)
+        SplashScreen.setWindowIcon((QtGui.QIcon("icons/Windowicon.png")))
+        self.central_widget = QtWidgets.QWidget(SplashScreen)
+        self.vertical_layout = QtWidgets.QVBoxLayout(self.central_widget)
+        self.vertical_layout.setContentsMargins(10, 10, 10, 10)
+        self.vertical_layout.setSpacing(0)
+        self.loading_main_frame = QtWidgets.QFrame(self.central_widget)
+        self.loading_main_frame.setStyleSheet("QFrame {    \n"
 "    background-color: transparent;    \n"
 "    color: rgb(220, 220, 220);\n"
 "    border-radius: 10px;\n"
 "}")
-        self.loadingmainFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.loadingmainFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.loadingmainFrame.setObjectName("loadingmainFrame")
-        self.backgroundLabel = QtWidgets.QLabel(self.loadingmainFrame)
-        self.backgroundLabel.setGeometry(QtCore.QRect(0, 0, 609, 612))
-        self.backgroundLabel.setStyleSheet("")
-        self.backgroundLabel.setText("")
-        self.backgroundLabel.setPixmap(QtGui.QPixmap("icons/splashScreenbackground.png"))
-        self.backgroundLabel.setScaledContents(True)
+        self.loading_main_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.loading_main_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.background_label = QtWidgets.QLabel(self.loading_main_frame)
+        self.background_label.setGeometry(QtCore.QRect(0, 0, 609, 612))
+        self.background_label.setStyleSheet("")
+        self.background_label.setText("")
+        self.background_label.setPixmap(QtGui.QPixmap("icons/splashScreenbackground.png"))
+        self.background_label.setScaledContents(True)
 
         
-        self.backgroundLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.backgroundLabel.setObjectName("backgroundLabel")
-        self.progressBar = QtWidgets.QProgressBar(self.loadingmainFrame)
-        self.progressBar.setGeometry(QtCore.QRect(215, 392, 178, 10))
-        self.progressBar.setStyleSheet("QProgressBar {\n"
+        self.background_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.progress_bar = QtWidgets.QProgressBar(self.loading_main_frame)
+        self.progress_bar.setGeometry(QtCore.QRect(215, 392, 178, 10))
+        self.progress_bar.setStyleSheet("QProgressBar {\n"
 "    background-color: rgb(0, 1, 0);\n"
 "    color: transparent;\n"
 "    border-style: none;\n"
@@ -46,46 +41,42 @@ class Ui_splashScreen(object):
 "    border-radius: 5px;\n"
 "    background-color:  qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(32, 33, 32, 255), stop:1 rgba(25, 26, 25, 255));\n"
 "}")
-        self.progressBar.setProperty("value", 24)
-        self.progressBar.setObjectName("progressBar")
-        self.loadingLabel = QtWidgets.QLabel(self.loadingmainFrame)
-        self.loadingLabel.setGeometry(QtCore.QRect(95, 410, 431, 21))
+        self.progress_bar.setProperty("value", 24)
+        self.loading_label = QtWidgets.QLabel(self.loading_main_frame)
+        self.loading_label.setGeometry(QtCore.QRect(95, 410, 431, 21))
         font = QtGui.QFont()
         font.setFamily("Alice")
         font.setPointSize(11)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
-        self.loadingLabel.setFont(font)
-        self.loadingLabel.setStyleSheet("font: 10pt \"Alice\";\n"
+        self.loading_label.setFont(font)
+        self.loading_label.setStyleSheet("font: 10pt \"Alice\";\n"
 "color: rgb(196, 196, 196);")
-        self.loadingLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.loadingLabel.setObjectName("loadingLabel")
-        self.loadingprogressLabel = QtWidgets.QLabel(self.loadingmainFrame)
-        self.loadingprogressLabel.setGeometry(QtCore.QRect(90, 351, 431, 41))
-        self.loadingprogressLabel.setStyleSheet("font: 11pt \"Alice\";\n"
+        self.loading_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.loading_progress_label = QtWidgets.QLabel(self.loading_main_frame)
+        self.loading_progress_label.setGeometry(QtCore.QRect(90, 351, 431, 41))
+        self.loading_progress_label.setStyleSheet("font: 11pt \"Alice\";\n"
 "color: rgb(196, 196, 196);")
-        self.loadingprogressLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.loadingprogressLabel.setObjectName("loadingprogressLabel")
+        self.loading_progress_label.setAlignment(QtCore.Qt.AlignCenter)
 
+        self.vertical_layout.addWidget(self.loading_main_frame)
+        SplashScreen.setCentralWidget(self.central_widget)
 
-        self.verticalLayout.addWidget(self.loadingmainFrame)
-        splashScreen.setCentralWidget(self.centralwidget)
+        self.retranslateUi(SplashScreen)
+        QtCore.QMetaObject.connectSlotsByName(SplashScreen)
 
-        self.retranslateUi(splashScreen)
-        QtCore.QMetaObject.connectSlotsByName(splashScreen)
-
-    def retranslateUi(self, splashScreen):
+    def retranslateUi(self, SplashScreen):
         _translate = QtCore.QCoreApplication.translate
-        splashScreen.setWindowTitle(_translate("splashScreen", "MainWindow"))
-        self.loadingLabel.setText(_translate("splashScreen", "loading..."))
-        self.loadingprogressLabel.setText(_translate("splashScreen", "<strong>LOADING</strong> ASSETS"))
+        SplashScreen.setWindowTitle(_translate("SplashScreen", "MainWindow"))
+        self.loading_label.setText(_translate("SplashScreen", "loading..."))
+        self.loading_progress_label.setText(_translate("SplashScreen", "<strong>LOADING</strong> ASSETS"))
 
 
-class splashScreen(QtWidgets.QMainWindow):
+class SplashScreen(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
-        self.ui = Ui_splashScreen()
+        self.ui = Ui_SplashScreen()
         self.ui.setupUi(self)
 
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)

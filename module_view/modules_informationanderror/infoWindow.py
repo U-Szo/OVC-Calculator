@@ -1,9 +1,9 @@
 from PySide2 import QtCore, QtGui, QtWidgets
-from module_view.modules_informationanderror.module_bidirectionaliterator.bidirectional_iterator import *
-
-###################
-### INFO WINDOW ###
-###################
+from module_view.modules_informationanderror.module_bidirectionaliterator.BidirectionalIterator import *
+######################
+##STYLESHEETS IMPORT##
+######################
+import module_view.modules_informationanderror.informationanderror_stylesheets.InfoWindowStylesheet as iwss
 
 class Ui_InfoWindow(object):
     def setupUi(self, MainWindow):
@@ -13,73 +13,47 @@ class Ui_InfoWindow(object):
         MainWindow.setObjectName("Information Window")
         MainWindow.resize(1031, 550)
         MainWindow.setStyleSheet("background-color: rgb(10, 11, 10);")
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.InfowindowTitlebarframe = QtWidgets.QFrame(self.centralwidget)
-        self.InfowindowTitlebarframe.setGeometry(QtCore.QRect(7, 0, 1031, 29))
-        self.InfowindowTitlebarframe.setStyleSheet("background-color: rgb(0, 1, 0);")
-        self.InfowindowTitlebarframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.InfowindowTitlebarframe.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.InfowindowTitlebarframe.setObjectName("InfowindowTitlebarframe")
-        self.InfowindowExit_Button = QtWidgets.QPushButton(self.centralwidget)
-        self.InfowindowExit_Button.setGeometry(QtCore.QRect(980, 0, 51, 29))
-        self.InfowindowExit_Button.setStyleSheet("QPushButton {\n"
-"    background-color: none;\n"
-"    border-bottom:2px;\n"
-"    border-right:None;\n"
-"    border-style:solid;\n"
-"    border-color:none;\n"
-"    margin:0px;    \n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(232, 17, 35);\n"
-"    border-style:solid;\n"
-"    border-color:none;\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(149, 20, 30);\n"
-"    border-style:solid;\n"
-"    border-color:none;    \n"
-"}    \n"
-"")
-        self.InfowindowExit_Button.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icons/ExitButttonicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.InfowindowExit_Button.setIcon(icon)
-        self.InfowindowExit_Button.setIconSize(QtCore.QSize(21, 21))
-        self.InfowindowExit_Button.setCheckable(False)
-        self.InfowindowExit_Button.setObjectName("InfowindowExit_Button")
-        self.infomainLabel = QtWidgets.QLabel(self.centralwidget)
-        self.infomainLabel.setGeometry(QtCore.QRect(70, 40, 896, 500))
-        self.infomainLabel.setText("")
-        self.infomainLabel.setPixmap(QtGui.QPixmap("icons/infowindowimages/infoimage01.png"))
-        self.infomainLabel.setScaledContents(True)
-        self.infomainLabel.setObjectName("infomainLabel")
-        self.inforightarrowpushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.inforightarrowpushButton.setGeometry(QtCore.QRect(970, 250, 61, 61))
-        self.inforightarrowpushButton.setStyleSheet("background-color: transparent;\n"
-"border:none;")
-        self.inforightarrowpushButton.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("icons/infowindowimages/infoarrowright.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.inforightarrowpushButton.setIcon(icon1)
-        self.inforightarrowpushButton.setIconSize(QtCore.QSize(51, 51))
-        self.inforightarrowpushButton.setObjectName("inforightarrowpushButton")
-        self.inforightarrowpushButton.clicked.connect(self.rightarrowclicked)
-        self.inforightarrowpushButton.setShortcut("Right")
-        self.infoleftarrowpushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.infoleftarrowpushButton.setGeometry(QtCore.QRect(0, 250, 61, 61))
-        self.infoleftarrowpushButton.setStyleSheet("background-color: transparent;\n"
-"border:none;")
-        self.infoleftarrowpushButton.setText("")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("icons/infowindowimages/infoarrowleft.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.infoleftarrowpushButton.setIcon(icon2)
-        self.infoleftarrowpushButton.setIconSize(QtCore.QSize(51, 51))
-        self.infoleftarrowpushButton.setObjectName("infoleftarrowpushButton")
-        self.infoleftarrowpushButton.clicked.connect(self.leftarrowclicked)
-        self.infoleftarrowpushButton.setShortcut("Left")
-        self.infoimagescycle = bidirectional_iterator([
+        self.central_widget = QtWidgets.QWidget(MainWindow)
+        self.info_window_title_bar_frame = QtWidgets.QFrame(self.central_widget)
+        self.info_window_title_bar_frame.setGeometry(QtCore.QRect(7, 0, 1031, 29))
+        self.info_window_title_bar_frame.setStyleSheet("background-color: rgb(0, 1, 0);")
+        self.info_window_title_bar_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.info_window_title_bar_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.info_window_exit_button = QtWidgets.QPushButton(self.central_widget)
+        self.info_window_exit_button.setGeometry(QtCore.QRect(980, 0, 51, 29))
+        self.info_window_exit_button.setStyleSheet(iwss.info_window_exit_button_stylesheet)
+        self.info_window_exit_button.setText("")
+        info_window_exit_button_icon = QtGui.QIcon()
+        info_window_exit_button_icon.addPixmap(QtGui.QPixmap("icons/ExitButttonicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.info_window_exit_button.setIcon(info_window_exit_button_icon)
+        self.info_window_exit_button.setIconSize(QtCore.QSize(21, 21))
+        self.info_window_exit_button.setCheckable(False)
+        self.info_main_label = QtWidgets.QLabel(self.central_widget)
+        self.info_main_label.setGeometry(QtCore.QRect(70, 40, 896, 500))
+        self.info_main_label.setText("")
+        self.info_main_label.setPixmap(QtGui.QPixmap("icons/infowindowimages/infoimage01.png"))
+        self.info_main_label.setScaledContents(True)
+        self.info_right_arrow_pushbutton = QtWidgets.QPushButton(self.central_widget)
+        self.info_right_arrow_pushbutton.setGeometry(QtCore.QRect(970, 250, 61, 61))
+        self.info_right_arrow_pushbutton.setStyleSheet(iwss.info_right_arrow_pushbutton_stylesheet)
+        self.info_right_arrow_pushbutton.setText("")
+        info_right_arrow_pushbutton_icon = QtGui.QIcon()
+        info_right_arrow_pushbutton_icon.addPixmap(QtGui.QPixmap("icons/infowindowimages/infoarrowright.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.info_right_arrow_pushbutton.setIcon(info_right_arrow_pushbutton_icon)
+        self.info_right_arrow_pushbutton.setIconSize(QtCore.QSize(51, 51))
+        self.info_right_arrow_pushbutton.clicked.connect(self.rightArrowClicked)
+        self.info_right_arrow_pushbutton.setShortcut("Right")
+        self.info_left_arrow_pushbutton = QtWidgets.QPushButton(self.central_widget)
+        self.info_left_arrow_pushbutton.setGeometry(QtCore.QRect(0, 250, 61, 61))
+        self.info_left_arrow_pushbutton.setStyleSheet(iwss.info_left_arrow_pushbutton_stylesheet)
+        self.info_left_arrow_pushbutton.setText("")
+        info_left_arrow_pushbutton_icon = QtGui.QIcon()
+        info_left_arrow_pushbutton_icon.addPixmap(QtGui.QPixmap("icons/infowindowimages/infoarrowleft.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.info_left_arrow_pushbutton.setIcon(info_left_arrow_pushbutton_icon)
+        self.info_left_arrow_pushbutton.setIconSize(QtCore.QSize(51, 51))
+        self.info_left_arrow_pushbutton.clicked.connect(self.leftArrowClicked)
+        self.info_left_arrow_pushbutton.setShortcut("Left")
+        self.info_images_cycle = BidirectionalIterator([
             "icons/infowindowimages/infoimage01.png",
             "icons/infowindowimages/infoimage02.png",
             "icons/infowindowimages/infoimage03.png",
@@ -97,24 +71,24 @@ class Ui_InfoWindow(object):
             "icons/infowindowimages/infoimage15.png",
             "icons/infowindowimages/infoimage16.png"
         ])
-        MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.setCentralWidget(self.central_widget)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def rightarrowclicked(self):
-        self.infomainLabel.setPixmap(QtGui.QPixmap(self.infoimagescycle.next()))
-    def leftarrowclicked(self):
-        self.infomainLabel.setPixmap(QtGui.QPixmap(self.infoimagescycle.prev()))
+    def rightArrowClicked(self):
+        self.info_main_label.setPixmap(QtGui.QPixmap(self.info_images_cycle.next()))
+    def leftArrowClicked(self):
+        self.info_main_label.setPixmap(QtGui.QPixmap(self.info_images_cycle.prev()))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.InfowindowExit_Button.setToolTip(_translate("MainWindow", "Matrix"))
-        self.InfowindowExit_Button.setStatusTip(_translate("MainWindow", "Matrix"))
-        self.InfowindowExit_Button.setWhatsThis(_translate("MainWindow", "Matrix"))
-        self.InfowindowExit_Button.setAccessibleName(_translate("MainWindow", "Matrix"))
-        self.InfowindowExit_Button.setAccessibleDescription(_translate("MainWindow", "Matrix"))
+        self.info_window_exit_button.setToolTip(_translate("MainWindow", "Matrix"))
+        self.info_window_exit_button.setStatusTip(_translate("MainWindow", "Matrix"))
+        self.info_window_exit_button.setWhatsThis(_translate("MainWindow", "Matrix"))
+        self.info_window_exit_button.setAccessibleName(_translate("MainWindow", "Matrix"))
+        self.info_window_exit_button.setAccessibleDescription(_translate("MainWindow", "Matrix"))
 
 ############################
 #### CLASES DE VENTANAS ####
@@ -134,9 +108,9 @@ class InfoWindow(QtWidgets.QMainWindow):
                 self.dragPos = event.globalPos()
                 event.accept()
 
-        self.ui.InfowindowTitlebarframe.mouseMoveEvent = moveWindow
+        self.ui.info_window_title_bar_frame.mouseMoveEvent = moveWindow
 
-        self.ui.InfowindowExit_Button.clicked.connect(lambda: self.close())
+        self.ui.info_window_exit_button.clicked.connect(lambda: self.close())
 
     def mousePressEvent(self, event):
         self.dragPos = event.globalPos()

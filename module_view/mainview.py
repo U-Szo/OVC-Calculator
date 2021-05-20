@@ -5,1120 +5,989 @@ import itertools as itools
 #########################
 ##WINDOW CLASSES IMPORT##
 #########################
-from module_view.modules_informationanderror.errorWindow import *
-from module_view.modules_informationanderror.infoWindow import *
-from module_view.modules_assigningvalues.assignWindow import *
-from module_view.modules_assigningvalues.valuesWindow import *
+from module_view.modules_informationanderror.ErrorWindow import *
+from module_view.modules_informationanderror.InfoWindow import *
+from module_view.modules_assigningvalues.AssignWindow import *
+from module_view.modules_assigningvalues.ValuesWindow import *
 ######################
 ##STYLESHEETS IMPORT##
 ######################
-import module_view.mainview_stylesheets.mainviewStylesheetsPoststart as mvssps
-import module_view.mainview_stylesheets.vectorandmatrixTabStylesheet as vmtss
-import module_view.mainview_stylesheets.anglesTabStylesheet as atss
-import module_view.mainview_stylesheets.eigenvectorsTabStylesheet as evtss
-import module_view.mainview_stylesheets.systemofequationsTabStylesheet as soetss
-import module_view.mainview_stylesheets.mainviewsideFramesStylesheet as mvsfss
+import module_view.mainview_stylesheets.MainviewStylesheetsPoststart as mvssps
+import module_view.mainview_stylesheets.VectorAndMatrixTabStylesheet as vmtss
+import module_view.mainview_stylesheets.AnglesTabStylesheet as atss
+import module_view.mainview_stylesheets.EigenvectorsTabStylesheet as evtss
+import module_view.mainview_stylesheets.SystemOfEquationsTabStylesheet as soetss
+import module_view.mainview_stylesheets.MainviewSideFramesStylesheet as mvsfss
 
-######################
-# VARIABLES GLOBALES #
-######################
-
-assignvaluewindowhidden=True
-Mainposx=0
-Mainposy=0
-startupmatrices=True
-firsttabchange=True
-
-######################
-#### CLASES DE UI ####
-######################
+####################
+# GLOBAL VARIABLES #
+####################
+ASSIGNVALUEWINDOWHIDDEN=True
+MAINWINDOWPOSITIONXAXIS=0
+MAINWINDOWPOSITIONYAXIS=0
+FIRSTTIMELOADINGMATRICES=True
+FIRSTTABCHANGE=True
+####################
+#### UI CLASSES ####
+####################
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow,admin):
         self.admin=admin
         MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
         MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.setFixedSize(724, 588)
-        MainWindow.setStyleSheet("background-color: rgb(27,28,27);\n")
+        MainWindow.setFixedSize(704, 588)
+        MainWindow.setStyleSheet("background-color: rgb(25,26,25);\n")
         MainWindow.setWindowIcon((QtGui.QIcon("icons/Windowicon.png")))
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
+        self.mainwindow_central_widget = QtWidgets.QWidget(MainWindow)
 
-        self.degorrad="RAD"
-        self.ddordms= "DMS"
+        self.deg_or_rad="RAD"
+        self.dd_or_dms= "DMS"
+        #############################################
+        ##MAIN VECTOR AND MATRIX SCREEN SCROLL AREA##
+        #############################################
+        self.main_vector_matrix_screen_scrollarea = QtWidgets.QScrollArea(self.mainwindow_central_widget)
+        self.main_vector_matrix_screen_scrollarea.setGeometry(QtCore.QRect(112, 119, 481, 159))
+        self.main_vector_matrix_screen_scrollarea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.main_vector_matrix_screen_scrollarea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.main_vector_matrix_screen_scrollarea.setWidgetResizable(True)
 
-        ######################
-        ##SCREEN SCROLL AREA##
-        ######################
+        self.main_vector_matrix_screen_scrollarea_widget_contents = QtWidgets.QWidget()
+        self.main_vector_matrix_screen_scrollarea_widget_contents.setGeometry(QtCore.QRect(0, 0, 479, 157))
+        self.main_vector_matrix_screen_scrollarea_widget_contents.setMinimumSize(0, 0)
+        self.main_vector_matrix_screen_scrollarea_widget_contents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
+        self.main_vector_matrix_screen_gridlayout = QtWidgets.QHBoxLayout(self.main_vector_matrix_screen_scrollarea_widget_contents)
+        self.main_vector_matrix_screen_gridlayout.setSpacing(0)
 
-        self.screen_scrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.screen_scrollArea.setGeometry(QtCore.QRect(112, 119, 481, 159))
-        self.screen_scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.screen_scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.screen_scrollArea.setWidgetResizable(True)
-        self.screen_scrollArea.setObjectName("screen_scrollArea")
-
-        self.screen_scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.screen_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 479, 157))
-        self.screen_scrollAreaWidgetContents.setObjectName("screen_scrollAreaWidgetContents")
-        self.screen_scrollAreaWidgetContents.setMinimumSize(0, 0)
-        self.screen_scrollAreaWidgetContents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
-        self.screen_gridLayout = QtWidgets.QHBoxLayout(self.screen_scrollAreaWidgetContents)
-        self.screen_gridLayout.setSpacing(0)
-        self.screen_gridLayout.setObjectName("screen_gridLayout")
-
-        self.screen_matrixgridLayoutWidget = QtWidgets.QWidget()
-        self.screen_matrixgridLayout = QtWidgets.QHBoxLayout(self.screen_matrixgridLayoutWidget)
-        self.screen_matrixgridLayout.setSpacing(5)
-        ######################
-        ##SCREEN VALUES GRID##
-        ######################
-        self.resultmatrixparentesisopenlabel = QtWidgets.QLabel()
-        self.resultmatrixparentesisopenlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
-        self.resultmatrixparentesisopenlabel.setScaledContents(True)
-        self.resultmatrixparentesisopenlabel.setFixedWidth(5)
-        self.resultmatrixparentesisclosedlabel = QtWidgets.QLabel()
-        self.resultmatrixparentesisclosedlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
-        self.resultmatrixparentesisclosedlabel.setScaledContents(True)
-        self.resultmatrixparentesisclosedlabel.setFixedWidth(5)
-        self.screen_valuesgridLayoutWidget = QtWidgets.QWidget()
-        self.screen_valuesgridLayout = QtWidgets.QGridLayout(self.screen_valuesgridLayoutWidget)
-        self.screen_valuesgridLayout.setContentsMargins(0, 0, 0, 0)
-        self.screen_valuesgridLayout.setHorizontalSpacing(20)
-        self.screen_valuesgridLayout.setVerticalSpacing(5)
-        self.screen_gridLayout.addWidget(self.screen_matrixgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
-        self.screen_matrixgridLayout.addWidget(self.resultmatrixparentesisopenlabel, 0, alignment=QtCore.Qt.AlignLeft)
-        self.screen_matrixgridLayout.addWidget(self.screen_valuesgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
-        self.screen_matrixgridLayout.addWidget(self.resultmatrixparentesisclosedlabel, 2, alignment=QtCore.Qt.AlignLeft)
-        self.screen_scrollArea.setWidget(self.screen_scrollAreaWidgetContents)
-        self.resultmatrixparentesisopenlabel.setHidden(True)
-        self.resultmatrixparentesisclosedlabel.setHidden(True)
-        ###############################
-        ## SCROLL AREA VALUES LABELS ##
-        ###############################
+        self.main_vector_matrix_screen_matrix_gridlayout_widget = QtWidgets.QWidget()
+        self.main_vector_matrix_screen_matrix_gridlayout = QtWidgets.QHBoxLayout(self.main_vector_matrix_screen_matrix_gridlayout_widget)
+        self.main_vector_matrix_screen_matrix_gridlayout.setSpacing(5)
+        #############################################
+        ##MAIN VECTOR AND MATRIX SCREEN VALUES GRID##
+        #############################################
+        self.result_matrix_parentesis_open_label = QtWidgets.QLabel()
+        self.result_matrix_parentesis_open_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
+        self.result_matrix_parentesis_open_label.setScaledContents(True)
+        self.result_matrix_parentesis_open_label.setFixedWidth(5)
+        self.result_matrix_parentesis_closed_label = QtWidgets.QLabel()
+        self.result_matrix_parentesis_closed_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
+        self.result_matrix_parentesis_closed_label.setScaledContents(True)
+        self.result_matrix_parentesis_closed_label.setFixedWidth(5)
+        self.main_vector_matrix_screen_values_gridlayout_widget = QtWidgets.QWidget()
+        self.main_vector_matrix_screen_values_gridlayout = QtWidgets.QGridLayout(self.main_vector_matrix_screen_values_gridlayout_widget)
+        self.main_vector_matrix_screen_values_gridlayout.setContentsMargins(0, 0, 0, 0)
+        self.main_vector_matrix_screen_values_gridlayout.setHorizontalSpacing(20)
+        self.main_vector_matrix_screen_values_gridlayout.setVerticalSpacing(5)
+        self.main_vector_matrix_screen_gridlayout.addWidget(self.main_vector_matrix_screen_matrix_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.main_vector_matrix_screen_matrix_gridlayout.addWidget(self.result_matrix_parentesis_open_label, 0, alignment=QtCore.Qt.AlignLeft)
+        self.main_vector_matrix_screen_matrix_gridlayout.addWidget(self.main_vector_matrix_screen_values_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.main_vector_matrix_screen_matrix_gridlayout.addWidget(self.result_matrix_parentesis_closed_label, 2, alignment=QtCore.Qt.AlignLeft)
+        self.main_vector_matrix_screen_scrollarea.setWidget(self.main_vector_matrix_screen_scrollarea_widget_contents)
+        self.result_matrix_parentesis_open_label.setHidden(True)
+        self.result_matrix_parentesis_closed_label.setHidden(True)
+        ######################################################
+        ## MAIN VECTOR AND MATRIX SCROLL AREA VALUES LABELS ##
+        ######################################################
         font = QtGui.QFont()
         font.setFamily("Alice")
         font.setPointSize(12)
-        intfloatfont = QtGui.QFont()
-        intfloatfont.setFamily("Alice")
-        intfloatfont.setPointSize(15)
-        stringstylesheetresult = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
+        int_float_font = QtGui.QFont()
+        int_float_font.setFamily("Alice")
+        int_float_font.setPointSize(15)
+        result_matrix_stylesheet = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
 
-        self.result_matrixlabelcelldict={}
+        self.result_matrix_label_cell_dict={}
         for x, y in itools.product(range(1,11), range(1,11)):
-            self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x)+"_"+str(y)] = QtWidgets.QLabel(self.screen_valuesgridLayoutWidget)
-            self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x)+"_"+str(y)].setStyleSheet(stringstylesheetresult)
-            self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x)+"_"+str(y)].setFont(font)
-            self.screen_valuesgridLayout.addWidget(self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x)+"_"+str(y)], (x-1), (y-1), 1, 1, alignment=QtCore.Qt.AlignCenter)
-            self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
+            self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x)+"_"+str(y)] = QtWidgets.QLabel(self.main_vector_matrix_screen_values_gridlayout_widget)
+            self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x)+"_"+str(y)].setStyleSheet(result_matrix_stylesheet)
+            self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x)+"_"+str(y)].setFont(font)
+            self.main_vector_matrix_screen_values_gridlayout.addWidget(self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x)+"_"+str(y)], (x-1), (y-1), 1, 1, alignment=QtCore.Qt.AlignCenter)
+            self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
 
-        self.resultlabelintorfloat = QtWidgets.QLabel()
-        self.resultlabelintorfloat.setStyleSheet("background-color: transparent;\n""color: rgb(236, 236, 236);\n")
-        self.resultlabelintorfloat.setFont(intfloatfont)
-        self.screen_gridLayout.addWidget(self.resultlabelintorfloat, 103, alignment=QtCore.Qt.AlignCenter)
-        self.resultlabelintorfloat.setHidden(True)
+        self.result_label_int_or_float = QtWidgets.QLabel()
+        self.result_label_int_or_float.setStyleSheet("background-color: transparent;\n""color: rgb(236, 236, 236);\n")
+        self.result_label_int_or_float.setFont(int_float_font)
+        self.main_vector_matrix_screen_gridlayout.addWidget(self.result_label_int_or_float, 103, alignment=QtCore.Qt.AlignCenter)
+        self.result_label_int_or_float.setHidden(True)
 
-        self.resultlabelerror = QtWidgets.QLabel()
-        self.resultlabelerror.setStyleSheet("background-color: transparent;\n""color: rgb(232, 17, 35);\n")
-        self.resultlabelerror.setFont(intfloatfont)
-        self.screen_gridLayout.addWidget(self.resultlabelerror, 4, alignment=QtCore.Qt.AlignLeft)
-        self.resultlabelerror.setHidden(True)
+        self.result_label_error = QtWidgets.QLabel()
+        self.result_label_error.setStyleSheet("background-color: transparent;\n""color: rgb(232, 17, 35);\n")
+        self.result_label_error.setFont(int_float_font)
+        self.main_vector_matrix_screen_gridlayout.addWidget(self.result_label_error, 4, alignment=QtCore.Qt.AlignLeft)
+        self.result_label_error.setHidden(True)
  
-        self.main_title_label_top = QtWidgets.QLabel(self.centralwidget)
-        self.main_title_label_top.setGeometry(QtCore.QRect(2, 9, 611, 91))
-        self.main_title_label_top.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:1, y2:0, stop:0 rgba(25, 26, 25, 255), stop:1 rgba(29, 30, 29, 255));\n")
+        self.main_title_label_top = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.main_title_label_top.setGeometry(QtCore.QRect(-15, 9, 638, 91))
+        self.main_title_label_top.setStyleSheet("background-color: rgb(25,26,25);\n")
         self.main_title_label_top.setText("")
         self.main_title_label_top.setAlignment(QtCore.Qt.AlignCenter)
-        self.main_title_label_top.setObjectName("main_title_label_top")
-        self.tab_buttonsframe = QtWidgets.QFrame(self.centralwidget)
-        self.tab_buttonsframe.setGeometry(QtCore.QRect(0, 70, 91, 519))
-        self.tab_buttonsframe.setStyleSheet(mvsfss.frame_stylesheet)
-        self.tab_buttonsframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.tab_buttonsframe.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.tab_buttonsframe.setObjectName("frame")
-        self.vectorsButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.vectorsButton.setGeometry(QtCore.QRect(0, 29, 81, 41))
-        self.vectorsButton.setStyleSheet(mvsfss.vectorsButton_stylesheet)
-        self.vectorsButton.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icons/Vectoresicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.vectorsButton.setIcon(icon)
-        self.vectorsButton.setIconSize(QtCore.QSize(24, 24))
-        self.vectorsButton.setCheckable(True)
-        self.vectorsButton.setObjectName("vectorsButton")
-        self.vectorsButton.clicked.connect(self.vectorsButtonstate)
-        self.matrixButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.matrixButton.setGeometry(QtCore.QRect(0, 69, 81, 41))
-        self.matrixButton.setStyleSheet(mvsfss.matrixButton_stylesheet)
-        self.matrixButton.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("icons/Matricesicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.matrixButton.setIcon(icon1)
-        self.matrixButton.setIconSize(QtCore.QSize(24, 24))
-        self.matrixButton.setCheckable(True)
-        self.matrixButton.setObjectName("matrixButton")
-        self.matrixButton.clicked.connect(self.matrixButtonstate)
-        self.anglesButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.anglesButton.setGeometry(QtCore.QRect(0, 109, 81, 41))
-        self.anglesButton.setStyleSheet(mvsfss.anglesButton_stylesheet)
-        self.anglesButton.setText("")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("icons/Anguloicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.anglesButton.setIcon(icon2)
-        self.anglesButton.setIconSize(QtCore.QSize(19, 19))
-        self.anglesButton.setCheckable(True)
-        self.anglesButton.setObjectName("anglesButton")
-        self.anglesButton.clicked.connect(self.anglesButtonstate)
-        self.eigenvaluesButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.eigenvaluesButton.setGeometry(QtCore.QRect(0, 149, 81, 41))
-        self.eigenvaluesButton.setStyleSheet(mvsfss.eigenvaluesButton_sylesheet)
-        self.eigenvaluesButton.setText("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("icons/Eigenvaluesicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.eigenvaluesButton.setIcon(icon4)
-        self.eigenvaluesButton.setIconSize(QtCore.QSize(17, 17))
-        self.eigenvaluesButton.setCheckable(True)
-        self.eigenvaluesButton.setObjectName("eigenvaluesButton")
-        self.eigenvaluesButton.clicked.connect(self.eigenvaluesButtonstate)
-        self.systemofequationButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.systemofequationButton.setGeometry(QtCore.QRect(0, 189, 81, 41))
-        self.systemofequationButton.setStyleSheet(mvsfss.systemofequationButton_stylesheet)
-        self.systemofequationButton.setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("icons/Systemofequationsicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.systemofequationButton.setIcon(icon5)
-        self.systemofequationButton.setIconSize(QtCore.QSize(27, 27))
-        self.systemofequationButton.setCheckable(True)
-        self.systemofequationButton.setObjectName("systemofequationButton")
-        self.systemofequationButton.clicked.connect(self.systemofequationButtonstate)
-        self.decorativebottomButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.decorativebottomButton.setEnabled(False)
-        self.decorativebottomButton.setGeometry(QtCore.QRect(0, 229, 81, 221))
-        self.decorativebottomButton.setStyleSheet(mvsfss.decorativebottomButton_stylesheet)
-        self.decorativebottomButton.setText("")
-        self.decorativebottomButton.setCheckable(True)
-        self.Decorativelabelbottom = QtWidgets.QLabel(self.centralwidget)
-        self.Decorativelabelbottom.setGeometry(QtCore.QRect(-10, 519, 634, 91))
-        self.Decorativelabelbottom.setStyleSheet("background-color: rgb(25, 26, 25);")
-        self.Decorativelabelbottom.setText("")
-        self.Decorativelabelbottom.setObjectName("Decorativelabelbottom")
-        self.infoButton = QtWidgets.QPushButton(self.tab_buttonsframe)
-        self.infoButton.setGeometry(QtCore.QRect(28, 369, 26, 26))
-        self.infoButton.setStyleSheet(mvsfss.infoButton_stylesheet)
-        self.infoButton.setText("")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("icons/Infoicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.infoButton.setIcon(icon3)
-        self.infoButton.setIconSize(QtCore.QSize(26, 26))
-        self.infoButton.setCheckable(False)
-        self.infoButton.setObjectName("infoButton")
-        self.infoButton.clicked.connect(self.Infobuttonclicked)
-        self.assignButton = QtWidgets.QPushButton(self.centralwidget)
-        self.assignButton.setGeometry(QtCore.QRect(0, 519, 96, 41))
-        self.assignButton.setStyleSheet(mvsfss.assignButton_stylesheet)
-        self.assignButton.setText("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("icons/Assignicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.assignButton.setIcon(icon4)
-        self.assignButton.setIconSize(QtCore.QSize(130, 27))
-        self.assignButton.setCheckable(False)
-        self.assignButton.setObjectName("assignButton")
-        self.assignButton.clicked.connect(self.showassign_window)
-        self.Righttopdecorativelabel = QtWidgets.QLabel(self.centralwidget)
-        self.Righttopdecorativelabel.setGeometry(QtCore.QRect(0, 29, 82, 71))
-        self.Righttopdecorativelabel.setStyleSheet(mvsfss.Righttopdecorativelabel_stylesheet)
-        self.Righttopdecorativelabel.setText("")
-        self.Righttopdecorativelabel.setScaledContents(True)
-        self.Righttopdecorativelabel.setObjectName("Righttopdecorativelabel")
-        self.rightallclearFrame = QtWidgets.QFrame(self.centralwidget)
-        self.rightallclearFrame.setGeometry(QtCore.QRect(623, -20, 161, 601))
-        self.rightallclearFrame.setStyleSheet(mvsfss.rightallclearFrame_stylesheet)
-        self.rightallclearFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.rightallclearFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.rightallclearFrame.setObjectName("rightallclearFrame")
-        self.Decorativelabelmiddlebottom = QtWidgets.QLabel(self.centralwidget)
-        self.Decorativelabelmiddlebottom.setGeometry(QtCore.QRect(282, 419, 141, 101))
-        self.Decorativelabelmiddlebottom.setStyleSheet(vmtss.Decorativelabelmiddlebottom_stylesheet)
-        self.Decorativelabelmiddlebottom.setText("")
-        self.Decorativelabelmiddlebottom.setObjectName("Decorativelabelmiddlebottom")
-        self.matrixoperatorsbuttons_names=["additionButton","subtractionButton","matrixproductButton","transposeButton","determinantButton"]
-        self.matrixoperatorsbuttons_methods=[self.Additionbuttonclicked,self.Subtractionbuttonclicked,self.Matrixproductbuttonclicked,
-        self.Transposebuttonclicked,self.Determinantbuttonclicked]
+        self.tab_buttons_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.tab_buttons_frame.setGeometry(QtCore.QRect(0, 70, 91, 519))
+        self.tab_buttons_frame.setStyleSheet(mvsfss.tab_buttons_frame_stylesheet)
+        self.tab_buttons_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.tab_buttons_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+
+        self.tab_buttons_dict={}
+        self.tab_buttons_name_list=["vector_tab_button","matrix_tab_button","angles_tab_button",
+        "eigenvalues_tab_button","system_of_equations_tab_button"]
+        self.tab_buttons_stylesheet_list=[mvsfss.vector_tab_button_stylesheet,
+        mvsfss.matrix_tab_button_stylesheet,mvsfss.angles_tab_button_stylesheet,
+        mvsfss.eigenvalues_tab_button_sylesheet,mvsfss.system_of_equations_tab_button_stylesheet]
+        self.tab_buttons_icon_list=["icons/Vectoresicon.png","icons/Matricesicon.png",
+        "icons/Anguloicon.png","icons/Eigenvaluesicon.png","icons/Systemofequationsicon.png"]
+        self.tab_buttons_method_list=[self.vectorsButtonState,self.matrixButtonState,
+        self.anglesButtonState,self.eigenvaluesButtonState,self.systemOfEquationButtonState]
+        self.tab_buttons_position=-11
+        for x in range(0,5):
+            self.tab_buttons_position+=40
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]] = QtWidgets.QPushButton(self.tab_buttons_frame)
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setGeometry(QtCore.QRect(0, self.tab_buttons_position, 81, 41))
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setStyleSheet(self.tab_buttons_stylesheet_list[x])
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(self.tab_buttons_icon_list[x]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setIcon(icon)
+            if self.tab_buttons_name_list[x] == "vector_tab_button":
+                self.tab_buttons_dict[self.tab_buttons_name_list[x]].setIconSize(QtCore.QSize(24, 24))
+            elif self.tab_buttons_name_list[x] == "matrix_tab_button":
+                self.tab_buttons_dict[self.tab_buttons_name_list[x]].setIconSize(QtCore.QSize(24, 24))
+            elif self.tab_buttons_name_list[x] == "angles_tab_button":
+                self.tab_buttons_dict[self.tab_buttons_name_list[x]].setIconSize(QtCore.QSize(19, 19))
+            elif self.tab_buttons_name_list[x] == "eigenvalues_tab_button":
+                self.tab_buttons_dict[self.tab_buttons_name_list[x]].setIconSize(QtCore.QSize(17, 17))
+            elif self.tab_buttons_name_list[x] == "system_of_equations_tab_button":
+                self.tab_buttons_dict[self.tab_buttons_name_list[x]].setIconSize(QtCore.QSize(27, 27))
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setCheckable(True)
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].clicked.connect(self.tab_buttons_method_list[x])
+
+        self.filler_bottom_left_frame_button = QtWidgets.QPushButton(self.tab_buttons_frame)
+        self.filler_bottom_left_frame_button.setEnabled(False)
+        self.filler_bottom_left_frame_button.setGeometry(QtCore.QRect(0, 229, 81, 221))
+        self.filler_bottom_left_frame_button.setStyleSheet(mvsfss.filler_bottom_left_frame_button_stylesheet)
+        self.filler_bottom_left_frame_button.setText("")
+        self.filler_bottom_left_frame_button.setCheckable(True)
+        self.bottom_assign_button_background_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.bottom_assign_button_background_label.setGeometry(QtCore.QRect(-10, 519, 714, 91))
+        self.bottom_assign_button_background_label.setStyleSheet("background-color: rgb(25, 26, 25);")
+        self.bottom_assign_button_background_label.setPixmap(QtGui.QPixmap("icons/Bottomassignbuttonbackground.png"))
+        self.bottom_assign_button_background_label.setText("")
+        self.info_button = QtWidgets.QPushButton(self.tab_buttons_frame)
+        self.info_button.setGeometry(QtCore.QRect(28, 369, 26, 26))
+        self.info_button.setStyleSheet(mvsfss.infoButton_stylesheet)
+        self.info_button.setText("")
+        info_button_icon = QtGui.QIcon()
+        info_button_icon.addPixmap(QtGui.QPixmap("icons/Infoicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.info_button.setIcon(info_button_icon)
+        self.info_button.setIconSize(QtCore.QSize(26, 26))
+        self.info_button.setCheckable(False)
+        self.info_button.clicked.connect(self.infoButtonClicked)
+        self.assign_button = QtWidgets.QPushButton(self.mainwindow_central_widget)
+        self.assign_button.setGeometry(QtCore.QRect(0, 519, 96, 41))
+        self.assign_button.setStyleSheet(mvsfss.assign_button_stylesheet)
+        self.assign_button.setText("")
+        assign_button_icon = QtGui.QIcon()
+        assign_button_icon.addPixmap(QtGui.QPixmap("icons/Assignicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.assign_button.setIcon(assign_button_icon)
+        self.assign_button.setIconSize(QtCore.QSize(130, 27))
+        self.assign_button.setCheckable(False)
+        self.assign_button.clicked.connect(self.showAssignWindow)
+        self.filler_top_left_frame_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.filler_top_left_frame_label.setGeometry(QtCore.QRect(0, 29, 82, 71))
+        self.filler_top_left_frame_label.setStyleSheet(mvsfss.filler_top_left_frame_label_stylesheet)
+        self.filler_top_left_frame_label.setText("")
+        self.filler_top_left_frame_label.setScaledContents(True)
+        self.right_all_clear_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.right_all_clear_frame.setGeometry(QtCore.QRect(623, -20, 81, 539))
+        self.right_all_clear_frame.setStyleSheet(mvsfss.right_all_clear_frame_stylesheet)
+        self.right_all_clear_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.right_all_clear_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.background_vectors_and_matrices_operators_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.background_vectors_and_matrices_operators_label.setGeometry(QtCore.QRect(283, 460, 140, 59))
+        self.background_vectors_and_matrices_operators_label.setStyleSheet(vmtss.background_vectors_and_matrices_operators_label_stylesheet)
+        self.background_vectors_and_matrices_operators_label.setText("")
+        self.matrix_operators_buttons_names=["additionButton","subtractionButton","matrixproductButton","transposeButton","determinantButton"]
+        self.matrixoperatorsbuttons_methods=[self.additionButtonClicked,self.subtractionButtonClicked,self.matrixProductButtonClicked,
+        self.transposeButtonClicked,self.determinantButtonClicked]
         self.matrixoperatorsbuttons_icons=["icons/Additionicon.png","icons/Subtractionicon.png","icons/Matrixproducticon.png",
         "icons/transpicon.png","icons/deticon.png"]
-        self.vectoroperatorsbuttons_names=["additionButton","subtractionButton","scalarproductButton","vectorproductButton","magnitudeButton"]
-        self.vectoroperatorsbuttons_methods=[self.Additionbuttonclicked,self.Subtractionbuttonclicked,self.Scalarbuttonclicked,
-        self.Vectorproductbuttonclicked,self.Magnitudebuttonclicked]
+        self.vector_operators_buttons_names=["additionButton","subtractionButton","scalarproductButton","vectorproductButton","magnitudeButton"]
+        self.vectoroperatorsbuttons_methods=[self.additionButtonClicked,self.subtractionButtonClicked,self.scalarButtonClicked,
+        self.vectorProductButtonClicked,self.magnitudeButtonClicked]
         self.vectoroperatorsbuttons_icons=["icons/Additionicon.png","icons/Subtractionicon.png","icons/Scalarproducticon.png",
         "icons/Vectorproducticon.png","icons/Magnitudeicon.png"]
-        self.answer_and_equalbuttons_names=["answerButton","equalButton"]
-        self.answer_and_equalbuttons_methods=[self.Answerbuttonclicked,self.Equalbuttonclicked]
+        self.answer_and_equal_buttons_names=["answerButton","equalButton"]
+        self.answer_and_equalbuttons_methods=[self.answerButtonClicked,self.equalButtonClicked]
         self.answer_and_equalbuttons_icons=["icons/Answericon.png","icons/Equalicon.png"]
-        self.matrixoperatorsbuttons_dict,self.vectoroperatorsbuttons_dict,self.answer_and_equalbuttons_dict={},{},{}
+        self.matrix_operators_buttons_dict,self.vector_operators_buttons_dict,self.answer_and_equal_buttons_dict={},{},{}
         self.matrixoperatorsbuttons_position,self.vectoroperatorsbuttons_position,self.answer_and_equalbuttons_position=232,232,369
         self.matrixoperatorbuttonscounter,self.vectoroperatorbuttonscounter,self.answer_and_equalbuttons_counter=-1,-1,-1
-        for x in self.matrixoperatorsbuttons_names:
+        for x in self.matrix_operators_buttons_names:
             self.matrixoperatorbuttonscounter+=1
             self.matrixoperatorsbuttons_position+=50
-            self.matrixoperatorsbuttons_dict[x] = QtWidgets.QPushButton(self.centralwidget)
-            self.matrixoperatorsbuttons_dict[x].setStyleSheet(vmtss.matrix_vector_answer_equal_operators_stylesheet)
-            self.matrixoperatorsbuttons_dict[x].setText("")
+            self.matrix_operators_buttons_dict[x] = QtWidgets.QPushButton(self.mainwindow_central_widget)
+            self.matrix_operators_buttons_dict[x].setStyleSheet(vmtss.matrix_vector_answer_equal_operators_stylesheet)
+            self.matrix_operators_buttons_dict[x].setText("")
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap(self.matrixoperatorsbuttons_icons[self.matrixoperatorbuttonscounter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.matrixoperatorsbuttons_dict[x].setIcon(icon)
-            self.matrixoperatorsbuttons_dict[x].setCheckable(False)
-            self.matrixoperatorsbuttons_dict[x].clicked.connect(self.matrixoperatorsbuttons_methods[self.matrixoperatorbuttonscounter])
+            self.matrix_operators_buttons_dict[x].setIcon(icon)
+            self.matrix_operators_buttons_dict[x].setCheckable(False)
+            self.matrix_operators_buttons_dict[x].clicked.connect(self.matrixoperatorsbuttons_methods[self.matrixoperatorbuttonscounter])
             if x == "transposeButton":
-                self.matrixoperatorsbuttons_dict[x].setIconSize(QtCore.QSize(23, 23))
-                self.matrixoperatorsbuttons_dict[x].setGeometry(QtCore.QRect(self.matrixoperatorsbuttons_position-132, 469, 41, 41)) 
+                self.matrix_operators_buttons_dict[x].setIconSize(QtCore.QSize(23, 23))
+                self.matrix_operators_buttons_dict[x].setGeometry(QtCore.QRect(self.matrixoperatorsbuttons_position-132, 469, 41, 41)) 
             elif x == "determinantButton":
-                self.matrixoperatorsbuttons_dict[x].setIconSize(QtCore.QSize(30, 30))
-                self.matrixoperatorsbuttons_dict[x].setGeometry(QtCore.QRect(self.matrixoperatorsbuttons_position-132, 469, 41, 41))
+                self.matrix_operators_buttons_dict[x].setIconSize(QtCore.QSize(30, 30))
+                self.matrix_operators_buttons_dict[x].setGeometry(QtCore.QRect(self.matrixoperatorsbuttons_position-132, 469, 41, 41))
             else:
-                self.matrixoperatorsbuttons_dict[x].setIconSize(QtCore.QSize(23, 23))
-                self.matrixoperatorsbuttons_dict[x].setGeometry(QtCore.QRect(self.matrixoperatorsbuttons_position, 419, 41, 41))
-        for x in self.vectoroperatorsbuttons_names:
+                self.matrix_operators_buttons_dict[x].setIconSize(QtCore.QSize(23, 23))
+                self.matrix_operators_buttons_dict[x].setGeometry(QtCore.QRect(self.matrixoperatorsbuttons_position, 419, 41, 41))
+        for x in self.vector_operators_buttons_names:
             self.vectoroperatorbuttonscounter+=1
             self.vectoroperatorsbuttons_position+=50
-            self.vectoroperatorsbuttons_dict[x] = QtWidgets.QPushButton(self.centralwidget)
-            self.vectoroperatorsbuttons_dict[x].setStyleSheet(vmtss.matrix_vector_answer_equal_operators_stylesheet)
-            self.vectoroperatorsbuttons_dict[x].setText("")
+            self.vector_operators_buttons_dict[x] = QtWidgets.QPushButton(self.mainwindow_central_widget)
+            self.vector_operators_buttons_dict[x].setStyleSheet(vmtss.matrix_vector_answer_equal_operators_stylesheet)
+            self.vector_operators_buttons_dict[x].setText("")
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap(self.vectoroperatorsbuttons_icons[self.vectoroperatorbuttonscounter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.vectoroperatorsbuttons_dict[x].setIcon(icon)
-            self.vectoroperatorsbuttons_dict[x].setCheckable(False)
-            self.vectoroperatorsbuttons_dict[x].clicked.connect(self.vectoroperatorsbuttons_methods[self.vectoroperatorbuttonscounter])
+            self.vector_operators_buttons_dict[x].setIcon(icon)
+            self.vector_operators_buttons_dict[x].setCheckable(False)
+            self.vector_operators_buttons_dict[x].clicked.connect(self.vectoroperatorsbuttons_methods[self.vectoroperatorbuttonscounter])
             if x == "vectorproductButton":
-                self.vectoroperatorsbuttons_dict[x].setIconSize(QtCore.QSize(23, 23))
-                self.vectoroperatorsbuttons_dict[x].setGeometry(QtCore.QRect(self.vectoroperatorsbuttons_position-132, 469, 41, 41)) 
+                self.vector_operators_buttons_dict[x].setIconSize(QtCore.QSize(23, 23))
+                self.vector_operators_buttons_dict[x].setGeometry(QtCore.QRect(self.vectoroperatorsbuttons_position-132, 469, 41, 41)) 
             elif x == "magnitudeButton":
-                self.vectoroperatorsbuttons_dict[x].setIconSize(QtCore.QSize(27, 27))
-                self.vectoroperatorsbuttons_dict[x].setGeometry(QtCore.QRect(self.vectoroperatorsbuttons_position-132, 469, 41, 41))
+                self.vector_operators_buttons_dict[x].setIconSize(QtCore.QSize(27, 27))
+                self.vector_operators_buttons_dict[x].setGeometry(QtCore.QRect(self.vectoroperatorsbuttons_position-132, 469, 41, 41))
             else:
-                self.vectoroperatorsbuttons_dict[x].setIconSize(QtCore.QSize(23, 23))
-                self.vectoroperatorsbuttons_dict[x].setGeometry(QtCore.QRect(self.vectoroperatorsbuttons_position, 419, 41, 41))
-        for x in self.answer_and_equalbuttons_names:
+                self.vector_operators_buttons_dict[x].setIconSize(QtCore.QSize(23, 23))
+                self.vector_operators_buttons_dict[x].setGeometry(QtCore.QRect(self.vectoroperatorsbuttons_position, 419, 41, 41))
+        for x in self.answer_and_equal_buttons_names:
             self.answer_and_equalbuttons_counter+=1
             self.answer_and_equalbuttons_position+=50
-            self.answer_and_equalbuttons_dict[x] = QtWidgets.QPushButton(self.centralwidget)
-            self.answer_and_equalbuttons_dict[x].setStyleSheet(vmtss.matrix_vector_answer_equal_operators_stylesheet)
-            self.answer_and_equalbuttons_dict[x].setText("")
+            self.answer_and_equal_buttons_dict[x] = QtWidgets.QPushButton(self.mainwindow_central_widget)
+            self.answer_and_equal_buttons_dict[x].setStyleSheet(vmtss.matrix_vector_answer_equal_operators_stylesheet)
+            self.answer_and_equal_buttons_dict[x].setText("")
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap(self.answer_and_equalbuttons_icons[self.answer_and_equalbuttons_counter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.answer_and_equalbuttons_dict[x].setIcon(icon)
-            self.answer_and_equalbuttons_dict[x].setCheckable(False)
-            self.answer_and_equalbuttons_dict[x].clicked.connect(self.answer_and_equalbuttons_methods[self.answer_and_equalbuttons_counter])
-            self.answer_and_equalbuttons_dict[x].setGeometry(QtCore.QRect(473, self.answer_and_equalbuttons_position, 121, 41))
+            self.answer_and_equal_buttons_dict[x].setIcon(icon)
+            self.answer_and_equal_buttons_dict[x].setCheckable(False)
+            self.answer_and_equal_buttons_dict[x].clicked.connect(self.answer_and_equalbuttons_methods[self.answer_and_equalbuttons_counter])
+            self.answer_and_equal_buttons_dict[x].setGeometry(QtCore.QRect(473, self.answer_and_equalbuttons_position, 121, 41))
             if x == "answerButton":
-                self.answer_and_equalbuttons_dict[x].setIconSize(QtCore.QSize(30, 30))
+                self.answer_and_equal_buttons_dict[x].setIconSize(QtCore.QSize(30, 30))
             if x == "equalButton":
-                self.answer_and_equalbuttons_dict[x].setIconSize(QtCore.QSize(23, 23))
-                self.answer_and_equalbuttons_dict[x].setShortcut("Return")
-        self.allclearButton = QtWidgets.QPushButton(self.rightallclearFrame)
-        self.allclearButton.setGeometry(QtCore.QRect(12, 59, 81, 41))
-        self.allclearButton.setStyleSheet("QPushButton {\n"
-"    background-color: rgb(132, 43, 108);\n"
-"    border-style: outset;\n"
-"    border-width: 2px;\n"
-"    border-radius: 5px;\n"
-"    border-color: rgb(97, 37, 103);\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(232, 17, 35);\n"
-"    border-style: outset;\n"
-"    border-width: 2px;\n"
-"    border-radius: 5px;\n"
-"    border-color: rgb(155, 26, 25);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(149, 20, 30);\n"
-"    border-style: outset;\n"
-"    border-width: 2px;\n"
-"    border-radius: 5px;\n"
-"    border-color: rgb(95, 26, 25);\n"
-"}    ")
-        self.allclearButton.setText("")
+                self.answer_and_equal_buttons_dict[x].setIconSize(QtCore.QSize(23, 23))
+                self.answer_and_equal_buttons_dict[x].setShortcut("Return")
+        self.all_clear_button = QtWidgets.QPushButton(self.right_all_clear_frame)
+        self.all_clear_button.setGeometry(QtCore.QRect(0, 119, 81, 41))
+        self.all_clear_button.setStyleSheet(mvsfss.all_clear_button_stylesheet)
+        self.all_clear_button.setText("")
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap("icons/Allclearicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.allclearButton.setIcon(icon5)
-        self.allclearButton.setIconSize(QtCore.QSize(30, 30))
-        self.allclearButton.setCheckable(False)
-        self.allclearButton.setObjectName("allclearButton")
-        self.allclearButton.clicked.connect(self.Allclearbuttonclicked)
-        self.Decographlabel = QtWidgets.QLabel(self.rightallclearFrame)
-        self.Decographlabel.setGeometry(QtCore.QRect(22, 100, 59, 492))
-        self.Decographlabel.setStyleSheet("background-color: transparent;\n"
+        self.all_clear_button.setIcon(icon5)
+        self.all_clear_button.setIconSize(QtCore.QSize(30, 30))
+        self.all_clear_button.setCheckable(False)
+        self.all_clear_button.clicked.connect(self.allClearButtonClicked)
+        self.decorative_graph_label = QtWidgets.QLabel(self.right_all_clear_frame)
+        self.decorative_graph_label.setGeometry(QtCore.QRect(11, 163, 59, 492))
+        self.decorative_graph_label.setStyleSheet("background-color: transparent;\n"
 "border-top:0px;\n"
 "border-style:solid;\n"
 "border-top-color: rgb(236, 236, 236);\n"
 "border-left:none;\n"
 "")
-        self.Decographlabel.setText("")
-        self.Decographlabel.setPixmap(QtGui.QPixmap("icons/Decorativegraph.png"))
-        self.Decographlabel.setScaledContents(True)
-        self.Decographlabel.setObjectName("Decographlabel")
+        self.decorative_graph_label.setText("")
+        self.decorative_graph_label.setPixmap(QtGui.QPixmap("icons/Decorativegraph.png"))
+        self.decorative_graph_label.setScaledContents(True)
 
-        ##########################
-        #General operators frame##
-        ##########################
+        ###########################
+        ##GENERAL OPERATORS FRAME##
+        ###########################
 
-        self.generaloperatorsframe = QtWidgets.QFrame(self.centralwidget)
-        self.generaloperatorsframe.setGeometry(QtCore.QRect(112, 329, 481, 63))
-        self.generaloperatorsframe.setStyleSheet(vmtss.generaloperatorsframestylesheet)
-        self.generaloperatorsframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.generaloperatorsframe.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.generaloperatorsframe.setObjectName("generaloperatorsframe")
-        self.generaloperatorsButtonsnamelist_line1=["generaladdButton","generalsubButton","generalmultiplyButton","generaldivisionButton",
+        self.general_operators_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.general_operators_frame.setGeometry(QtCore.QRect(112, 329, 481, 63))
+        self.general_operators_frame.setStyleSheet(vmtss.general_operators_framestylesheet)
+        self.general_operators_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.general_operators_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.general_operators_buttons_name_list_line1=["generaladdButton","generalsubButton","generalmultiplyButton","generaldivisionButton",
         "generalsinButton","generalcosButton","generaltanButton","generalsinhButton","generalcoshButton","generaltanhButton",
         "generallogButton","generalinButton"]
-        self.generaloperatorsButtonsnamelist_line2=["generalpowerButton","generalrootButton","generaleButton","generalpiButton",
+        self.general_operators_buttons_name_list_line2=["generalpowerButton","generalrootButton","generaleButton","generalpiButton",
         "generalsininvButton","generalcosinvButton","generaltaninvButton","generalsinhinvButton","generalcoshinvButton",
         "generaltanhinvButton","generallogchooseButton","generalabsoluteButton"]
-        self.generaloperatorsButtonsnamelist_line1icons=["icons/generaloperators/add.png","icons/generaloperators/subtract.png",
+        self.general_operators_buttons_name_list_line1_icons=["icons/generaloperators/add.png","icons/generaloperators/subtract.png",
         "icons/generaloperators/multiply.png","icons/generaloperators/division.png","icons/generaloperators/sin().png",
         "icons/generaloperators/cos().png","icons/generaloperators/tan().png","icons/generaloperators/sinh().png",
         "icons/generaloperators/cosh().png","icons/generaloperators/tanh().png","icons/generaloperators/log().png",
         "icons/generaloperators/in().png"]
-        self.generaloperatorsButtonsnamelist_line2icons=["icons/generaloperators/power.png","icons/generaloperators/root.png",
+        self.general_operators_buttons_name_list_line2_icons=["icons/generaloperators/power.png","icons/generaloperators/root.png",
         "icons/generaloperators/e.png","icons/generaloperators/pi.png","icons/generaloperators/sin-1().png",
         "icons/generaloperators/cos-1().png","icons/generaloperators/tan-1().png","icons/generaloperators/sinh-1().png",
         "icons/generaloperators/cosh-1().png","icons/generaloperators/tanh-1().png","icons/generaloperators/log()().png",
         "icons/generaloperators/absolute.png"]
-        self.generaloperatorsButtonsnamelist_line1methods=[self.Generaladdbuttonclicked,self.Generalsubbuttonclicked,
-        self.Generalmultiplybuttonclicked,self.Generaldivisionbuttonclicked,self.Generalsinbuttonclicked,
-        self.Generalcosbuttonclicked,self.Generaltanbuttonclicked,self.Generalsinhbuttonclicked,self.Generalcoshbuttonclicked,
-        self.Generaltanhbuttonclicked,self.Generallogbuttonclicked,self.Generalinbuttonclicked]
-        self.generaloperatorsButtonsnamelist_line2methods=[self.Generalpowerbuttonclicked,self.Generalrootbuttonclicked,
-        self.Generalebuttonclicked,self.Generalpibuttonclicked,self.Generalsininvbuttonclicked,self.Generalcosinvbuttonclicked,
-        self.Generaltaninvbuttonclicked,self.Generalsinhinvbuttonclicked,self.Generalcoshinvbuttonclicked,self.Generaltanhinvbuttonclicked,
-        self.Generallogchoosebuttonclicked,self.Generalabsolutebuttonclicked]
-        self.generaloperatorsButtonsdict={}
-        generaloperatorsButtonsnamelist_line1position,generaloperatorsButtonsnamelist_line1counter=-40,-1
-        for x in self.generaloperatorsButtonsnamelist_line1:
-            generaloperatorsButtonsnamelist_line1position+=40
-            generaloperatorsButtonsnamelist_line1counter+=1
-            self.generaloperatorsButtonsdict[x] = QtWidgets.QPushButton(self.generaloperatorsframe)
-            self.generaloperatorsButtonsdict[x].setStyleSheet(vmtss.generaloperatorsButtons_stylesheet)
-            self.generaloperatorsButtonsdict[x].setText("")
-            self.generaloperatorsButtonsdict[x].setGeometry(QtCore.QRect(generaloperatorsButtonsnamelist_line1position, 0, 41, 31))
+        self.general_operators_buttons_name_list_line1_methods=[self.generalAddButtonClicked,self.generalSubButtonClicked,
+        self.generalMultiplyButtonClicked,self.generalDivisionButtonClicked,self.generalSinButtonClicked,
+        self.generalCosButtonClicked,self.generalTanButtonClicked,self.generalSinhButtonClicked,self.generalCoshButtonClicked,
+        self.generalTanhButtonClicked,self.generalLogButtonClicked,self.generalInButtonClicked]
+        self.general_operators_buttons_name_list_line2_methods=[self.generalPowerButtonClicked,self.generalRootButtonClicked,
+        self.generalEButtonClicked,self.generalPiButtonClicked,self.generalSinInvButtonClicked,self.generalCosInvButtonClicked,
+        self.generalTanInvButtonClicked,self.generalSinhInvButtonClicked,self.generalCoshInvButtonClicked,self.generalTanhInvButtonClicked,
+        self.generalLogChooseButtonClicked,self.generalAbsoluteButtonClicked]
+        self.general_operators_buttons_dict={}
+        general_operators_buttons_name_list_line1_position,general_operators_buttons_name_list_line1_counter=-40,-1
+        for x in self.general_operators_buttons_name_list_line1:
+            general_operators_buttons_name_list_line1_position+=40
+            general_operators_buttons_name_list_line1_counter+=1
+            self.general_operators_buttons_dict[x] = QtWidgets.QPushButton(self.general_operators_frame)
+            self.general_operators_buttons_dict[x].setStyleSheet(vmtss.generaloperatorsButtons_stylesheet)
+            self.general_operators_buttons_dict[x].setText("")
+            self.general_operators_buttons_dict[x].setGeometry(QtCore.QRect(general_operators_buttons_name_list_line1_position, 0, 41, 31))
             icon= QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(self.generaloperatorsButtonsnamelist_line1icons[generaloperatorsButtonsnamelist_line1counter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.generaloperatorsButtonsdict[x].setIcon(icon)
-            self.generaloperatorsButtonsdict[x].setCheckable(False)
-            self.generaloperatorsButtonsdict[x].clicked.connect(self.generaloperatorsButtonsnamelist_line1methods[generaloperatorsButtonsnamelist_line1counter])
+            icon.addPixmap(QtGui.QPixmap(self.general_operators_buttons_name_list_line1_icons[general_operators_buttons_name_list_line1_counter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.general_operators_buttons_dict[x].setIcon(icon)
+            self.general_operators_buttons_dict[x].setCheckable(False)
+            self.general_operators_buttons_dict[x].clicked.connect(self.general_operators_buttons_name_list_line1_methods[general_operators_buttons_name_list_line1_counter])
             if x =="generaladdButton":
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(18, 18))
-                self.generaloperatorsButtonsdict[x].setShortcut("+")
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(18, 18))
+                self.general_operators_buttons_dict[x].setShortcut("+")
             elif x == "generalsubButton":
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(18, 18))
-                self.generaloperatorsButtonsdict[x].setShortcut("-")
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(18, 18))
+                self.general_operators_buttons_dict[x].setShortcut("-")
             elif x == "generalmultiplyButton":
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(18, 18))
-                self.generaloperatorsButtonsdict[x].setShortcut("*")
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(18, 18))
+                self.general_operators_buttons_dict[x].setShortcut("*")
             elif x =="generaldivisionButton":
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(18, 18))
-                self.generaloperatorsButtonsdict[x].setShortcut("/")
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(18, 18))
+                self.general_operators_buttons_dict[x].setShortcut("/")
             else:
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(35, 35))
-        generaloperatorsButtonsnamelist_line2position,generaloperatorsButtonsnamelist_line2counter=-40,-1
-        for x in self.generaloperatorsButtonsnamelist_line2:
-            generaloperatorsButtonsnamelist_line2position+=40
-            generaloperatorsButtonsnamelist_line2counter+=1
-            self.generaloperatorsButtonsdict[x] = QtWidgets.QPushButton(self.generaloperatorsframe)
-            self.generaloperatorsButtonsdict[x].setStyleSheet(vmtss.generaloperatorsButtons_stylesheet)
-            self.generaloperatorsButtonsdict[x].setText("")
-            self.generaloperatorsButtonsdict[x].setGeometry(QtCore.QRect(generaloperatorsButtonsnamelist_line2position, 32, 41, 31))
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(35, 35))
+        general_operators_buttons_name_list_line2_position,general_operators_buttons_name_list_line2_counter=-40,-1
+        for x in self.general_operators_buttons_name_list_line2:
+            general_operators_buttons_name_list_line2_position+=40
+            general_operators_buttons_name_list_line2_counter+=1
+            self.general_operators_buttons_dict[x] = QtWidgets.QPushButton(self.general_operators_frame)
+            self.general_operators_buttons_dict[x].setStyleSheet(vmtss.generaloperatorsButtons_stylesheet)
+            self.general_operators_buttons_dict[x].setText("")
+            self.general_operators_buttons_dict[x].setGeometry(QtCore.QRect(general_operators_buttons_name_list_line2_position, 32, 41, 31))
             icon= QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(self.generaloperatorsButtonsnamelist_line2icons[generaloperatorsButtonsnamelist_line2counter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.generaloperatorsButtonsdict[x].setIcon(icon)
-            self.generaloperatorsButtonsdict[x].setCheckable(False)
-            self.generaloperatorsButtonsdict[x].clicked.connect(self.generaloperatorsButtonsnamelist_line2methods[generaloperatorsButtonsnamelist_line2counter])
+            icon.addPixmap(QtGui.QPixmap(self.general_operators_buttons_name_list_line2_icons[general_operators_buttons_name_list_line2_counter]), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.general_operators_buttons_dict[x].setIcon(icon)
+            self.general_operators_buttons_dict[x].setCheckable(False)
+            self.general_operators_buttons_dict[x].clicked.connect(self.general_operators_buttons_name_list_line2_methods[general_operators_buttons_name_list_line2_counter])
             if x =="generalabsoluteButton":
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(18, 18))
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(18, 18))
             elif x == "generaleButton" or x == "generalpiButton":
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(45, 45))
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(45, 45))
             else:
-                self.generaloperatorsButtonsdict[x].setIconSize(QtCore.QSize(35, 35))
-        ######################################
-        ##Draggable Matrix & Vector elements##
-        ######################################
+                self.general_operators_buttons_dict[x].setIconSize(QtCore.QSize(35, 35))
+        ########################################
+        ##DRAGGABLE VECTORS AND MATRICES LISTS##
+        ########################################
+        self.click_and_drag_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.click_and_drag_label.setGeometry(QtCore.QRect(110, 419, 124, 21))
+        self.click_and_drag_label.setStyleSheet(vmtss.click_and_drag_labelstylesheet)
+        self.click_and_drag_label.setScaledContents(True)
+        self.click_and_drag_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.click_and_drag_label.setScaledContents(True)
+        self.click_and_drag_label.setText("CLICK OR DRAG")
 
-        self.clickndraglabel = QtWidgets.QLabel(self.centralwidget)
-        self.clickndraglabel.setGeometry(QtCore.QRect(110, 419, 124, 21))
-        self.clickndraglabel.setStyleSheet(vmtss.clickndraglabelstylesheet)
-        self.clickndraglabel.setScaledContents(True)
-        self.clickndraglabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.clickndraglabel.setScaledContents(True)
-        self.clickndraglabel.setObjectName("clickndraglabel")
-        self.clickndraglabel.setText("CLICK OR DRAG")
-
-        self.draggablematrixListWidget = QtWidgets.QListWidget(self.centralwidget)
-        self.draggablematrixListWidget.setGeometry(QtCore.QRect(112, 440, 121, 79))
-        self.draggablematrixListWidget.setDragEnabled(True)
-        self.draggablematrixListWidget.setDragDropOverwriteMode(True)
-        self.draggablematrixListWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
-        self.draggablematrixListWidget.setObjectName("draggablematrixListWidget")
-        self.draggablematrixListWidget.itemDoubleClicked.connect(self.Vectorandmatrixlistwidgetdoubleclicked)        
+        self.draggable_matrix_list_widget = QtWidgets.QListWidget(self.mainwindow_central_widget)
+        self.draggable_matrix_list_widget.setGeometry(QtCore.QRect(110, 440, 123, 79))
+        self.draggable_matrix_list_widget.setDragEnabled(True)
+        self.draggable_matrix_list_widget.setDragDropOverwriteMode(True)
+        self.draggable_matrix_list_widget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
+        self.draggable_matrix_list_widget.itemDoubleClicked.connect(self.vectorAndMatrixListWidgetDoubleClicked)        
         for x in range(0,20):
             item = QtWidgets.QListWidgetItem()
-            self.draggablematrixListWidget.addItem(item)
+            self.draggable_matrix_list_widget.addItem(item)
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-        self.draggablevectorListWidget = QtWidgets.QListWidget(self.centralwidget)
-        self.draggablevectorListWidget.setGeometry(QtCore.QRect(112, 440, 121, 79))
-        self.draggablevectorListWidget.setDragEnabled(True)
-        self.draggablevectorListWidget.setDragDropOverwriteMode(True)
-        self.draggablevectorListWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
-        self.draggablevectorListWidget.setObjectName("draggablevectorListWidget")
-        self.draggablevectorListWidget.itemDoubleClicked.connect(self.Vectorandmatrixlistwidgetdoubleclicked)
+
+        self.draggable_vector_list_widget = QtWidgets.QListWidget(self.mainwindow_central_widget)
+        self.draggable_vector_list_widget.setGeometry(QtCore.QRect(110, 440, 123, 79))
+        self.draggable_vector_list_widget.setDragEnabled(True)
+        self.draggable_vector_list_widget.setDragDropOverwriteMode(True)
+        self.draggable_vector_list_widget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
+        self.draggable_vector_list_widget.itemDoubleClicked.connect(self.vectorAndMatrixListWidgetDoubleClicked)
         for x in range(0,20):
             item = QtWidgets.QListWidgetItem()
-            self.draggablevectorListWidget.addItem(item)
+            self.draggable_vector_list_widget.addItem(item)
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-        ##########################
-        ##Degree and  Rad Slider##
-        ##########################
-
-        self.degandradverticalSlider = QtWidgets.QSlider(self.tab_buttonsframe)
-        self.degandradverticalSlider.setGeometry(QtCore.QRect(40, 410, 31, 35))
-        self.degandradverticalSlider.setStyleSheet(mvsfss.degandradverticalSlider_stylesheet)
-        self.degandradverticalSlider.setMaximum(1)
-        self.degandradverticalSlider.setOrientation(QtCore.Qt.Vertical)
-        self.degandradverticalSlider.setInvertedAppearance(False)
-        self.degandradverticalSlider.setObjectName("verticalSlider")
-        self.degandradverticalSlider.valueChanged.connect(self.Degandradverticalslidervaluechanged)
-        self.degreeLabel = QtWidgets.QLabel(self.tab_buttonsframe)
-        self.degreeLabel.setGeometry(QtCore.QRect(20, 410, 31, 16))
-        self.degreeLabel.setStyleSheet(mvsfss.degreeLabel_initialstylesheet)
-        self.degreeLabel.setObjectName("degreeLabel")
-        self.degreeLabel.setText("DEG")
-        self.radLabel = QtWidgets.QLabel(self.tab_buttonsframe)
-        self.radLabel.setGeometry(QtCore.QRect(20, 430, 31, 16))
-        self.radLabel.setStyleSheet(mvsfss.radLabel_initialstylesheet)
-        self.radLabel.setObjectName("radLabel")
-        self.radLabel.setText("RAD")
-
+        ######################
+        ##DEG AND RAD SLIDER##
+        ######################
+        self.deg_and_rad_vertical_slider = QtWidgets.QSlider(self.tab_buttons_frame)
+        self.deg_and_rad_vertical_slider.setGeometry(QtCore.QRect(40, 410, 31, 35))
+        self.deg_and_rad_vertical_slider.setStyleSheet(mvsfss.deg_and_rad_vertical_slider_stylesheet)
+        self.deg_and_rad_vertical_slider.setMaximum(1)
+        self.deg_and_rad_vertical_slider.setOrientation(QtCore.Qt.Vertical)
+        self.deg_and_rad_vertical_slider.setInvertedAppearance(False)
+        self.deg_and_rad_vertical_slider.valueChanged.connect(self.degAndRadVerticalSliderValueChanged)
+        self.degree_label = QtWidgets.QLabel(self.tab_buttons_frame)
+        self.degree_label.setGeometry(QtCore.QRect(20, 410, 31, 16))
+        self.degree_label.setStyleSheet(mvsfss.degree_label_initial_stylesheet)
+        self.degree_label.setText("DEG")
+        self.rad_label = QtWidgets.QLabel(self.tab_buttons_frame)
+        self.rad_label.setGeometry(QtCore.QRect(20, 430, 31, 16))
+        self.rad_label.setStyleSheet(mvsfss.rad_label_initial_stylesheet)
+        self.rad_label.setText("RAD")
         ##################
         ### ANGLES TAB ###
         ##################
-        self.bakcgrounddecorativeslideLabel = QtWidgets.QLabel(self.centralwidget)
-        self.bakcgrounddecorativeslideLabel.setGeometry(QtCore.QRect(282, 100, 141, 71))
-        self.bakcgrounddecorativeslideLabel.setStyleSheet(atss.bakcgrounddecorativeslideLabel_stylesheet)
-        self.bakcgrounddecorativeslideLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.bakcgrounddecorativeslideLabel.setObjectName("bakcgrounddecorativeslideLabel")
-        self.angleshorizontalSlider = QtWidgets.QSlider(self.centralwidget)
-        self.angleshorizontalSlider.setGeometry(QtCore.QRect(322, 119, 61, 16))
-        self.angleshorizontalSlider.setStyleSheet(atss.angleshorizontalSlider_stylesheet)
-        self.angleshorizontalSlider.setMaximum(1)
-        self.angleshorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.angleshorizontalSlider.setInvertedAppearance(False)
-        self.angleshorizontalSlider.setObjectName("angleshorizontalSlider")
-        self.angleshorizontalSlider.valueChanged.connect(self.Angleshorizontalslidervaluechanged)
-        self.anglesimportLabel = QtWidgets.QLabel(self.centralwidget)
-        self.anglesimportLabel.setGeometry(QtCore.QRect(306, 139, 51, 16))
-        self.anglesimportLabel.setStyleSheet(atss.anglesimportLabel_stylesheet)
-        self.anglesimportLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.anglesimportLabel.setObjectName("anglesimportLabel")
-        self.angleswriteLabel = QtWidgets.QLabel(self.centralwidget)
-        self.angleswriteLabel.setGeometry(QtCore.QRect(362, 139, 41, 16))
-        self.angleswriteLabel.setStyleSheet(atss.angleswriteLabel_stylesheet)
-        self.angleswriteLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.angleswriteLabel.setObjectName("angleswriteLabel")
-        self.angleschoosevectorFrame = QtWidgets.QFrame(self.centralwidget)
-        self.angleschoosevectorFrame.setGeometry(QtCore.QRect(90, 179, 501, 71))
-        self.angleschoosevectorFrame.setStyleSheet(atss.angleschoosevectorFrame_stylesheet)
-        self.angleschoosevectorFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.angleschoosevectorFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.angleschoosevectorFrame.setObjectName("angleschoosevectorFrame")
-        self.choosevectorcomboBox_x = QtWidgets.QComboBox(self.angleschoosevectorFrame)
-        self.choosevectorcomboBox_x.setGeometry(QtCore.QRect(0, 20, 91, 21))
-        self.choosevectorcomboBox_x.setStyleSheet(atss.choosevectorcomboBox_x_stylesheet)
-        self.choosevectorcomboBox_x.setObjectName("choosevectorcomboBox_x")
+        self.background_decorative_slide_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.background_decorative_slide_label.setGeometry(QtCore.QRect(282, 100, 141, 71))
+        self.background_decorative_slide_label.setStyleSheet(atss.background_decorative_slide_label_stylesheet)
+        self.background_decorative_slide_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.choose_type_horizontal_slider = QtWidgets.QSlider(self.mainwindow_central_widget)
+        self.choose_type_horizontal_slider.setGeometry(QtCore.QRect(322, 119, 61, 16))
+        self.choose_type_horizontal_slider.setStyleSheet(atss.choose_type_horizontal_slider_stylesheet)
+        self.choose_type_horizontal_slider.setMaximum(1)
+        self.choose_type_horizontal_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.choose_type_horizontal_slider.setInvertedAppearance(False)
+        self.choose_type_horizontal_slider.valueChanged.connect(self.chooseTypeHorizontalSliderValueChanged)
+        self.vector_import_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.vector_import_label.setGeometry(QtCore.QRect(306, 139, 51, 16))
+        self.vector_import_label.setStyleSheet(atss.vector_import_label_stylesheet)
+        self.vector_import_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.vector_write_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.vector_write_label.setGeometry(QtCore.QRect(362, 139, 41, 16))
+        self.vector_write_label.setStyleSheet(atss.vector_write_label_stylesheet)
+        self.vector_write_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.choose_vector_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.choose_vector_frame.setGeometry(QtCore.QRect(90, 179, 501, 71))
+        self.choose_vector_frame.setStyleSheet(atss.choose_vector_frame_stylesheet)
+        self.choose_vector_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.choose_vector_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.choose_vector_combobox_x = QtWidgets.QComboBox(self.choose_vector_frame)
+        self.choose_vector_combobox_x.setGeometry(QtCore.QRect(0, 20, 91, 21))
+        self.choose_vector_combobox_x.setStyleSheet(atss.choose_vector_combobox_x_stylesheet)
         for x in range(0,20):
-            self.choosevectorcomboBox_x.addItem("")
-        self.choosevectorcomboBox_x.activated.connect(self.Anglesvectorxcomboboxvaluechanged)
-        self.choosevectorcomboBox_y = QtWidgets.QComboBox(self.angleschoosevectorFrame)
-        self.choosevectorcomboBox_y.setGeometry(QtCore.QRect(0, 50, 91, 21))
-        self.choosevectorcomboBox_y.setStyleSheet(atss.choosevectorcomboBox_y_stylesheet)
-        self.choosevectorcomboBox_y.setObjectName("choosevectorcomboBox_y")
+            self.choose_vector_combobox_x.addItem("")
+        self.choose_vector_combobox_x.activated.connect(self.anglesVectorXComboboxValueChanged)
+        self.choose_vector_combobox_y = QtWidgets.QComboBox(self.choose_vector_frame)
+        self.choose_vector_combobox_y.setGeometry(QtCore.QRect(0, 50, 91, 21))
+        self.choose_vector_combobox_y.setStyleSheet(atss.choose_vector_combobox_y_stylesheet)
         for x in range(0,20):
-            self.choosevectorcomboBox_y.addItem("")
-        self.choosevectorcomboBox_y.activated.connect(self.Anglesvectorycomboboxvaluechanged)
-        self.valueschoosexLabel = QtWidgets.QLabel(self.angleschoosevectorFrame)
-        self.valueschoosexLabel.setGeometry(QtCore.QRect(90, 20, 412, 21))
-        self.valueschoosexLabel.setStyleSheet(atss.valueschoosexLabel_stylesheet)
-        self.valueschoosexLabel.setText("")
-        self.valueschoosexLabel.setObjectName("valueschoosexLabel")
-        self.valueschooseyLabel = QtWidgets.QLabel(self.angleschoosevectorFrame)
-        self.valueschooseyLabel.setGeometry(QtCore.QRect(90, 50, 412, 21))
-        self.valueschooseyLabel.setStyleSheet(atss.valueschooseyLabel_stylesheet)
-        self.valueschooseyLabel.setText("")
-        self.valueschooseyLabel.setObjectName("valueschooseyLabel")
-        self.valueschooseyLabel.raise_()
-        self.valueschoosexLabel.raise_()
-        self.choosevectorcomboBox_x.raise_()
-        self.choosevectorcomboBox_y.raise_()
-        self.angleresultFrame = QtWidgets.QFrame(self.centralwidget)
-        self.angleresultFrame.setGeometry(QtCore.QRect(90, 269, 524, 241))
-        self.angleresultFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.angleresultFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.angleresultFrame.setObjectName("angleresultFrame")
-        self.calculatepushButton = QtWidgets.QPushButton(self.angleresultFrame)
-        self.calculatepushButton.setGeometry(QtCore.QRect(82, 40, 361, 31))
-        self.calculatepushButton.setStyleSheet(atss.calculatepushButton_stylesheet)
-        self.calculatepushButton.setText("")
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap("icons/Calculateicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.calculatepushButton.setIcon(icon9)
-        self.calculatepushButton.setIconSize(QtCore.QSize(200, 200))
-        self.calculatepushButton.setObjectName("calculatepushButton")
-        self.calculatepushButton.clicked.connect(self.AnglescalculatepushButtonclicked)
-        self.DeocrativebackgroundLabel = QtWidgets.QLabel(self.angleresultFrame)
-        self.DeocrativebackgroundLabel.setGeometry(QtCore.QRect(-10, 0, 534, 21))
-        self.DeocrativebackgroundLabel.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(17, 18, 17, 255), stop:1 rgba(22, 23, 22, 255));")
-        self.DeocrativebackgroundLabel.setText("")
-        self.DeocrativebackgroundLabel.setObjectName("DeocrativebackgroundLabel")
-        self.ddordmshorizontalSlider = QtWidgets.QSlider(self.angleresultFrame)
-        self.ddordmshorizontalSlider.setGeometry(QtCore.QRect(233, 2, 41, 16))
-        self.ddordmshorizontalSlider.setStyleSheet(atss.ddordmshorizontalSlider_stylesheet)
-        self.ddordmshorizontalSlider.setMaximum(1)
-        self.ddordmshorizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.ddordmshorizontalSlider.setInvertedAppearance(False)
-        self.ddordmshorizontalSlider.setObjectName("ddordmshorizontalSlider")
-        self.ddordmshorizontalSlider.valueChanged.connect(self.Ddordmshorizontalslidervaluechanged)
-        self.degreesminutessecondsLabel = QtWidgets.QLabel(self.angleresultFrame)
-        self.degreesminutessecondsLabel.setGeometry(QtCore.QRect(208, 3, 22, 16))
-        self.degreesminutessecondsLabel.setStyleSheet(atss.degreesminutessecondsLabel_stylesheet)
-        self.degreesminutessecondsLabel.setObjectName("degreesminutessecondsLabel")
-        self.decimaldegreeLabel = QtWidgets.QLabel(self.angleresultFrame)
-        self.decimaldegreeLabel.setGeometry(QtCore.QRect(275, 3, 21, 16))
-        self.decimaldegreeLabel.setStyleSheet(atss.decimaldegreeLabel_stylesheet)
-        self.decimaldegreeLabel.setObjectName("decimaldegreeLabel")
+            self.choose_vector_combobox_y.addItem("")
+        self.choose_vector_combobox_y.activated.connect(self.anglesVectorYComboboxValueChanged)
+        self.values_chosen_x_label = QtWidgets.QLabel(self.choose_vector_frame)
+        self.values_chosen_x_label.setGeometry(QtCore.QRect(90, 20, 412, 21))
+        self.values_chosen_x_label.setStyleSheet(atss.values_chosen_x_label_stylesheet)
+        self.values_chosen_x_label.setText("")
+        self.values_chosen_y_label = QtWidgets.QLabel(self.choose_vector_frame)
+        self.values_chosen_y_label.setGeometry(QtCore.QRect(90, 50, 412, 21))
+        self.values_chosen_y_label.setStyleSheet(atss.values_chosen_y_label_stylesheet)
+        self.values_chosen_y_label.setText("")
+        self.values_chosen_y_label.raise_()
+        self.values_chosen_x_label.raise_()
+        self.choose_vector_combobox_x.raise_()
+        self.choose_vector_combobox_y.raise_()
+        self.angle_result_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.angle_result_frame.setGeometry(QtCore.QRect(90, 269, 524, 241))
+        self.angle_result_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.angle_result_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.angle_calculate_button = QtWidgets.QPushButton(self.angle_result_frame)
+        self.angle_calculate_button.setGeometry(QtCore.QRect(82, 40, 361, 31))
+        self.angle_calculate_button.setStyleSheet(atss.angle_calculate_button_stylesheet)
+        self.angle_calculate_button.setText("")
+        angle_calculate_button_icon = QtGui.QIcon()
+        angle_calculate_button_icon.addPixmap(QtGui.QPixmap("icons/Calculateicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.angle_calculate_button.setIcon(angle_calculate_button_icon)
+        self.angle_calculate_button.setIconSize(QtCore.QSize(200, 200))
+        self.angle_calculate_button.clicked.connect(self.anglesCalculatePushbuttonClicked)
+        self.dd_or_dms_background_decorative_label = QtWidgets.QLabel(self.angle_result_frame)
+        self.dd_or_dms_background_decorative_label.setGeometry(QtCore.QRect(-10, 0, 534, 21))
+        self.dd_or_dms_background_decorative_label.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(17, 18, 17, 255), stop:1 rgba(22, 23, 22, 255));")
+        self.dd_or_dms_background_decorative_label.setText("")
+        self.dd_or_dms_horizontal_slider = QtWidgets.QSlider(self.angle_result_frame)
+        self.dd_or_dms_horizontal_slider.setGeometry(QtCore.QRect(233, 2, 41, 16))
+        self.dd_or_dms_horizontal_slider.setStyleSheet(atss.dd_or_dms_horizontal_slider_stylesheet)
+        self.dd_or_dms_horizontal_slider.setMaximum(1)
+        self.dd_or_dms_horizontal_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.dd_or_dms_horizontal_slider.setInvertedAppearance(False)
+        self.dd_or_dms_horizontal_slider.valueChanged.connect(self.ddOrDmsHorizontalSliderValueChanged)
+        self.degrees_minutes_seconds_label = QtWidgets.QLabel(self.angle_result_frame)
+        self.degrees_minutes_seconds_label.setGeometry(QtCore.QRect(208, 3, 22, 16))
+        self.degrees_minutes_seconds_label.setStyleSheet(atss.degrees_minutes_seconds_label_stylesheet)
+        self.decimal_degree_label = QtWidgets.QLabel(self.angle_result_frame)
+        self.decimal_degree_label.setGeometry(QtCore.QRect(275, 3, 21, 16))
+        self.decimal_degree_label.setStyleSheet(atss.decimal_degree_label_stylesheet)
 
-        self.anglesscreen_scrollArea = QtWidgets.QScrollArea(self.angleresultFrame)
-        self.anglesscreen_scrollArea.setGeometry(QtCore.QRect(72, 90, 381, 141))
-        self.anglesscreen_scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.anglesscreen_scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.anglesscreen_scrollArea.setWidgetResizable(True)
-        self.anglesscreen_scrollArea.setObjectName("anglesscreen_scrollArea")
+        self.angle_result_screen_scrollarea = QtWidgets.QScrollArea(self.angle_result_frame)
+        self.angle_result_screen_scrollarea.setGeometry(QtCore.QRect(72, 90, 381, 141))
+        self.angle_result_screen_scrollarea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.angle_result_screen_scrollarea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.angle_result_screen_scrollarea.setWidgetResizable(True)
+        self.angle_result_screen_scroll_area_widgetcontents = QtWidgets.QWidget()
+        self.angle_result_screen_scroll_area_widgetcontents.setGeometry(QtCore.QRect(0, 0, 379, 139))
+        self.angle_result_screen_scroll_area_widgetcontents.setMinimumSize(0, 0)
+        self.angle_result_screen_scroll_area_widgetcontents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
+        self.angle_result_screen_horizontal_gridlayout = QtWidgets.QHBoxLayout(self.angle_result_screen_scroll_area_widgetcontents)
+        self.angle_result_screen_horizontal_gridlayout.setSpacing(0)
+        self.angle_result_screen_scrollarea_label = QtWidgets.QLabel()
+        self.angle_result_screen_scrollarea_label.setGeometry(QtCore.QRect(0, 0, 379, 139))
+        self.angle_result_screen_scrollarea_label.setStyleSheet(atss.angle_result_screen_scrollarea_label_stylesheet)
+        self.angle_result_screen_scrollarea_label.setText("")
+        self.angle_result_screen_scrollarea_label.setTextFormat(QtCore.Qt.AutoText)
+        self.angle_result_screen_scrollarea_label.setScaledContents(False)
+        self.angle_result_screen_scrollarea_label.setWordWrap(False)
 
-        self.anglesscreen_scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.anglesscreen_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 379, 139))
-        self.anglesscreen_scrollAreaWidgetContents.setObjectName("anglesscreen_scrollAreaWidgetContents")
-        self.anglesscreen_scrollAreaWidgetContents.setMinimumSize(0, 0)
-        self.anglesscreen_scrollAreaWidgetContents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
-        self.anglesscreenresulthorizontalgridLayout = QtWidgets.QHBoxLayout(self.anglesscreen_scrollAreaWidgetContents)
-        self.anglesscreenresulthorizontalgridLayout.setSpacing(0)
-        self.anglesscreenresulthorizontalgridLayout.setObjectName("anglesscreenresulthorizontalgridLayout")
-        
-        self.anglesscreen_scrollArearesultLabel = QtWidgets.QLabel()
-        self.anglesscreen_scrollArearesultLabel.setGeometry(QtCore.QRect(0, 0, 379, 139))
-        self.anglesscreen_scrollArearesultLabel.setStyleSheet(atss.anglesscreen_scrollArearesultLabel_stylesheet)
-        self.anglesscreen_scrollArearesultLabel.setText("")
-        self.anglesscreen_scrollArearesultLabel.setTextFormat(QtCore.Qt.AutoText)
-        self.anglesscreen_scrollArearesultLabel.setScaledContents(False)
-        self.anglesscreen_scrollArearesultLabel.setWordWrap(False)
-        self.anglesscreen_scrollArearesultLabel.setObjectName("anglesscreen_scrollArearesultLabel")
+        self.angle_result_screen_horizontal_gridlayout.addWidget(self.angle_result_screen_scrollarea_label, 1, alignment=QtCore.Qt.AlignCenter)
+        self.angle_result_screen_scrollarea.setWidget(self.angle_result_screen_scroll_area_widgetcontents)
 
-        self.anglesscreenresulthorizontalgridLayout.addWidget(self.anglesscreen_scrollArearesultLabel, 1, alignment=QtCore.Qt.AlignCenter)
-        self.anglesscreen_scrollArea.setWidget(self.anglesscreen_scrollAreaWidgetContents)
-
-        self.angleswritevectorFrame = QtWidgets.QFrame(self.centralwidget)
-        self.angleswritevectorFrame.setGeometry(QtCore.QRect(90, 179, 501, 71))
-        self.angleswritevectorFrame.setStyleSheet(atss.angleswritevectorFrame_stylesheet)
-        self.angleswritevectorFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.angleswritevectorFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.angleswritevectorFrame.setObjectName("angleswritevectorFrame")
-        self.writevectorLabel_x = QtWidgets.QLabel(self.angleswritevectorFrame)
-        self.writevectorLabel_x.setGeometry(QtCore.QRect(0, 20, 91, 21))
-        self.writevectorLabel_x.setStyleSheet(atss.writevectorLabel_x_stylesheet)
-        self.writevectorLabel_x.setObjectName("writevectorLabel_x")
-        self.writevectorLabel_y = QtWidgets.QLabel(self.angleswritevectorFrame)
-        self.writevectorLabel_y.setGeometry(QtCore.QRect(0, 50, 91, 21))
-        self.writevectorLabel_y.setStyleSheet(atss.writevectorLabel_y_stylesheet)
-        self.writevectorLabel_y.setObjectName("writevectorLabel_y")
-        self.decorativewritexLabel = QtWidgets.QLabel(self.angleswritevectorFrame)
-        self.decorativewritexLabel.setGeometry(QtCore.QRect(90, 20, 412, 21))
-        self.decorativewritexLabel.setStyleSheet(atss.decorativewritexLabel_stylesheet)
-        self.decorativewriteyLabel = QtWidgets.QLabel(self.angleswritevectorFrame)
-        self.decorativewriteyLabel.setGeometry(QtCore.QRect(90, 50, 412, 21))
-        self.decorativewriteyLabel.setStyleSheet(atss.decorativewriteyLabel_stylesheet)
-        self.horizontalLayoutWidget_4 = QtWidgets.QWidget(self.angleswritevectorFrame)
-        self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(90, 50, 371, 21))
-        self.horizontalLayoutWidget_4.setObjectName("horizontalLayoutWidget_4")
-        self.writevectorhorizontalLayout_x = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_4)
-        self.writevectorhorizontalLayout_x.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.writevectorhorizontalLayout_x.setContentsMargins(0, 0, 0, 0)
-        self.writevectorhorizontalLayout_x.setObjectName("writevectorhorizontalLayout_x")
-        self.horizontalLayoutWidget_5 = QtWidgets.QWidget(self.angleswritevectorFrame)
-        self.horizontalLayoutWidget_5.setGeometry(QtCore.QRect(90, 20, 371, 22))
-        self.horizontalLayoutWidget_5.setObjectName("horizontalLayoutWidget_5")
-        self.writevectorhorizontalLayout_y = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_5)
-        self.writevectorhorizontalLayout_y.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.writevectorhorizontalLayout_y.setContentsMargins(0, 0, 0, 0)
-        self.writevectorhorizontalLayout_y.setObjectName("writevectorhorizontalLayout_y")
-        self.writevectorcolumncomboBox_x = QtWidgets.QComboBox(self.angleswritevectorFrame)
-        self.writevectorcolumncomboBox_x.setGeometry(QtCore.QRect(460, 20, 41, 21))
-        self.writevectorcolumncomboBox_x.setStyleSheet(atss.writevectorcolumncomboBox_x_stylesheet)
-        self.writevectorcolumncomboBox_x.setObjectName("writevectorcolumncomboBox_x")
+        self.write_vector_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.write_vector_frame.setGeometry(QtCore.QRect(90, 179, 501, 71))
+        self.write_vector_frame.setStyleSheet(atss.write_vector_frame_stylesheet)
+        self.write_vector_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.write_vector_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.write_vector_label_x = QtWidgets.QLabel(self.write_vector_frame)
+        self.write_vector_label_x.setGeometry(QtCore.QRect(0, 20, 91, 21))
+        self.write_vector_label_x.setStyleSheet(atss.write_vector_label_x_stylesheet)
+        self.write_vector_label_y = QtWidgets.QLabel(self.write_vector_frame)
+        self.write_vector_label_y.setGeometry(QtCore.QRect(0, 50, 91, 21))
+        self.write_vector_label_y.setStyleSheet(atss.write_vector_label_y_stylesheet)
+        self.decorative_write_x_label = QtWidgets.QLabel(self.write_vector_frame)
+        self.decorative_write_x_label.setGeometry(QtCore.QRect(90, 20, 412, 21))
+        self.decorative_write_x_label.setStyleSheet(atss.decorative_write_x_label_stylesheet)
+        self.decorative_write_y_label = QtWidgets.QLabel(self.write_vector_frame)
+        self.decorative_write_y_label.setGeometry(QtCore.QRect(90, 50, 412, 21))
+        self.decorative_write_y_label.setStyleSheet(atss.decorative_write_y_label_stylesheet)
+        self.write_vector_horizontal_layout_widget_x = QtWidgets.QWidget(self.write_vector_frame)
+        self.write_vector_horizontal_layout_widget_x.setGeometry(QtCore.QRect(90, 50, 371, 21))
+        self.write_vector_horizontal_layout_x = QtWidgets.QHBoxLayout(self.write_vector_horizontal_layout_widget_x)
+        self.write_vector_horizontal_layout_x.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.write_vector_horizontal_layout_x.setContentsMargins(0, 0, 0, 0)
+        self.write_vector_horizontal_layout_widget_y = QtWidgets.QWidget(self.write_vector_frame)
+        self.write_vector_horizontal_layout_widget_y.setGeometry(QtCore.QRect(90, 20, 371, 22))
+        self.write_vector_horizontal_layout_y = QtWidgets.QHBoxLayout(self.write_vector_horizontal_layout_widget_y)
+        self.write_vector_horizontal_layout_y.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.write_vector_horizontal_layout_y.setContentsMargins(0, 0, 0, 0)
+        self.write_vector_column_combobox_x = QtWidgets.QComboBox(self.write_vector_frame)
+        self.write_vector_column_combobox_x.setGeometry(QtCore.QRect(460, 20, 41, 21))
+        self.write_vector_column_combobox_x.setStyleSheet(atss.write_vector_column_combobox_x_stylesheet)
         for x in range(0,12):
-            self.writevectorcolumncomboBox_x.addItem("")
-        self.writevectorcolumncomboBox_x.activated.connect(self.WritevectorcolumncomboBox_xvaluechanged)
-        self.writevectorcolumncomboBox_y = QtWidgets.QComboBox(self.angleswritevectorFrame)
-        self.writevectorcolumncomboBox_y.setGeometry(QtCore.QRect(460, 50, 41, 21))
-        self.writevectorcolumncomboBox_y.setStyleSheet(atss.writevectorcolumncomboBox_y_stylesheet)
-        self.writevectorcolumncomboBox_y.setObjectName("writevectorcolumncomboBox_y")
+            self.write_vector_column_combobox_x.addItem("")
+        self.write_vector_column_combobox_x.activated.connect(self.writeVectorColumnComboboxXValueChanged)
+        self.write_vector_column_combobox_y = QtWidgets.QComboBox(self.write_vector_frame)
+        self.write_vector_column_combobox_y.setGeometry(QtCore.QRect(460, 50, 41, 21))
+        self.write_vector_column_combobox_y.setStyleSheet(atss.write_vector_column_combobox_y_stylesheet)
         for x in range(0,12):
-            self.writevectorcolumncomboBox_y.addItem("")
-        self.writevectorcolumncomboBox_y.activated.connect(self.WritevectorcolumncomboBox_yvaluechanged)
-        self.writevectorcolumncomboBox_y.setEnabled(False)
-        self.columnsLabel = QtWidgets.QLabel(self.angleswritevectorFrame)
-        self.columnsLabel.setGeometry(QtCore.QRect(443, 4, 61, 16))
-        self.columnsLabel.setText("")
-        self.columnsLabel.setPixmap(QtGui.QPixmap("icons/createwindowicons/Columnsicon.png"))
-        self.columnsLabel.setScaledContents(True)
-        self.columnsLabel.setObjectName("columnsLabel")
+            self.write_vector_column_combobox_y.addItem("")
+        self.write_vector_column_combobox_y.activated.connect(self.writeVectorColumnComboboxYValueChanged)
+        self.write_vector_column_combobox_y.setEnabled(False)
+        self.write_vector_columns_label = QtWidgets.QLabel(self.write_vector_frame)
+        self.write_vector_columns_label.setGeometry(QtCore.QRect(443, 4, 61, 16))
+        self.write_vector_columns_label.setText("")
+        self.write_vector_columns_label.setPixmap(QtGui.QPixmap("icons/createwindowicons/Columnsicon.png"))
+        self.write_vector_columns_label.setScaledContents(True)
 
         ######################
         ## ANGLES TAB CELLS ##
         ######################
 
         self.reg_ex_cell = QtCore.QRegExp("(^-?[0-9]+/0*[1-9][0-9]*$|^[-+]?[0-9]+$|^[-+]?[0-9]+\.[0-9]+$)")
-        writefont = QtGui.QFont()
-        writefont.setFamily("Alice")
-        writefont.setPointSize(12)
-        self.writevectorxlineEdit_dict,self.writevectorylineEdit_dict = {},{}
-        self.writevectorxlineEdit_validatordict,self.writevectorylineEdit_validatordict = {},{}
-        writevectorposition=40
+        write_vector_font = QtGui.QFont()
+        write_vector_font.setFamily("Alice")
+        write_vector_font.setPointSize(12)
+        self.write_vector_x_lineedit_dict,self.write_vector_y_lineedit_dict = {},{}
+        self.write_vector_x_lineedit_validator_dict,self.write_vector_y_lineedit_validatordict = {},{}
+        write_vector_position=40
         for x in range(1,13):
-            writevectorposition+=30
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)] = QtWidgets.QLineEdit(self.angleswritevectorFrame)
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].setGeometry(QtCore.QRect(writevectorposition, 20, 31, 20))
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].setFont(writefont)
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].setStyleSheet("color: rgb(236, 236, 236);"
+            write_vector_position+=30
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)] = QtWidgets.QLineEdit(self.write_vector_frame)
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].setGeometry(QtCore.QRect(write_vector_position, 20, 31, 20))
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].setFont(write_vector_font)
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].setStyleSheet("color: rgb(236, 236, 236);"
         "border:1px;"
         "border-style:solid;"
         "border-color: rgb(15, 16, 15);"
         "background-color: rgb(42, 43, 42);"
         "")
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].setAlignment(QtCore.Qt.AlignCenter)
-            self.writevectorxlineEdit_validatordict["writevectorxlineEdit_"+str(x)+"_validator"]=QtGui.QRegExpValidator(self.reg_ex_cell, self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)])
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].setValidator(self.writevectorxlineEdit_validatordict["writevectorxlineEdit_"+str(x)+"_validator"])
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)] = QtWidgets.QLineEdit(self.angleswritevectorFrame)
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].setGeometry(QtCore.QRect(writevectorposition, 50, 31, 20))
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].setFont(writefont)
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].setStyleSheet("color: rgb(236, 236, 236);"
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].setAlignment(QtCore.Qt.AlignCenter)
+            self.write_vector_x_lineedit_validator_dict["writevectorxlineEdit_"+str(x)+"_validator"]=QtGui.QRegExpValidator(self.reg_ex_cell, self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)])
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].setValidator(self.write_vector_x_lineedit_validator_dict["writevectorxlineEdit_"+str(x)+"_validator"])
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)] = QtWidgets.QLineEdit(self.write_vector_frame)
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].setGeometry(QtCore.QRect(write_vector_position, 50, 31, 20))
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].setFont(write_vector_font)
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].setStyleSheet("color: rgb(236, 236, 236);"
         "border:1px;"
         "border-style:solid;"
         "border-color: rgb(15, 16, 15);"
         "background-color: rgb(42, 43, 42);"
         "") 
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].setAlignment(QtCore.Qt.AlignCenter)
-            self.writevectorylineEdit_validatordict["writevectorylineEdit_"+str(x)+"_validator"]=QtGui.QRegExpValidator(self.reg_ex_cell, self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)])
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].setValidator(self.writevectorylineEdit_validatordict["writevectorylineEdit_"+str(x)+"_validator"])
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].setAlignment(QtCore.Qt.AlignCenter)
+            self.write_vector_y_lineedit_validatordict["writevectorylineEdit_"+str(x)+"_validator"]=QtGui.QRegExpValidator(self.reg_ex_cell, self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)])
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].setValidator(self.write_vector_y_lineedit_validatordict["writevectorylineEdit_"+str(x)+"_validator"])
+        
         #####################
-        ## Eigenvalues Tab ##
+        ## EIGENVALUES TAB ##
         #####################
 
-        self.eigenvaluesframe = QtWidgets.QFrame(self.centralwidget)
-        self.eigenvaluesframe.setGeometry(QtCore.QRect(95, 109, 511, 411))
-        self.eigenvaluesframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.eigenvaluesframe.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.eigenvaluesframe.setObjectName("eigenvaluesframe")
-        self.eigenvalueschoosematrixListWidget = QtWidgets.QListWidget(self.eigenvaluesframe)
-        self.eigenvalueschoosematrixListWidget.setGeometry(QtCore.QRect(20, 10, 469, 31))
-        self.eigenvalueschoosematrixListWidget.setDragEnabled(False)
-        self.eigenvalueschoosematrixListWidget.setDragDropOverwriteMode(True)
-        self.eigenvalueschoosematrixListWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
-        self.eigenvalueschoosematrixListWidget.setFlow(QtWidgets.QListView.LeftToRight)
-        self.eigenvalueschoosematrixListWidget.setUniformItemSizes(True)
-        self.eigenvalueschoosematrixListWidget.setItemAlignment(QtCore.Qt.AlignCenter)
-        self.eigenvalueschoosematrixListWidget.setObjectName("eigenvalueschoosematrixListWidget")
+        self.eigenvalues_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.eigenvalues_frame.setGeometry(QtCore.QRect(95, 109, 511, 411))
+        self.eigenvalues_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.eigenvalues_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.eigenvalues_choose_matrix_list_widget = QtWidgets.QListWidget(self.eigenvalues_frame)
+        self.eigenvalues_choose_matrix_list_widget.setGeometry(QtCore.QRect(20, 10, 469, 31))
+        self.eigenvalues_choose_matrix_list_widget.setDragEnabled(False)
+        self.eigenvalues_choose_matrix_list_widget.setDragDropOverwriteMode(True)
+        self.eigenvalues_choose_matrix_list_widget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
+        self.eigenvalues_choose_matrix_list_widget.setFlow(QtWidgets.QListView.LeftToRight)
+        self.eigenvalues_choose_matrix_list_widget.setUniformItemSizes(True)
+        self.eigenvalues_choose_matrix_list_widget.setItemAlignment(QtCore.Qt.AlignCenter)
         for x in range(0,20):
             item = QtWidgets.QListWidgetItem()
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-            self.eigenvalueschoosematrixListWidget.addItem(item)
-        self.eigenvalueschoosematrixListWidget.setSpacing(4)
-        self.eigenvalueschoosematrixListWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.eigenvalueschoosematrixListWidget.currentItemChanged.connect(self.Eigenvalueschoosematrixlistwidgetitemchanged)
-        self.eigenvaluescalculatepushButton = QtWidgets.QPushButton(self.eigenvaluesframe)
-        self.eigenvaluescalculatepushButton.setGeometry(QtCore.QRect(80, 214, 361, 31))
-        self.eigenvaluescalculatepushButton.setStyleSheet(evtss.eigenvaluescalculatepushButton_stylesheet)
-        self.eigenvaluescalculatepushButton.setText("")
+            self.eigenvalues_choose_matrix_list_widget.addItem(item)
+        self.eigenvalues_choose_matrix_list_widget.setSpacing(4)
+        self.eigenvalues_choose_matrix_list_widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.eigenvalues_choose_matrix_list_widget.currentItemChanged.connect(self.eigenvaluesChooseMatrixListWidgetItemChanged)
+        self.eigenvalues_calculate_pushbutton = QtWidgets.QPushButton(self.eigenvalues_frame)
+        self.eigenvalues_calculate_pushbutton.setGeometry(QtCore.QRect(80, 214, 361, 31))
+        self.eigenvalues_calculate_pushbutton.setStyleSheet(evtss.eigenvalues_calculate_pushbutton_stylesheet)
+        self.eigenvalues_calculate_pushbutton.setText("")
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap("icons/Calculateicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.eigenvaluescalculatepushButton.setIcon(icon8)
-        self.eigenvaluescalculatepushButton.setIconSize(QtCore.QSize(200, 200))
-        self.eigenvaluescalculatepushButton.setObjectName("eigenvaluescalculatepushButton")
-        self.eigenvaluescalculatepushButton.clicked.connect(self.Eigenvaluescalculatepushbuttonclicked)
+        self.eigenvalues_calculate_pushbutton.setIcon(icon8)
+        self.eigenvalues_calculate_pushbutton.setIconSize(QtCore.QSize(200, 200))
+        self.eigenvalues_calculate_pushbutton.clicked.connect(self.eigenvaluesCalculatePushbuttonClicked)
 
         #########################################
         ##EIGENVALUES CHOSEN MATRIX SCROLL AREA##
         #########################################
 
-        self.eigenvalueschosenmatrixscreen_scrollArea = QtWidgets.QScrollArea(self.eigenvaluesframe)
-        self.eigenvalueschosenmatrixscreen_scrollArea.setGeometry(QtCore.QRect(80, 50, 361, 151))
-        self.eigenvalueschosenmatrixscreen_scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.eigenvalueschosenmatrixscreen_scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.eigenvalueschosenmatrixscreen_scrollArea.setWidgetResizable(True)
-        self.eigenvalueschosenmatrixscreen_scrollArea.setObjectName("eigenvalueschosenmatrixscreen_scrollArea")
+        self.eigenvalues_chosen_matrix_screen_scrollarea = QtWidgets.QScrollArea(self.eigenvalues_frame)
+        self.eigenvalues_chosen_matrix_screen_scrollarea.setGeometry(QtCore.QRect(80, 50, 361, 151))
+        self.eigenvalues_chosen_matrix_screen_scrollarea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.eigenvalues_chosen_matrix_screen_scrollarea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.eigenvalues_chosen_matrix_screen_scrollarea.setWidgetResizable(True)
 
-        self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 359, 149))
-        self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents.setObjectName("eigenvalueschosenmatrixscreen_scrollAreaWidgetContents")
-        self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents.setMinimumSize(0, 0)
-        self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
-        self.eigenvalueschosenmatrixscreen_gridLayout = QtWidgets.QHBoxLayout(self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents)
-        self.eigenvalueschosenmatrixscreen_gridLayout.setSpacing(0)
-        self.eigenvalueschosenmatrixscreen_gridLayout.setObjectName("eigenvalueschosenmatrixscreen_gridLayout")
+        self.eigenvalues_chosen_matrixscreen_scrollarea_widget_contents = QtWidgets.QWidget()
+        self.eigenvalues_chosen_matrixscreen_scrollarea_widget_contents.setGeometry(QtCore.QRect(0, 0, 359, 149))
+        self.eigenvalues_chosen_matrixscreen_scrollarea_widget_contents.setMinimumSize(0, 0)
+        self.eigenvalues_chosen_matrixscreen_scrollarea_widget_contents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
+        self.eigenvalues_chosen_matrix_screen_gridlayout = QtWidgets.QHBoxLayout(self.eigenvalues_chosen_matrixscreen_scrollarea_widget_contents)
+        self.eigenvalues_chosen_matrix_screen_gridlayout.setSpacing(0)
 
-        self.eigenvalueschosenmatrixscreen_matrixgridLayoutWidget = QtWidgets.QWidget()
-        self.eigenvalueschosenmatrixscreen_matrixgridLayout = QtWidgets.QHBoxLayout(self.eigenvalueschosenmatrixscreen_matrixgridLayoutWidget)
-        self.eigenvalueschosenmatrixscreen_matrixgridLayout.setSpacing(5)
-
+        self.eigenvalues_chosen_matrix_screen_matrix_gridlayout_widget = QtWidgets.QWidget()
+        self.eigenvalues_chosen_matrix_screen_matrix_gridlayout = QtWidgets.QHBoxLayout(self.eigenvalues_chosen_matrix_screen_matrix_gridlayout_widget)
+        self.eigenvalues_chosen_matrix_screen_matrix_gridlayout.setSpacing(5)
 
         #####################################################
         ##EIGENVALUES CHOSEN MATRIX SCROLL AREA VALUES GRID##
         #####################################################
 
-        self.eigenvalueschosenmatrixparentesisopenlabel = QtWidgets.QLabel()
-        self.eigenvalueschosenmatrixparentesisopenlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
-        self.eigenvalueschosenmatrixparentesisopenlabel.setScaledContents(True)
-        self.eigenvalueschosenmatrixparentesisopenlabel.setFixedWidth(5)
-        self.eigenvalueschosenmatrixparentesisclosedlabel = QtWidgets.QLabel()
-        self.eigenvalueschosenmatrixparentesisclosedlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
-        self.eigenvalueschosenmatrixparentesisclosedlabel.setScaledContents(True)
-        self.eigenvalueschosenmatrixparentesisclosedlabel.setFixedWidth(5)
+        self.eigenvalues_chosen_matrix_parentesis_open_label = QtWidgets.QLabel()
+        self.eigenvalues_chosen_matrix_parentesis_open_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
+        self.eigenvalues_chosen_matrix_parentesis_open_label.setScaledContents(True)
+        self.eigenvalues_chosen_matrix_parentesis_open_label.setFixedWidth(5)
+        self.eigenvalues_chosen_matrix_parentesis_closed_label = QtWidgets.QLabel()
+        self.eigenvalues_chosen_matrix_parentesis_closed_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
+        self.eigenvalues_chosen_matrix_parentesis_closed_label.setScaledContents(True)
+        self.eigenvalues_chosen_matrix_parentesis_closed_label.setFixedWidth(5)
 
-        self.eigenvalueschosenmatrixscreen_valuesgridLayoutWidget = QtWidgets.QWidget()
-        self.eigenvalueschosenmatrixscreen_valuesgridLayout = QtWidgets.QGridLayout(self.eigenvalueschosenmatrixscreen_valuesgridLayoutWidget)
-        self.eigenvalueschosenmatrixscreen_valuesgridLayout.setContentsMargins(0, 0, 0, 0)
-        self.eigenvalueschosenmatrixscreen_valuesgridLayout.setHorizontalSpacing(20)
-        self.eigenvalueschosenmatrixscreen_valuesgridLayout.setVerticalSpacing(5)
+        self.eigenvalues_chosen_matrix_screen_values_gridlayout_widget = QtWidgets.QWidget()
+        self.eigenvalues_chosen_matrix_screen_values_gridlayout = QtWidgets.QGridLayout(self.eigenvalues_chosen_matrix_screen_values_gridlayout_widget)
+        self.eigenvalues_chosen_matrix_screen_values_gridlayout.setContentsMargins(0, 0, 0, 0)
+        self.eigenvalues_chosen_matrix_screen_values_gridlayout.setHorizontalSpacing(20)
+        self.eigenvalues_chosen_matrix_screen_values_gridlayout.setVerticalSpacing(5)
 
-        self.eigenvalueschosenmatrixscreen_gridLayout.addWidget(self.eigenvalueschosenmatrixscreen_matrixgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.eigenvalues_chosen_matrix_screen_gridlayout.addWidget(self.eigenvalues_chosen_matrix_screen_matrix_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
 
-        self.eigenvalueschosenmatrixscreen_matrixgridLayout.addWidget(self.eigenvalueschosenmatrixparentesisopenlabel, 0, alignment=QtCore.Qt.AlignLeft)
-        self.eigenvalueschosenmatrixscreen_matrixgridLayout.addWidget(self.eigenvalueschosenmatrixscreen_valuesgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
-        self.eigenvalueschosenmatrixscreen_matrixgridLayout.addWidget(self.eigenvalueschosenmatrixparentesisclosedlabel, 2, alignment=QtCore.Qt.AlignLeft)
+        self.eigenvalues_chosen_matrix_screen_matrix_gridlayout.addWidget(self.eigenvalues_chosen_matrix_parentesis_open_label, 0, alignment=QtCore.Qt.AlignLeft)
+        self.eigenvalues_chosen_matrix_screen_matrix_gridlayout.addWidget(self.eigenvalues_chosen_matrix_screen_values_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.eigenvalues_chosen_matrix_screen_matrix_gridlayout.addWidget(self.eigenvalues_chosen_matrix_parentesis_closed_label, 2, alignment=QtCore.Qt.AlignLeft)
 
-        self.eigenvalueschosenmatrixscreen_scrollArea.setWidget(self.eigenvalueschosenmatrixscreen_scrollAreaWidgetContents)
+        self.eigenvalues_chosen_matrix_screen_scrollarea.setWidget(self.eigenvalues_chosen_matrixscreen_scrollarea_widget_contents)
 
-        self.eigenvalueschosenmatrixparentesisopenlabel.setHidden(True)
-        self.eigenvalueschosenmatrixparentesisclosedlabel.setHidden(True)
+        self.eigenvalues_chosen_matrix_parentesis_open_label.setHidden(True)
+        self.eigenvalues_chosen_matrix_parentesis_closed_label.setHidden(True)
 
         #########################################################
         ## EIGENVALUES CHOSEN MATRIX SCROLL AREA VALUES LABELS ##
         #########################################################
-        eigenfont = QtGui.QFont()
-        eigenfont.setFamily("Alice")
-        eigenfont.setPointSize(12)
+        eigen_font = QtGui.QFont()
+        eigen_font.setFamily("Alice")
+        eigen_font.setPointSize(12)
+        eigen_chosen_stylesheet = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
 
-        stringstylesheeteigenchosen = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
-
-        self.eigenchosen_matrixlabelcelldict={}
+        self.eigenchosen_matrix_label_cell_dict={}
         for x, y in itools.product(range(1,11), range(1,11)):
-            self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)] = QtWidgets.QLabel(self.eigenvalueschosenmatrixscreen_valuesgridLayoutWidget)
-            self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)].setStyleSheet(stringstylesheeteigenchosen)
-            self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)].setFont(eigenfont)
-            self.eigenvalueschosenmatrixscreen_valuesgridLayout.addWidget(self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)], (x-1), (y-1), 1, 1, alignment=QtCore.Qt.AlignCenter)
-            self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
+            self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)] = QtWidgets.QLabel(self.eigenvalues_chosen_matrix_screen_values_gridlayout_widget)
+            self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)].setStyleSheet(eigen_chosen_stylesheet)
+            self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)].setFont(eigen_font)
+            self.eigenvalues_chosen_matrix_screen_values_gridlayout.addWidget(self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)], (x-1), (y-1), 1, 1, alignment=QtCore.Qt.AlignCenter)
+            self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
 
         ##################################
         ##EIGENVALUES RESULT SCROLL AREA##
         ##################################
-        self.eigenvaluesresultscreen_scrollArea = QtWidgets.QScrollArea(self.eigenvaluesframe)
-        self.eigenvaluesresultscreen_scrollArea.setGeometry(QtCore.QRect(80, 257, 361, 151))
-        self.eigenvaluesresultscreen_scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.eigenvaluesresultscreen_scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.eigenvaluesresultscreen_scrollArea.setWidgetResizable(True)
-        self.eigenvaluesresultscreen_scrollArea.setObjectName("eigenvaluesresultscreen_scrollArea")
+        self.eigenvalues_result_screen_scrollarea = QtWidgets.QScrollArea(self.eigenvalues_frame)
+        self.eigenvalues_result_screen_scrollarea.setGeometry(QtCore.QRect(80, 257, 361, 151))
+        self.eigenvalues_result_screen_scrollarea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.eigenvalues_result_screen_scrollarea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.eigenvalues_result_screen_scrollarea.setWidgetResizable(True)
 
-        self.eigenvaluesresultscreen_scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.eigenvaluesresultscreen_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 359, 149))
-        self.eigenvaluesresultscreen_scrollAreaWidgetContents.setObjectName("eigenvaluesresultscreen_scrollAreaWidgetContents")
-        self.eigenvaluesresultscreen_scrollAreaWidgetContents.setMinimumSize(0, 0)
-        self.eigenvaluesresultscreen_scrollAreaWidgetContents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
-        self.eigenvaluesresulthorizontalgridLayout = QtWidgets.QHBoxLayout(self.eigenvaluesresultscreen_scrollAreaWidgetContents)
-        self.eigenvaluesresulthorizontalgridLayout.setSpacing(0)
-        self.eigenvaluesresulthorizontalgridLayout.setObjectName("eigenvaluesresulthorizontalgridLayout")
+        self.eigenvalues_result_screen_scrollarea_widget_contents = QtWidgets.QWidget()
+        self.eigenvalues_result_screen_scrollarea_widget_contents.setGeometry(QtCore.QRect(0, 0, 359, 149))
+        self.eigenvalues_result_screen_scrollarea_widget_contents.setMinimumSize(0, 0)
+        self.eigenvalues_result_screen_scrollarea_widget_contents.setStyleSheet("background-color: rgb(17, 18, 17);\n")
+        self.eigenvalues_result_horizontal_gridlayout = QtWidgets.QHBoxLayout(self.eigenvalues_result_screen_scrollarea_widget_contents)
+        self.eigenvalues_result_horizontal_gridlayout.setSpacing(0)
 
-        self.gridLayoutWidget = QtWidgets.QWidget()
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(-1, -1, 361, 151))
-        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        self.eigenvalues_result_gridlayout_widget = QtWidgets.QWidget()
+        self.eigenvalues_result_gridlayout_widget.setGeometry(QtCore.QRect(-1, -1, 361, 151))
 
-        self.eigenvaluesresultgridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
-        self.eigenvaluesresultgridLayout.setContentsMargins(0, 0, 0, 0)
-        self.eigenvaluesresultgridLayout.setSpacing(25)
-        self.eigenvaluesresultgridLayout.setObjectName("eigenvaluesresultgridLayout")
-        self.eigenvectorsLabel_dict,self.eigenvalueLabel_dict,self.eigenvaluemultiplicityLabel_dict={},{},{}
+        self.eigenvalues_result_gridlayout = QtWidgets.QGridLayout(self.eigenvalues_result_gridlayout_widget)
+        self.eigenvalues_result_gridlayout.setContentsMargins(0, 0, 0, 0)
+        self.eigenvalues_result_gridlayout.setSpacing(25)
+        self.eigenvectors_label_dict,self.eigenvalue_label_dict,self.eigenvalue_multiplicity_label_dict={},{},{}
         for x in range(1,11):
-            self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x)] = QtWidgets.QLabel(self.gridLayoutWidget)
-            self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x)].setStyleSheet("")
-            self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x)].setText("")
-            self.eigenvaluesresultgridLayout.addWidget(self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x)], 4, (x+9), 1, 1)
+            self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x)] = QtWidgets.QLabel(self.eigenvalues_result_gridlayout_widget)
+            self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x)].setStyleSheet("")
+            self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x)].setText("")
+            self.eigenvalues_result_gridlayout.addWidget(self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x)], 4, (x+9), 1, 1)
 
-            self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x)] = QtWidgets.QLabel(self.gridLayoutWidget)
-            self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x)].setStyleSheet("border-bottom:2px dotted rgb(126, 126, 126);")
-            self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x)].setText("")
-            self.eigenvaluesresultgridLayout.addWidget(self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x)], 3, (x+9), 1, 1)
+            self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x)] = QtWidgets.QLabel(self.eigenvalues_result_gridlayout_widget)
+            self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x)].setStyleSheet("border-bottom:2px dotted rgb(126, 126, 126);")
+            self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x)].setText("")
+            self.eigenvalues_result_gridlayout.addWidget(self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x)], 3, (x+9), 1, 1)
 
-            self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x)] = QtWidgets.QLabel(self.gridLayoutWidget)
-            self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x)].setStyleSheet("border-bottom:2px dotted rgb(126, 126, 126);")
-            self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x)].setText("")
-            self.eigenvaluesresultgridLayout.addWidget(self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x)], 0, (x+9), 1, 1)
+            self.eigenvalue_label_dict["eigenvalueLabel_"+str(x)] = QtWidgets.QLabel(self.eigenvalues_result_gridlayout_widget)
+            self.eigenvalue_label_dict["eigenvalueLabel_"+str(x)].setStyleSheet("border-bottom:2px dotted rgb(126, 126, 126);")
+            self.eigenvalue_label_dict["eigenvalueLabel_"+str(x)].setText("")
+            self.eigenvalues_result_gridlayout.addWidget(self.eigenvalue_label_dict["eigenvalueLabel_"+str(x)], 0, (x+9), 1, 1)
 
-        self.eigenvaluesresulthorizontalgridLayout.addWidget(self.gridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.eigenvalues_result_horizontal_gridlayout.addWidget(self.eigenvalues_result_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
 
-        self.eigenvaluesresultscreen_scrollArea.setWidget(self.eigenvaluesresultscreen_scrollAreaWidgetContents)
+        self.eigenvalues_result_screen_scrollarea.setWidget(self.eigenvalues_result_screen_scrollarea_widget_contents)
 
         for x in range(0, 10):
-            self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setHidden(True)
-            self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(True)
-            self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setHidden(True)
+            self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setHidden(True)
+            self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(True)
+            self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setHidden(True)
 
-            self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setAlignment(QtCore.Qt.AlignCenter)
-            self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setStyleSheet(evtss.eigenvaluelabel_stylesheet)
+            self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setAlignment(QtCore.Qt.AlignCenter)
+            self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setStyleSheet(evtss.eigenvaluelabel_stylesheet)
 
-            self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setAlignment(QtCore.Qt.AlignCenter)
-            self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setStyleSheet(evtss.eigenvaluemultiplicitylabel_stylesheet)
+            self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setAlignment(QtCore.Qt.AlignCenter)
+            self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setStyleSheet(evtss.eigenvaluemultiplicitylabel_stylesheet)
 
-            self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setAlignment(QtCore.Qt.AlignCenter)
-            self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setStyleSheet(evtss.eigenvectorslabel_stylesheet)
+            self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setAlignment(QtCore.Qt.AlignCenter)
+            self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setStyleSheet(evtss.eigenvectorslabel_stylesheet)
 
 
         ##########################
         ###SYSTEMS OF EQUATIONS###
         ##########################
 
-        self.systemofequationsframe = QtWidgets.QFrame(self.centralwidget)
-        self.systemofequationsframe.setGeometry(QtCore.QRect(85, 109, 511, 411))
-        self.systemofequationsframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.systemofequationsframe.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.systemofequationsframe.setObjectName("systemofequationsframe")
-        self.systemofequationschoosematrixListWidget = QtWidgets.QListWidget(self.systemofequationsframe)
-        self.systemofequationschoosematrixListWidget.setGeometry(QtCore.QRect(20, 10, 211, 31))
+        self.system_of_equations_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.system_of_equations_frame.setGeometry(QtCore.QRect(85, 109, 511, 411))
+        self.system_of_equations_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.system_of_equations_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.system_of_equations_choose_matrix_listwidget = QtWidgets.QListWidget(self.system_of_equations_frame)
+        self.system_of_equations_choose_matrix_listwidget.setGeometry(QtCore.QRect(20, 10, 211, 31))
         
-        self.systemofequationschoosematrixListWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.systemofequationschoosematrixListWidget.setDragEnabled(True)
-        self.systemofequationschoosematrixListWidget.setDragDropOverwriteMode(True)
-        self.systemofequationschoosematrixListWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
-        self.systemofequationschoosematrixListWidget.setFlow(QtWidgets.QListView.LeftToRight)
-        self.systemofequationschoosematrixListWidget.setUniformItemSizes(True)
-        self.systemofequationschoosematrixListWidget.setItemAlignment(QtCore.Qt.AlignCenter|QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop|QtCore.Qt.AlignVCenter)
-        self.systemofequationschoosematrixListWidget.setObjectName("systemofequationschoosematrixListWidget")
+        self.system_of_equations_choose_matrix_listwidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.system_of_equations_choose_matrix_listwidget.setDragEnabled(True)
+        self.system_of_equations_choose_matrix_listwidget.setDragDropOverwriteMode(True)
+        self.system_of_equations_choose_matrix_listwidget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
+        self.system_of_equations_choose_matrix_listwidget.setFlow(QtWidgets.QListView.LeftToRight)
+        self.system_of_equations_choose_matrix_listwidget.setUniformItemSizes(True)
+        self.system_of_equations_choose_matrix_listwidget.setItemAlignment(QtCore.Qt.AlignCenter|QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop|QtCore.Qt.AlignVCenter)
         for x in range(0,20):
             item = QtWidgets.QListWidgetItem()
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-            self.systemofequationschoosematrixListWidget.addItem(item)
-        self.systemofequationschoosematrixListWidget.setSpacing(4)
-        self.systemofequationschoosematrixListWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.systemofequationschoosematrixListWidget.currentItemChanged.connect(self.SystemofequationschoosematrixListWidgetitemchanged)
+            self.system_of_equations_choose_matrix_listwidget.addItem(item)
+        self.system_of_equations_choose_matrix_listwidget.setSpacing(4)
+        self.system_of_equations_choose_matrix_listwidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.system_of_equations_choose_matrix_listwidget.currentItemChanged.connect(self.systemOfEquationsChooseMatrixListWidgetItemChanged)
+        self.system_of_equations_choose_matrix_scrollarea = QtWidgets.QScrollArea(self.system_of_equations_frame)
+        self.system_of_equations_choose_matrix_scrollarea.setGeometry(QtCore.QRect(20, 50, 211, 151))
+        self.system_of_equations_choose_matrix_scrollarea.setStyleSheet(soetss.system_of_equations_choose_matrix_scrollarea_stylesheet)
+        self.system_of_equations_choose_matrix_scrollarea.setWidgetResizable(True)
+        self.system_of_equations_choose_matrix_scrollarea_widget_contents = QtWidgets.QWidget()
+        self.system_of_equations_choose_matrix_scrollarea_widget_contents.setGeometry(QtCore.QRect(0, 0, 209, 149))
+        self.system_of_equations_choose_matrix_scrollarea_widget_contents.setMinimumSize(0, 0)
+        self.system_of_equations_choose_matrix_scrollarea_widget_contents.setStyleSheet(soetss.system_of_equations_choose_matrix_scrollarea_widget_contents_stylesheet)
+        self.system_of_equations_choose_matrix_screen_gridlayout = QtWidgets.QHBoxLayout(self.system_of_equations_choose_matrix_scrollarea_widget_contents)
+        self.system_of_equations_choose_matrix_screen_gridlayout.setSpacing(0)
 
-        self.systemofequationschoosematrixScrollArea = QtWidgets.QScrollArea(self.systemofequationsframe)
-        self.systemofequationschoosematrixScrollArea.setGeometry(QtCore.QRect(20, 50, 211, 151))
-        self.systemofequationschoosematrixScrollArea.setStyleSheet(soetss.systemofequationschoosematrixScrollArea_stylesheet)
-        self.systemofequationschoosematrixScrollArea.setWidgetResizable(True)
-        self.systemofequationschoosematrixScrollArea.setObjectName("systemofequationschoosematrixScrollArea")
-        self.systemofequationschoosematrixScrollAreaWidgetContents = QtWidgets.QWidget()
-        self.systemofequationschoosematrixScrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 209, 149))
-        self.systemofequationschoosematrixScrollAreaWidgetContents.setMinimumSize(0, 0)
-        self.systemofequationschoosematrixScrollAreaWidgetContents.setObjectName("systemofequationschoosematrixScrollAreaWidgetContents")
-        self.systemofequationschoosematrixScrollAreaWidgetContents.setStyleSheet(soetss.systemofequationschoosematrixScrollAreaWidgetContents_stylesheet)
-        self.systemofequationschoosematrixscreen_gridLayout = QtWidgets.QHBoxLayout(self.systemofequationschoosematrixScrollAreaWidgetContents)
-        self.systemofequationschoosematrixscreen_gridLayout.setSpacing(0)
-        self.systemofequationschoosematrixscreen_gridLayout.setObjectName("systemofequationschoosematrixscreen_gridLayout")
-
-        self.systemofequationschoosematrixscreen_matrixgridLayoutWidget = QtWidgets.QWidget()
-        self.systemofequationschoosematrixscreen_matrixgridLayout = QtWidgets.QHBoxLayout(self.systemofequationschoosematrixscreen_matrixgridLayoutWidget)
-        self.systemofequationschoosematrixscreen_matrixgridLayout.setSpacing(5)
+        self.system_of_equations_choose_matrix_screen_matrix_gridlayout_widget = QtWidgets.QWidget()
+        self.system_of_equations_choose_matrix_screen_matrix_gridlayout = QtWidgets.QHBoxLayout(self.system_of_equations_choose_matrix_screen_matrix_gridlayout_widget)
+        self.system_of_equations_choose_matrix_screen_matrix_gridlayout.setSpacing(5)
 
         ###############################################
         ##SYSTEM OF EQ MATRIX SCROLL AREA VALUES GRID##
         ###############################################
 
-        self.systemofequationschoosematrixparentesisopenlabel = QtWidgets.QLabel()
-        self.systemofequationschoosematrixparentesisopenlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
-        self.systemofequationschoosematrixparentesisopenlabel.setScaledContents(True)
-        self.systemofequationschoosematrixparentesisopenlabel.setFixedWidth(5)
-        self.systemofequationschoosematrixparentesisclosedlabel = QtWidgets.QLabel()
-        self.systemofequationschoosematrixparentesisclosedlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
-        self.systemofequationschoosematrixparentesisclosedlabel.setScaledContents(True)
-        self.systemofequationschoosematrixparentesisclosedlabel.setFixedWidth(5)
+        self.system_of_equations_choose_matrix_parentesis_open_label = QtWidgets.QLabel()
+        self.system_of_equations_choose_matrix_parentesis_open_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
+        self.system_of_equations_choose_matrix_parentesis_open_label.setScaledContents(True)
+        self.system_of_equations_choose_matrix_parentesis_open_label.setFixedWidth(5)
+        self.system_of_equations_choose_matrix_parentesis_closed_label = QtWidgets.QLabel()
+        self.system_of_equations_choose_matrix_parentesis_closed_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
+        self.system_of_equations_choose_matrix_parentesis_closed_label.setScaledContents(True)
+        self.system_of_equations_choose_matrix_parentesis_closed_label.setFixedWidth(5)
 
+        self.system_of_equations_choose_matrix_screen_values_gridlayout_widget = QtWidgets.QWidget()
+        self.system_of_equations_choose_matrix_screen_values_gridlayout = QtWidgets.QGridLayout(self.system_of_equations_choose_matrix_screen_values_gridlayout_widget)
+        self.system_of_equations_choose_matrix_screen_values_gridlayout.setContentsMargins(0, 0, 0, 0)
+        self.system_of_equations_choose_matrix_screen_values_gridlayout.setHorizontalSpacing(20)
+        self.system_of_equations_choose_matrix_screen_values_gridlayout.setVerticalSpacing(5)
 
-        self.systemofequationschoosematrixscreen_valuesgridLayoutWidget = QtWidgets.QWidget()
-        self.systemofequationschoosematrixscreen_valuesgridLayout = QtWidgets.QGridLayout(self.systemofequationschoosematrixscreen_valuesgridLayoutWidget)
-        self.systemofequationschoosematrixscreen_valuesgridLayout.setContentsMargins(0, 0, 0, 0)
-        self.systemofequationschoosematrixscreen_valuesgridLayout.setHorizontalSpacing(20)
-        self.systemofequationschoosematrixscreen_valuesgridLayout.setVerticalSpacing(5)
+        self.system_of_equations_choose_matrix_screen_gridlayout.addWidget(self.system_of_equations_choose_matrix_screen_matrix_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
 
-        self.systemofequationschoosematrixscreen_gridLayout.addWidget(self.systemofequationschoosematrixscreen_matrixgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.system_of_equations_choose_matrix_screen_matrix_gridlayout.addWidget(self.system_of_equations_choose_matrix_parentesis_open_label, 0, alignment=QtCore.Qt.AlignLeft)
+        self.system_of_equations_choose_matrix_screen_matrix_gridlayout.addWidget(self.system_of_equations_choose_matrix_screen_values_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.system_of_equations_choose_matrix_screen_matrix_gridlayout.addWidget(self.system_of_equations_choose_matrix_parentesis_closed_label, 2, alignment=QtCore.Qt.AlignLeft)
 
-        self.systemofequationschoosematrixscreen_matrixgridLayout.addWidget(self.systemofequationschoosematrixparentesisopenlabel, 0, alignment=QtCore.Qt.AlignLeft)
-        self.systemofequationschoosematrixscreen_matrixgridLayout.addWidget(self.systemofequationschoosematrixscreen_valuesgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
-        self.systemofequationschoosematrixscreen_matrixgridLayout.addWidget(self.systemofequationschoosematrixparentesisclosedlabel, 2, alignment=QtCore.Qt.AlignLeft)
+        self.system_of_equations_choose_matrix_scrollarea.setWidget(self.system_of_equations_choose_matrix_scrollarea_widget_contents)
 
-        self.systemofequationschoosematrixScrollArea.setWidget(self.systemofequationschoosematrixScrollAreaWidgetContents)
-
-        self.systemofequationschoosematrixparentesisopenlabel.setHidden(True)
-        self.systemofequationschoosematrixparentesisclosedlabel.setHidden(True)
+        self.system_of_equations_choose_matrix_parentesis_open_label.setHidden(True)
+        self.system_of_equations_choose_matrix_parentesis_closed_label.setHidden(True)
 
         #########################################################
         ## EIGENVALUES CHOSEN MATRIX SCROLL AREA VALUES LABELS ##
         #########################################################
-        systemfont = QtGui.QFont()
-        systemfont.setFamily("Alice")
-        systemfont.setPointSize(12)
+        system_font = QtGui.QFont()
+        system_font.setFamily("Alice")
+        system_font.setPointSize(12)
 
-        stringstylesheetmatrixsystemchosen = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
-        self.systemmatrixchosen_matrixlabelcelldict={}
+        system_matrix_chosen_stylesheet = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
+        self.system_matrix_chosen_matrix_label_cell_dict={}
         for x, y in itools.product(range(1,11), range(1,11)):
-            self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)] = QtWidgets.QLabel(self.systemofequationschoosematrixscreen_valuesgridLayoutWidget)
-            self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)].setStyleSheet(stringstylesheetmatrixsystemchosen)
-            self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)].setFont(systemfont)
-            self.systemofequationschoosematrixscreen_valuesgridLayout.addWidget(self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)], (x-1), (y-1), 1, 1, alignment=QtCore.Qt.AlignCenter)
-            self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
+            self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)] = QtWidgets.QLabel(self.system_of_equations_choose_matrix_screen_values_gridlayout_widget)
+            self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)].setStyleSheet(system_matrix_chosen_stylesheet)
+            self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)].setFont(system_font)
+            self.system_of_equations_choose_matrix_screen_values_gridlayout.addWidget(self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)], (x-1), (y-1), 1, 1, alignment=QtCore.Qt.AlignCenter)
+            self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
 
-        self.systemofequationsresultscrollArea = QtWidgets.QScrollArea(self.systemofequationsframe)
-        self.systemofequationsresultscrollArea.setGeometry(QtCore.QRect(80, 250, 361, 151))
-        self.systemofequationsresultscrollArea.setStyleSheet(soetss.systemofequationsresultscrollArea_stylesheet)
-        self.systemofequationsresultscrollArea.setWidgetResizable(True)
-        self.systemofequationsresultscrollArea.setObjectName("systemofequationsresultscrollArea")
-        self.systemofequationsresultscrollAreaWidgetContents = QtWidgets.QWidget()
-        self.systemofequationsresultscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 359, 149))
-        self.systemofequationsresultscrollAreaWidgetContents.setObjectName("systemofequationsresultscrollAreaWidgetContents")
-        self.systemofequationsresultscrollAreaWidgetContents.setStyleSheet(soetss.systemofequationsresultscrollAreaWidgetContents_stylesheet)
-        self.systemofequationsresultscrollAreahorizontalgridLayout = QtWidgets.QHBoxLayout(self.systemofequationsresultscrollAreaWidgetContents)
-        self.systemofequationsresultscrollAreahorizontalgridLayout.setSpacing(0)
-        self.systemofequationsresultscrollAreahorizontalgridLayout.setObjectName("systemofequationsresultscrollAreahorizontalgridLayout")
+        self.system_of_equations_result_scrollarea = QtWidgets.QScrollArea(self.system_of_equations_frame)
+        self.system_of_equations_result_scrollarea.setGeometry(QtCore.QRect(80, 250, 361, 151))
+        self.system_of_equations_result_scrollarea.setStyleSheet(soetss.system_of_equations_result_scrollarea_stylesheet)
+        self.system_of_equations_result_scrollarea.setWidgetResizable(True)
+        self.system_of_equations_result_scrollarea_widget_contents = QtWidgets.QWidget()
+        self.system_of_equations_result_scrollarea_widget_contents.setGeometry(QtCore.QRect(0, 0, 359, 149))
+        self.system_of_equations_result_scrollarea_widget_contents.setStyleSheet(soetss.system_of_equations_result_scrollarea_widget_contents_stylesheet)
+        self.system_of_equations_result_scrollarea_horizontal_gridlayout = QtWidgets.QHBoxLayout(self.system_of_equations_result_scrollarea_widget_contents)
+        self.system_of_equations_result_scrollarea_horizontal_gridlayout.setSpacing(0)
 
-        self.systemofequationsresultscrollArearesultLabel = QtWidgets.QLabel()
-        self.systemofequationsresultscrollArearesultLabel.setGeometry(QtCore.QRect(0, 0, 359, 149))
-        self.systemofequationsresultscrollArearesultLabel.setStyleSheet(soetss.systemofequationsresultscrollArearesultLabel_stylesheet)
-        self.systemofequationsresultscrollArearesultLabel.setText("")
-        self.systemofequationsresultscrollArearesultLabel.setTextFormat(QtCore.Qt.AutoText)
-        self.systemofequationsresultscrollArearesultLabel.setScaledContents(False)
-        self.systemofequationsresultscrollArearesultLabel.setWordWrap(False)
-        self.systemofequationsresultscrollArearesultLabel.setObjectName("systemofequationsresultscrollArearesultLabel")
+        self.system_of_equations_result_scrollarea_result_label = QtWidgets.QLabel()
+        self.system_of_equations_result_scrollarea_result_label.setGeometry(QtCore.QRect(0, 0, 359, 149))
+        self.system_of_equations_result_scrollarea_result_label.setStyleSheet(soetss.system_of_equations_result_scrollarea_result_label_stylesheet)
+        self.system_of_equations_result_scrollarea_result_label.setText("")
+        self.system_of_equations_result_scrollarea_result_label.setTextFormat(QtCore.Qt.AutoText)
+        self.system_of_equations_result_scrollarea_result_label.setScaledContents(False)
+        self.system_of_equations_result_scrollarea_result_label.setWordWrap(False)
 
-        self.systemofequationsresultscrollAreahorizontalgridLayout.addWidget(self.systemofequationsresultscrollArearesultLabel, 1, alignment=QtCore.Qt.AlignCenter)
-        self.systemofequationsresultscrollArea.setWidget(self.systemofequationsresultscrollAreaWidgetContents)
+        self.system_of_equations_result_scrollarea_horizontal_gridlayout.addWidget(self.system_of_equations_result_scrollarea_result_label, 1, alignment=QtCore.Qt.AlignCenter)
+        self.system_of_equations_result_scrollarea.setWidget(self.system_of_equations_result_scrollarea_widget_contents)
 
-        self.systemofequationscalculatepushButton = QtWidgets.QPushButton(self.systemofequationsframe)
-        self.systemofequationscalculatepushButton.setGeometry(QtCore.QRect(80, 215, 361, 23))
-        self.systemofequationscalculatepushButton.setStyleSheet(soetss.systemofequationscalculatepushButton_stylesheet)
-        self.systemofequationscalculatepushButton.setText("")
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap("icons/Calculateicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.systemofequationscalculatepushButton.setIcon(icon8)
-        self.systemofequationscalculatepushButton.setIconSize(QtCore.QSize(200, 200))
-        self.systemofequationscalculatepushButton.setObjectName("systemofequationscalculatepushButton")
-        self.systemofequationscalculatepushButton.clicked.connect(self.Systemofequationscalculatepushbuttonclicked)
-        self.systemofequationschoosevectorListWidget = QtWidgets.QListWidget(self.systemofequationsframe)
-        self.systemofequationschoosevectorListWidget.setGeometry(QtCore.QRect(430, 10, 81, 31))
+        self.system_of_equations_calculate_pushbutton = QtWidgets.QPushButton(self.system_of_equations_frame)
+        self.system_of_equations_calculate_pushbutton.setGeometry(QtCore.QRect(80, 215, 361, 23))
+        self.system_of_equations_calculate_pushbutton.setStyleSheet(soetss.system_of_equations_calculate_pushbutton_stylesheet)
+        self.system_of_equations_calculate_pushbutton.setText("")
+        system_of_equations_calculate_pushbutton_icon = QtGui.QIcon()
+        system_of_equations_calculate_pushbutton_icon.addPixmap(QtGui.QPixmap("icons/Calculateicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.system_of_equations_calculate_pushbutton.setIcon(system_of_equations_calculate_pushbutton_icon)
+        self.system_of_equations_calculate_pushbutton.setIconSize(QtCore.QSize(200, 200))
+        self.system_of_equations_calculate_pushbutton.clicked.connect(self.systemOfEquationsCalculatePushbuttonClicked)
+        self.system_of_equations_choosevector_list_widget = QtWidgets.QListWidget(self.system_of_equations_frame)
+        self.system_of_equations_choosevector_list_widget.setGeometry(QtCore.QRect(430, 10, 81, 31))
         
-        self.systemofequationschoosevectorListWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.systemofequationschoosevectorListWidget.setDragEnabled(True)
-        self.systemofequationschoosevectorListWidget.setDragDropOverwriteMode(True)
-        self.systemofequationschoosevectorListWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
-        self.systemofequationschoosevectorListWidget.setFlow(QtWidgets.QListView.LeftToRight)
-        self.systemofequationschoosevectorListWidget.setUniformItemSizes(True)
-        self.systemofequationschoosevectorListWidget.setItemAlignment(QtCore.Qt.AlignCenter|QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop|QtCore.Qt.AlignVCenter)
-        self.systemofequationschoosevectorListWidget.setObjectName("systemofequationschoosevectorListWidget")
+        self.system_of_equations_choosevector_list_widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.system_of_equations_choosevector_list_widget.setDragEnabled(True)
+        self.system_of_equations_choosevector_list_widget.setDragDropOverwriteMode(True)
+        self.system_of_equations_choosevector_list_widget.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
+        self.system_of_equations_choosevector_list_widget.setFlow(QtWidgets.QListView.LeftToRight)
+        self.system_of_equations_choosevector_list_widget.setUniformItemSizes(True)
+        self.system_of_equations_choosevector_list_widget.setItemAlignment(QtCore.Qt.AlignCenter|QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop|QtCore.Qt.AlignVCenter)
         for x in range(0,20):
             item = QtWidgets.QListWidgetItem()
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-            self.systemofequationschoosevectorListWidget.addItem(item)
-        self.systemofequationschoosevectorListWidget.setSpacing(4)
-        self.systemofequationschoosevectorListWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.systemofequationschoosevectorListWidget.currentItemChanged.connect(self.SystemofequationschoosevectorListWidgetitemchanged)
+            self.system_of_equations_choosevector_list_widget.addItem(item)
+        self.system_of_equations_choosevector_list_widget.setSpacing(4)
+        self.system_of_equations_choosevector_list_widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.system_of_equations_choosevector_list_widget.currentItemChanged.connect(self.systemOfEquationsChooseVectorListWidgetItemChanged)
 
-        self.systemofequationschoosevectorScrollArea = QtWidgets.QScrollArea(self.systemofequationsframe)
-        self.systemofequationschoosevectorScrollArea.setGeometry(QtCore.QRect(430, 50, 81, 151))
-        self.systemofequationschoosevectorScrollArea.setStyleSheet(soetss.systemofequationschoosevectorScrollArea_stylesheet)
-        self.systemofequationschoosevectorScrollArea.setWidgetResizable(True)
-        self.systemofequationschoosevectorScrollArea.setObjectName("systemofequationschoosevectorScrollArea")
-        self.systemofequationschoosevectorScrollAreaWidgetContents = QtWidgets.QWidget()
-        self.systemofequationschoosevectorScrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 79, 149))
-        self.systemofequationschoosevectorScrollAreaWidgetContents.setObjectName("systemofequationschoosevectorScrollAreaWidgetContents")
-        self.systemofequationschoosevectorScrollAreaWidgetContents.setStyleSheet(soetss.systemofequationschoosevectorScrollAreaWidgetContents_stylesheet)
+        self.system_of_equations_choose_vector_scrollarea = QtWidgets.QScrollArea(self.system_of_equations_frame)
+        self.system_of_equations_choose_vector_scrollarea.setGeometry(QtCore.QRect(430, 50, 81, 151))
+        self.system_of_equations_choose_vector_scrollarea.setStyleSheet(soetss.system_of_equations_choose_vector_scrollarea_stylesheet)
+        self.system_of_equations_choose_vector_scrollarea.setWidgetResizable(True)
+        self.system_of_equations_choose_vector_scrollarea_widget_contents = QtWidgets.QWidget()
+        self.system_of_equations_choose_vector_scrollarea_widget_contents.setGeometry(QtCore.QRect(0, 0, 79, 149))
+        self.system_of_equations_choose_vector_scrollarea_widget_contents.setStyleSheet(soetss.system_of_equations_choose_vector_scrollarea_widget_contents_stylesheet)
 
-        self.systemofequationschoosevectorscreen_gridLayout = QtWidgets.QHBoxLayout(self.systemofequationschoosevectorScrollAreaWidgetContents)
-        self.systemofequationschoosevectorscreen_gridLayout.setSpacing(0)
-        self.systemofequationschoosevectorscreen_gridLayout.setObjectName("systemofequationschoosevectorscreen_gridLayout")
+        self.system_of_equations_choose_vector_screen_gridlayout = QtWidgets.QHBoxLayout(self.system_of_equations_choose_vector_scrollarea_widget_contents)
+        self.system_of_equations_choose_vector_screen_gridlayout.setSpacing(0)
 
-        self.systemofequationschoosevectorscreen_vectorgridLayoutWidget = QtWidgets.QWidget()
-        self.systemofequationschoosevectorscreen_vectorgridLayout = QtWidgets.QHBoxLayout(self.systemofequationschoosevectorscreen_vectorgridLayoutWidget)
-        self.systemofequationschoosevectorscreen_vectorgridLayout.setSpacing(5)
+        self.system_of_equations_choose_vector_screen_vector_gridlayout_widget = QtWidgets.QWidget()
+        self.system_of_equations_choose_vector_screen_vector_gridlayout = QtWidgets.QHBoxLayout(self.system_of_equations_choose_vector_screen_vector_gridlayout_widget)
+        self.system_of_equations_choose_vector_screen_vector_gridlayout.setSpacing(5)
 
         ###############################################
         ##SYSTEM OF EQ VECTOR SCROLL AREA VALUES GRID##
         ###############################################
 
-        self.systemofequationschoosevectorparentesisopenlabel = QtWidgets.QLabel()
-        self.systemofequationschoosevectorparentesisopenlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
-        self.systemofequationschoosevectorparentesisopenlabel.setScaledContents(True)
-        self.systemofequationschoosevectorparentesisopenlabel.setFixedWidth(5)
-        self.systemofequationschoosevectorparentesisclosedlabel = QtWidgets.QLabel()
-        self.systemofequationschoosevectorparentesisclosedlabel.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
-        self.systemofequationschoosevectorparentesisclosedlabel.setScaledContents(True)
-        self.systemofequationschoosevectorparentesisclosedlabel.setFixedWidth(5)
+        self.system_of_equations_choose_vector_parentesis_open_label = QtWidgets.QLabel()
+        self.system_of_equations_choose_vector_parentesis_open_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisopen.png"))
+        self.system_of_equations_choose_vector_parentesis_open_label.setScaledContents(True)
+        self.system_of_equations_choose_vector_parentesis_open_label.setFixedWidth(5)
+        self.system_of_equations_choose_vector_parentesis_closed_label = QtWidgets.QLabel()
+        self.system_of_equations_choose_vector_parentesis_closed_label.setPixmap(QtGui.QPixmap("icons/Itemparentesisclose.png"))
+        self.system_of_equations_choose_vector_parentesis_closed_label.setScaledContents(True)
+        self.system_of_equations_choose_vector_parentesis_closed_label.setFixedWidth(5)
 
-        self.systemofequationschoosevectorscreen_valuesgridLayoutWidget = QtWidgets.QWidget()
-        self.systemofequationschoosevectorscreen_valuesgridLayout = QtWidgets.QGridLayout(self.systemofequationschoosevectorscreen_valuesgridLayoutWidget)
-        self.systemofequationschoosevectorscreen_valuesgridLayout.setContentsMargins(0, 0, 0, 0)
-        self.systemofequationschoosevectorscreen_valuesgridLayout.setHorizontalSpacing(20)
-        self.systemofequationschoosevectorscreen_valuesgridLayout.setVerticalSpacing(5)
+        self.system_of_equations_choose_vector_screen_values_gridlayout_widget = QtWidgets.QWidget()
+        self.system_of_equations_choose_vector_screen_values_gridlayout = QtWidgets.QGridLayout(self.system_of_equations_choose_vector_screen_values_gridlayout_widget)
+        self.system_of_equations_choose_vector_screen_values_gridlayout.setContentsMargins(0, 0, 0, 0)
+        self.system_of_equations_choose_vector_screen_values_gridlayout.setHorizontalSpacing(20)
+        self.system_of_equations_choose_vector_screen_values_gridlayout.setVerticalSpacing(5)
 
-        self.systemofequationschoosevectorscreen_gridLayout.addWidget(self.systemofequationschoosevectorscreen_vectorgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.system_of_equations_choose_vector_screen_gridlayout.addWidget(self.system_of_equations_choose_vector_screen_vector_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
 
-        self.systemofequationschoosevectorscreen_vectorgridLayout.addWidget(self.systemofequationschoosevectorparentesisopenlabel, 0, alignment=QtCore.Qt.AlignLeft)
-        self.systemofequationschoosevectorscreen_vectorgridLayout.addWidget(self.systemofequationschoosevectorscreen_valuesgridLayoutWidget, 1, alignment=QtCore.Qt.AlignCenter)
-        self.systemofequationschoosevectorscreen_vectorgridLayout.addWidget(self.systemofequationschoosevectorparentesisclosedlabel, 2, alignment=QtCore.Qt.AlignLeft)
+        self.system_of_equations_choose_vector_screen_vector_gridlayout.addWidget(self.system_of_equations_choose_vector_parentesis_open_label, 0, alignment=QtCore.Qt.AlignLeft)
+        self.system_of_equations_choose_vector_screen_vector_gridlayout.addWidget(self.system_of_equations_choose_vector_screen_values_gridlayout_widget, 1, alignment=QtCore.Qt.AlignCenter)
+        self.system_of_equations_choose_vector_screen_vector_gridlayout.addWidget(self.system_of_equations_choose_vector_parentesis_closed_label, 2, alignment=QtCore.Qt.AlignLeft)
 
-        self.systemofequationschoosevectorScrollArea.setWidget(self.systemofequationschoosevectorScrollAreaWidgetContents)
+        self.system_of_equations_choose_vector_scrollarea.setWidget(self.system_of_equations_choose_vector_scrollarea_widget_contents)
 
-        self.systemofequationschoosevectorparentesisopenlabel.setHidden(True)
-        self.systemofequationschoosevectorparentesisclosedlabel.setHidden(True)
+        self.system_of_equations_choose_vector_parentesis_open_label.setHidden(True)
+        self.system_of_equations_choose_vector_parentesis_closed_label.setHidden(True)
 
         #########################################################
         ## EIGENVALUES CHOSEN VECTOR SCROLL AREA VALUES LABELS ##
         #########################################################
-        systemfont = QtGui.QFont()
-        systemfont.setFamily("Alice")
-        systemfont.setPointSize(12)
+        system_font = QtGui.QFont()
+        system_font.setFamily("Alice")
+        system_font.setPointSize(12)
 
-        stringstylesheetvectorsystemchosen = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
-        self.systemvectorchosen_vectorlabelcell_dict={}
+        system_vector_chosen_stylesheet = "background-color: transparent;\n""color: rgb(236, 236, 236);\n"
+        self.system_vector_chosen_vector_label_cell_dict={}
         for x in range(1,11):
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"] = QtWidgets.QLabel(self.systemofequationschoosevectorscreen_valuesgridLayoutWidget)
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setStyleSheet(stringstylesheetvectorsystemchosen)
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setFont(systemfont)
-            self.systemofequationschoosevectorscreen_valuesgridLayout.addWidget(self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"], (x-1), 0, 1, 1, alignment=QtCore.Qt.AlignCenter)
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setHidden(True)
-        self.systemofequationdecorativebackgroundLabel = QtWidgets.QLabel(self.systemofequationsframe)
-        self.systemofequationdecorativebackgroundLabel.setGeometry(QtCore.QRect(229, 50, 203, 151))
-        self.systemofequationdecorativebackgroundLabel.setStyleSheet(soetss.systemofequationdecorativebackgroundLabel_stylesheet)
-        self.systemofequationdecorativebackgroundLabel.setText("")
-        self.systemofequationdecorativebackgroundLabel.setObjectName("systemofequationdecorativebackgroundLabel")
-        self.systemofequationsdecorativeLabel = QtWidgets.QLabel(self.systemofequationsframe)
-        self.systemofequationsdecorativeLabel.setGeometry(QtCore.QRect(252, 55, 161, 141))
-        self.systemofequationsdecorativeLabel.setStyleSheet("background-color: transparent;")
-        self.systemofequationsdecorativeLabel.setText("")
-        self.systemofequationsdecorativeLabel.setPixmap(QtGui.QPixmap("icons/Decorativesystemofequationsicon.png"))
-        self.systemofequationsdecorativeLabel.setObjectName("systemofequationsdecorativeLabel")
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"] = QtWidgets.QLabel(self.system_of_equations_choose_vector_screen_values_gridlayout_widget)
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setStyleSheet(system_vector_chosen_stylesheet)
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setFont(system_font)
+            self.system_of_equations_choose_vector_screen_values_gridlayout.addWidget(self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"], (x-1), 0, 1, 1, alignment=QtCore.Qt.AlignCenter)
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x)+"_1"].setHidden(True)
+        self.system_of_equations_decorative_background_label = QtWidgets.QLabel(self.system_of_equations_frame)
+        self.system_of_equations_decorative_background_label.setGeometry(QtCore.QRect(229, 50, 203, 151))
+        self.system_of_equations_decorative_background_label.setStyleSheet(soetss.system_of_equations_decorative_background_label_stylesheet)
+        self.system_of_equations_decorative_background_label.setText("")
+        self.system_of_equations_decorative_label = QtWidgets.QLabel(self.system_of_equations_frame)
+        self.system_of_equations_decorative_label.setGeometry(QtCore.QRect(252, 55, 161, 141))
+        self.system_of_equations_decorative_label.setStyleSheet("background-color: transparent;")
+        self.system_of_equations_decorative_label.setText("")
+        self.system_of_equations_decorative_label.setPixmap(QtGui.QPixmap("icons/Decorativesystemofequationsicon.png"))
         ###############
         ###Title bar###
         ###############
-        self.Titlebarframe = QtWidgets.QFrame(self.centralwidget)
-        self.Titlebarframe.setGeometry(QtCore.QRect(0, 0, 618, 29))
-        self.Titlebarframe.setStyleSheet("background-color: rgb(17, 18, 17);")
-        self.Titlebarframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.Titlebarframe.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.Titlebarframe.setObjectName("Titlebarframe")
-        self.Exit_Button = QtWidgets.QPushButton(self.centralwidget)
-        self.Exit_Button.setGeometry(QtCore.QRect(673, 0, 51, 29))
-        self.Exit_Button.setStyleSheet("QPushButton {\n"
+        self.title_bar_frame = QtWidgets.QFrame(self.mainwindow_central_widget)
+        self.title_bar_frame.setGeometry(QtCore.QRect(0, 0, 704, 29))
+        self.title_bar_frame.setStyleSheet("background-color: rgb(17, 18, 17);")
+        self.title_bar_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.title_bar_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.exit_button = QtWidgets.QPushButton(self.mainwindow_central_widget)
+        self.exit_button.setGeometry(QtCore.QRect(653, 0, 51, 29))
+        self.exit_button.setStyleSheet("QPushButton {\n"
 "    background-color: rgb(17, 18, 17);\n"
 "    border-bottom:2px;\n"
 "    border-right:None;\n"
@@ -1137,16 +1006,15 @@ class Ui_MainWindow(object):
 "    border-color:none;    \n"
 "}    \n"
 "")
-        self.Exit_Button.setText("")
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap("icons/ExitButttonicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.Exit_Button.setIcon(icon13)
-        self.Exit_Button.setIconSize(QtCore.QSize(21, 21))
-        self.Exit_Button.setCheckable(False)
-        self.Exit_Button.setObjectName("Exit_Button")
-        self.Minimize_Button = QtWidgets.QPushButton(self.centralwidget)
-        self.Minimize_Button.setGeometry(QtCore.QRect(618, 0, 51, 29))
-        self.Minimize_Button.setStyleSheet("QPushButton {\n"
+        self.exit_button.setText("")
+        exit_button_icon = QtGui.QIcon()
+        exit_button_icon.addPixmap(QtGui.QPixmap("icons/ExitButttonicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.exit_button.setIcon(exit_button_icon)
+        self.exit_button.setIconSize(QtCore.QSize(21, 21))
+        self.exit_button.setCheckable(False)
+        self.minimize_button = QtWidgets.QPushButton(self.mainwindow_central_widget)
+        self.minimize_button.setGeometry(QtCore.QRect(598, 0, 51, 29))
+        self.minimize_button.setStyleSheet("QPushButton {\n"
 "    background-color: rgb(17, 18, 17);\n"
 "    border-bottom:2px;\n"
 "    border-right:None;\n"
@@ -1165,372 +1033,350 @@ class Ui_MainWindow(object):
 "    border-color:none;    \n"
 "}    \n"
 "")
-        self.Minimize_Button.setText("")
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap("icons/MinimizeButttonicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.Minimize_Button.setIcon(icon14)
-        self.Minimize_Button.setIconSize(QtCore.QSize(21, 21))
-        self.Minimize_Button.setCheckable(False)
-        self.Minimize_Button.setObjectName("Minimize_Button")
-        self.Titlebarbuttons_fillerlabel = QtWidgets.QLabel(self.centralwidget)
-        self.Titlebarbuttons_fillerlabel.setGeometry(QtCore.QRect(669, 0, 4, 29))
-        self.Titlebarbuttons_fillerlabel.setStyleSheet("background-color: rgb(17, 18, 17);\n")
-        self.Titlebarbuttons_fillerlabel.setText("")
-        self.Titlebarbuttons_fillerlabel.setObjectName("Titlebarbuttons_fillerlabel")
+        self.minimize_button.setText("")
+        minimize_button_icon = QtGui.QIcon()
+        minimize_button_icon.addPixmap(QtGui.QPixmap("icons/MinimizeButttonicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.minimize_button.setIcon(minimize_button_icon)
+        self.minimize_button.setIconSize(QtCore.QSize(21, 21))
+        self.minimize_button.setCheckable(False)
+        self.title_bar_buttons_filler_label = QtWidgets.QLabel(self.mainwindow_central_widget)
+        self.title_bar_buttons_filler_label.setGeometry(QtCore.QRect(649, 0, 4, 29))
+        self.title_bar_buttons_filler_label.setStyleSheet("background-color: rgb(17, 18, 17);\n")
+        self.title_bar_buttons_filler_label.setText("")
         ######################
         #MAIN ECUATION STRING#
         ######################
-        self.layoutforeqstringwidget=QtWidgets.QWidget(self.centralwidget)
-        self.layoutforeqstring = QtWidgets.QVBoxLayout(self.layoutforeqstringwidget)
-        self.layoutforeqstring.setContentsMargins(0,0,0,0)
-        self.layoutforeqstringwidget.setGeometry(QtCore.QRect(112, 289, 481, 29))
 
-        self.eqstringtextEdit = QTextEditdropenabled(self.admin)
-        self.eqstringtextEdit.setStyleSheet(vmtss.eqstringtextEdit_stylesheet)
-        self.eqstringtextEdit.setObjectName("eqstringtextEdit")
-        self.eqstringtextEdit.setPlaceholderText("Type here...")
-        self.eqstringtextEdit.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
-        self.eqstringtextEdit.setLineWrapColumnOrWidth(0)
-        self.eqstringtextEdit.setReadOnly(True)
-        self.eqstringtextEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.eq_string_layout_widget=QtWidgets.QWidget(self.mainwindow_central_widget)
+        self.eq_string_layout = QtWidgets.QVBoxLayout(self.eq_string_layout_widget)
+        self.eq_string_layout.setContentsMargins(0,0,0,0)
+        self.eq_string_layout_widget.setGeometry(QtCore.QRect(112, 289, 481, 29))
 
-        self.layoutforeqstring.addWidget(self.eqstringtextEdit,0)
+        self.eq_string_text_edit = QTextEditDropEnabled(self.admin)
+        self.eq_string_text_edit.setStyleSheet(vmtss.eq_string_text_edit_stylesheet)
+        self.eq_string_text_edit.setPlaceholderText("Type here...")
+        self.eq_string_text_edit.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
+        self.eq_string_text_edit.setLineWrapColumnOrWidth(0)
+        self.eq_string_text_edit.setReadOnly(True)
+        self.eq_string_text_edit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
-        ##################
-        #ESCONDER WIDGETS#
-        ##################
+        self.eq_string_layout.addWidget(self.eq_string_text_edit,0)
 
-        self.systemofequationsframe.hide()
-        self.Decorativelabelmiddlebottom.hide()
-        for x in self.matrixoperatorsbuttons_names:
-            self.matrixoperatorsbuttons_dict[x].hide()
-        for x in self.vectoroperatorsbuttons_names:
-            self.vectoroperatorsbuttons_dict[x].hide() 
-        for x in self.answer_and_equalbuttons_names: 
-            self.answer_and_equalbuttons_dict[x].hide()
-        self.generaloperatorsframe.hide()
-        self.draggablevectorListWidget.hide()
-        self.draggablematrixListWidget.hide()
-        self.clickndraglabel.hide()
-        self.screen_scrollArea.hide()
-        self.angleswritevectorFrame.hide()
-        self.angleschoosevectorFrame.hide()
-        self.angleresultFrame.hide()
-        self.angleshorizontalSlider.hide()
-        self.anglesimportLabel.hide()
-        self.angleswriteLabel.hide()
-        self.layoutforeqstringwidget.hide()
-        self.bakcgrounddecorativeslideLabel.hide()
-        self.ddordmshorizontalSlider.hide()
-        self.decimaldegreeLabel.hide()
-        self.degreesminutessecondsLabel.hide()
-        self.eigenvaluesframe.hide()
+        ################
+        ##HIDE WIDGETS##
+        ################
 
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 29, 711, 21))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        self.statusbar.setStyleSheet("color: rgb(96, 96, 96);\n"
+        self.system_of_equations_frame.hide()
+        self.background_vectors_and_matrices_operators_label.hide()
+        for x in self.matrix_operators_buttons_names:
+            self.matrix_operators_buttons_dict[x].hide()
+        for x in self.vector_operators_buttons_names:
+            self.vector_operators_buttons_dict[x].hide() 
+        for x in self.answer_and_equal_buttons_names: 
+            self.answer_and_equal_buttons_dict[x].hide()
+        self.general_operators_frame.hide()
+        self.draggable_vector_list_widget.hide()
+        self.draggable_matrix_list_widget.hide()
+        self.click_and_drag_label.hide()
+        self.main_vector_matrix_screen_scrollarea.hide()
+        self.write_vector_frame.hide()
+        self.choose_vector_frame.hide()
+        self.angle_result_frame.hide()
+        self.choose_type_horizontal_slider.hide()
+        self.vector_import_label.hide()
+        self.vector_write_label.hide()
+        self.eq_string_layout_widget.hide()
+        self.background_decorative_slide_label.hide()
+        self.dd_or_dms_horizontal_slider.hide()
+        self.decimal_degree_label.hide()
+        self.degrees_minutes_seconds_label.hide()
+        self.eigenvalues_frame.hide()
+
+        MainWindow.setCentralWidget(self.mainwindow_central_widget)
+        self.menu_bar = QtWidgets.QMenuBar(MainWindow)
+        self.menu_bar.setGeometry(QtCore.QRect(0, 29, 711, 21))
+        MainWindow.setMenuBar(self.menu_bar)
+        self.status_bar = QtWidgets.QStatusBar(MainWindow)
+        self.status_bar.setStyleSheet("color: rgb(96, 96, 96);\n"
 "font: 10pt \"Alice\";\n"
 ""
 )
-        MainWindow.setStatusBar(self.statusbar)
+        MainWindow.setStatusBar(self.status_bar)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.vectorsButton.setToolTip(_translate("MainWindow", "Vectors"))
-        self.vectorsButton.setStatusTip(_translate("MainWindow", "Vectors"))
-        self.vectorsButton.setWhatsThis(_translate("MainWindow", "Vectors"))
-        self.vectorsButton.setAccessibleName(_translate("MainWindow", "Vectors"))
-        self.vectorsButton.setAccessibleDescription(_translate("MainWindow", "Vectors"))
-        self.matrixButton.setToolTip(_translate("MainWindow", "Matrix"))
-        self.matrixButton.setStatusTip(_translate("MainWindow", "Matrix"))
-        self.matrixButton.setWhatsThis(_translate("MainWindow", "Matrix"))
-        self.matrixButton.setAccessibleName(_translate("MainWindow", "Matrix"))
-        self.matrixButton.setAccessibleDescription(_translate("MainWindow", "Matrix"))
-        self.anglesButton.setToolTip(_translate("MainWindow", "Angles"))
-        self.anglesButton.setStatusTip(_translate("MainWindow", "Angles"))
-        self.anglesButton.setWhatsThis(_translate("MainWindow", "Angles"))
-        self.anglesButton.setAccessibleName(_translate("MainWindow", "Angles"))
-        self.anglesButton.setAccessibleDescription(_translate("MainWindow", "Angles"))
-        self.eigenvaluesButton.setToolTip(_translate("MainWindow", "Eigenvectors"))
-        self.eigenvaluesButton.setStatusTip(_translate("MainWindow", "Eigenvectors"))
-        self.eigenvaluesButton.setWhatsThis(_translate("MainWindow", "Eigenvectors"))
-        self.eigenvaluesButton.setAccessibleName(_translate("MainWindow", "Eigenvectors"))
-        self.eigenvaluesButton.setAccessibleDescription(_translate("MainWindow", "Eigenvectors"))
-        self.systemofequationButton.setToolTip(_translate("MainWindow", "System of Equations"))
-        self.systemofequationButton.setStatusTip(_translate("MainWindow", "System of Equations"))
-        self.systemofequationButton.setWhatsThis(_translate("MainWindow", "System of Equations"))
-        self.systemofequationButton.setAccessibleName(_translate("MainWindow", "System of Equations"))
-        self.systemofequationButton.setAccessibleDescription(_translate("MainWindow", "System of Equations"))
-        self.infoButton.setToolTip(_translate("MainWindow", "Info"))
-        self.infoButton.setToolTip(_translate("MainWindow", "Info"))
-        self.infoButton.setStatusTip(_translate("MainWindow", "Info"))
-        self.infoButton.setWhatsThis(_translate("MainWindow", "Info"))
-        self.infoButton.setAccessibleName(_translate("MainWindow", "Info"))
-        self.assignButton.setToolTip(_translate("MainWindow", "Assign values"))
-        self.assignButton.setStatusTip(_translate("MainWindow", "Assign values"))
-        self.assignButton.setWhatsThis(_translate("MainWindow", "Assign values"))
-        self.assignButton.setAccessibleName(_translate("MainWindow", "Assign values"))
-        self.assignButton.setAccessibleDescription(_translate("MainWindow", "Assign values"))
-        vectoroperatorsbuttons_tooltipcounter=-1
-        vectoroperatorsbuttons_tooltips=["Addition","Subtraction","Scalar Product","Vector Product","Magnitude"]
-        for x in self.vectoroperatorsbuttons_names:
-            vectoroperatorsbuttons_tooltipcounter+=1
-            self.vectoroperatorsbuttons_dict[x].setToolTip(_translate("MainWindow", vectoroperatorsbuttons_tooltips[vectoroperatorsbuttons_tooltipcounter]))
-            self.vectoroperatorsbuttons_dict[x].setStatusTip(_translate("MainWindow", vectoroperatorsbuttons_tooltips[vectoroperatorsbuttons_tooltipcounter]))
-            self.vectoroperatorsbuttons_dict[x].setWhatsThis(_translate("MainWindow", vectoroperatorsbuttons_tooltips[vectoroperatorsbuttons_tooltipcounter]))
-            self.vectoroperatorsbuttons_dict[x].setAccessibleName(_translate("MainWindow", vectoroperatorsbuttons_tooltips[vectoroperatorsbuttons_tooltipcounter]))
-        matrixoperatorsbuttons_tooltipcounter=-1
-        matrixoperatorsbuttons_tooltips=["Addition","Subtraction","Product","Transpose","Determinant"]
-        for x in self.matrixoperatorsbuttons_names:
-            matrixoperatorsbuttons_tooltipcounter+=1 
-            self.matrixoperatorsbuttons_dict[x].setToolTip(_translate("MainWindow", matrixoperatorsbuttons_tooltips[matrixoperatorsbuttons_tooltipcounter]))
-            self.matrixoperatorsbuttons_dict[x].setStatusTip(_translate("MainWindow", matrixoperatorsbuttons_tooltips[matrixoperatorsbuttons_tooltipcounter]))
-            self.matrixoperatorsbuttons_dict[x].setWhatsThis(_translate("MainWindow", matrixoperatorsbuttons_tooltips[matrixoperatorsbuttons_tooltipcounter]))
-            self.matrixoperatorsbuttons_dict[x].setAccessibleName(_translate("MainWindow", matrixoperatorsbuttons_tooltips[matrixoperatorsbuttons_tooltipcounter]))
-        answer_equal_buttons_tooltipcounter=-1
+        self.tab_buttons_tooltips_list=["Vectors","Matrix","Angles","Eigenvectors",
+        "System of Equations"]
+        for x in range(0,5):
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setToolTip(_translate("MainWindow", self.tab_buttons_tooltips_list[x]))
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setStatusTip(_translate("MainWindow", self.tab_buttons_tooltips_list[x]))
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setWhatsThis(_translate("MainWindow", self.tab_buttons_tooltips_list[x]))
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setAccessibleName(_translate("MainWindow", self.tab_buttons_tooltips_list[x]))
+            self.tab_buttons_dict[self.tab_buttons_name_list[x]].setAccessibleDescription(_translate("MainWindow", self.tab_buttons_tooltips_list[x]))
+        self.info_button.setToolTip(_translate("MainWindow", "Info"))
+        self.info_button.setToolTip(_translate("MainWindow", "Info"))
+        self.info_button.setStatusTip(_translate("MainWindow", "Info"))
+        self.info_button.setWhatsThis(_translate("MainWindow", "Info"))
+        self.info_button.setAccessibleName(_translate("MainWindow", "Info"))
+        self.assign_button.setToolTip(_translate("MainWindow", "Assign values"))
+        self.assign_button.setStatusTip(_translate("MainWindow", "Assign values"))
+        self.assign_button.setWhatsThis(_translate("MainWindow", "Assign values"))
+        self.assign_button.setAccessibleName(_translate("MainWindow", "Assign values"))
+        self.assign_button.setAccessibleDescription(_translate("MainWindow", "Assign values"))
+        vector_operators_buttons_tooltip_counter=-1
+        vector_operators_buttons_tooltips=["Addition","Subtraction","Scalar Product","Vector Product","Magnitude"]
+        for x in self.vector_operators_buttons_names:
+            vector_operators_buttons_tooltip_counter+=1
+            self.vector_operators_buttons_dict[x].setToolTip(_translate("MainWindow", vector_operators_buttons_tooltips[vector_operators_buttons_tooltip_counter]))
+            self.vector_operators_buttons_dict[x].setStatusTip(_translate("MainWindow", vector_operators_buttons_tooltips[vector_operators_buttons_tooltip_counter]))
+            self.vector_operators_buttons_dict[x].setWhatsThis(_translate("MainWindow", vector_operators_buttons_tooltips[vector_operators_buttons_tooltip_counter]))
+            self.vector_operators_buttons_dict[x].setAccessibleName(_translate("MainWindow", vector_operators_buttons_tooltips[vector_operators_buttons_tooltip_counter]))
+        matrix_operators_buttons_tooltip_counter=-1
+        matrix_operators_buttons_tooltips=["Addition","Subtraction","Product","Transpose","Determinant"]
+        for x in self.matrix_operators_buttons_names:
+            matrix_operators_buttons_tooltip_counter+=1 
+            self.matrix_operators_buttons_dict[x].setToolTip(_translate("MainWindow", matrix_operators_buttons_tooltips[matrix_operators_buttons_tooltip_counter]))
+            self.matrix_operators_buttons_dict[x].setStatusTip(_translate("MainWindow", matrix_operators_buttons_tooltips[matrix_operators_buttons_tooltip_counter]))
+            self.matrix_operators_buttons_dict[x].setWhatsThis(_translate("MainWindow", matrix_operators_buttons_tooltips[matrix_operators_buttons_tooltip_counter]))
+            self.matrix_operators_buttons_dict[x].setAccessibleName(_translate("MainWindow", matrix_operators_buttons_tooltips[matrix_operators_buttons_tooltip_counter]))
+        answer_equal_buttons_tooltip_counter=-1
         answer_equal_buttons_tooltips=["Use previous Answer","Solve"]
-        for x in self.answer_and_equalbuttons_names: 
-            answer_equal_buttons_tooltipcounter+=1 
-            self.answer_and_equalbuttons_dict[x].setToolTip(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltipcounter]))
-            self.answer_and_equalbuttons_dict[x].setStatusTip(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltipcounter]))
-            self.answer_and_equalbuttons_dict[x].setWhatsThis(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltipcounter]))
-            self.answer_and_equalbuttons_dict[x].setAccessibleName(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltipcounter]))
-        self.allclearButton.setToolTip(_translate("MainWindow", "Clear all"))
-        self.allclearButton.setStatusTip(_translate("MainWindow", "Clear all"))
-        self.allclearButton.setWhatsThis(_translate("MainWindow", "Clear all"))
-        self.allclearButton.setAccessibleName(_translate("MainWindow", "Clear all"))
-        self.generaloperatorsButtonsnamelist_line1tooltips=["Add","Subtract","Multiply","Divide","Sine","Cosine","Tangent","Hyperbolic Sine",
+        for x in self.answer_and_equal_buttons_names: 
+            answer_equal_buttons_tooltip_counter+=1 
+            self.answer_and_equal_buttons_dict[x].setToolTip(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltip_counter]))
+            self.answer_and_equal_buttons_dict[x].setStatusTip(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltip_counter]))
+            self.answer_and_equal_buttons_dict[x].setWhatsThis(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltip_counter]))
+            self.answer_and_equal_buttons_dict[x].setAccessibleName(_translate("MainWindow", answer_equal_buttons_tooltips[answer_equal_buttons_tooltip_counter]))
+        self.all_clear_button.setToolTip(_translate("MainWindow", "Clear all"))
+        self.all_clear_button.setStatusTip(_translate("MainWindow", "Clear all"))
+        self.all_clear_button.setWhatsThis(_translate("MainWindow", "Clear all"))
+        self.all_clear_button.setAccessibleName(_translate("MainWindow", "Clear all"))
+        self.general_operators_buttons_name_list_line1tooltips=["Add","Subtract","Multiply","Divide","Sine","Cosine","Tangent","Hyperbolic Sine",
         "Hyperbolic Cosine","Hyperbolic Tangent","Logarithm base 10","Natural Logarithm"]
-        self.generaloperatorsButtonsnamelist_line2tooltips=["Power","Root","Euler's Number","Pi Number","Inverse Sine","Inverse Cosine",
+        self.general_operators_buttons_name_list_line2tooltips=["Power","Root","Euler's Number","Pi Number","Inverse Sine","Inverse Cosine",
         "Inverse Tangent","Inverse Hyperbolic Sine","Inverse Hyperbolic Cosine","Inverse Hyperbolic Tangent","Logarithm Without Base",
         "Scalar Absolute"]
-        generaloperators_line1_tooltipcounter=-1
-        for x in self.generaloperatorsButtonsnamelist_line1:
-            generaloperators_line1_tooltipcounter+=1
-            self.generaloperatorsButtonsdict[x].setToolTip(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line1tooltips[generaloperators_line1_tooltipcounter]))
-            self.generaloperatorsButtonsdict[x].setStatusTip(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line1tooltips[generaloperators_line1_tooltipcounter]))
-            self.generaloperatorsButtonsdict[x].setWhatsThis(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line1tooltips[generaloperators_line1_tooltipcounter]))
-            self.generaloperatorsButtonsdict[x].setAccessibleName(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line1tooltips[generaloperators_line1_tooltipcounter]))
-        generaloperators_line2_tooltipcounter=-1
-        for x in self.generaloperatorsButtonsnamelist_line2:
-            generaloperators_line2_tooltipcounter+=1
-            self.generaloperatorsButtonsdict[x].setToolTip(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line2tooltips[generaloperators_line2_tooltipcounter]))
-            self.generaloperatorsButtonsdict[x].setStatusTip(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line2tooltips[generaloperators_line2_tooltipcounter]))
-            self.generaloperatorsButtonsdict[x].setWhatsThis(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line2tooltips[generaloperators_line2_tooltipcounter]))
-            self.generaloperatorsButtonsdict[x].setAccessibleName(_translate("MainWindow", self.generaloperatorsButtonsnamelist_line2tooltips[generaloperators_line2_tooltipcounter]))
-        __sortingEnabled = self.draggablematrixListWidget.isSortingEnabled()
-        self.draggablematrixListWidget.setSortingEnabled(False)
-        self.draggablematrixListWidget.setSortingEnabled(__sortingEnabled)
-        __sortingEnabled = self.draggablevectorListWidget.isSortingEnabled()
-        self.draggablevectorListWidget.setSortingEnabled(False)
-        self.draggablevectorListWidget.setSortingEnabled(__sortingEnabled)
-        self.anglesimportLabel.setText(_translate("MainWindow", "IMPORT"))
-        self.angleswriteLabel.setText(_translate("MainWindow", "WRITE"))
-        self.writevectorLabel_x.setText(_translate("MainWindow", " Vector  I"))
-        self.writevectorLabel_y.setText(_translate("MainWindow", " Vector II"))
-        self.degreesminutessecondsLabel.setText(_translate("MainWindow", "DMS"))
-        self.decimaldegreeLabel.setText(_translate("MainWindow", "  DD"))
-        __sortingEnabled = self.eigenvalueschoosematrixListWidget.isSortingEnabled()
-        self.eigenvalueschoosematrixListWidget.setSortingEnabled(False)
-        self.eigenvalueschoosematrixListWidget.setSortingEnabled(__sortingEnabled)
-        __sortingEnabled = self.systemofequationschoosematrixListWidget.isSortingEnabled()
-        self.systemofequationschoosematrixListWidget.setSortingEnabled(False)
-        self.systemofequationschoosematrixListWidget.setSortingEnabled(__sortingEnabled)
-        __sortingEnabled = self.systemofequationschoosevectorListWidget.isSortingEnabled()
-        self.systemofequationschoosevectorListWidget.setSortingEnabled(False)
-        self.systemofequationschoosevectorListWidget.setSortingEnabled(__sortingEnabled)
-        self.retranslateUi_listofmatrixnames=["Matrix1","Matrix2","Matrix3","Matrix4","Matrix5","Matrix6","Matrix7","Matrix8",
-        "Matrix9","Matrix10","Matrix11","Matrix12","Matrix13","Matrix14","Matrix15","Matrix16","Matrix17","Matrix18",
-        "Matrix19","Matrix20"]
-        self.retranslateUi_listofvectornames=["Vector1","Vector2","Vector3","Vector4","Vector5","Vector6","Vector7","Vector8",
-        "Vector9","Vector10","Vector11","Vector12","Vector13","Vector14","Vector15","Vector16","Vector17","Vector18",
-        "Vector19","Vector20"]
+        general_operators_line1_tooltip_counter=-1
+        for x in self.general_operators_buttons_name_list_line1:
+            general_operators_line1_tooltip_counter+=1
+            self.general_operators_buttons_dict[x].setToolTip(_translate("MainWindow", self.general_operators_buttons_name_list_line1tooltips[general_operators_line1_tooltip_counter]))
+            self.general_operators_buttons_dict[x].setStatusTip(_translate("MainWindow", self.general_operators_buttons_name_list_line1tooltips[general_operators_line1_tooltip_counter]))
+            self.general_operators_buttons_dict[x].setWhatsThis(_translate("MainWindow", self.general_operators_buttons_name_list_line1tooltips[general_operators_line1_tooltip_counter]))
+            self.general_operators_buttons_dict[x].setAccessibleName(_translate("MainWindow", self.general_operators_buttons_name_list_line1tooltips[general_operators_line1_tooltip_counter]))
+        general_operators_line2_tooltip_counter=-1
+        for x in self.general_operators_buttons_name_list_line2:
+            general_operators_line2_tooltip_counter+=1
+            self.general_operators_buttons_dict[x].setToolTip(_translate("MainWindow", self.general_operators_buttons_name_list_line2tooltips[general_operators_line2_tooltip_counter]))
+            self.general_operators_buttons_dict[x].setStatusTip(_translate("MainWindow", self.general_operators_buttons_name_list_line2tooltips[general_operators_line2_tooltip_counter]))
+            self.general_operators_buttons_dict[x].setWhatsThis(_translate("MainWindow", self.general_operators_buttons_name_list_line2tooltips[general_operators_line2_tooltip_counter]))
+            self.general_operators_buttons_dict[x].setAccessibleName(_translate("MainWindow", self.general_operators_buttons_name_list_line2tooltips[general_operators_line2_tooltip_counter]))
+        __sortingEnabled = self.draggable_matrix_list_widget.isSortingEnabled()
+        self.draggable_matrix_list_widget.setSortingEnabled(False)
+        self.draggable_matrix_list_widget.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.draggable_vector_list_widget.isSortingEnabled()
+        self.draggable_vector_list_widget.setSortingEnabled(False)
+        self.draggable_vector_list_widget.setSortingEnabled(__sortingEnabled)
+        self.vector_import_label.setText(_translate("MainWindow", "IMPORT"))
+        self.vector_write_label.setText(_translate("MainWindow", "WRITE"))
+        self.write_vector_label_x.setText(_translate("MainWindow", " Vector  I"))
+        self.write_vector_label_y.setText(_translate("MainWindow", " Vector II"))
+        self.degrees_minutes_seconds_label.setText(_translate("MainWindow", "DMS"))
+        self.decimal_degree_label.setText(_translate("MainWindow", "  DD"))
+        __sortingEnabled = self.eigenvalues_choose_matrix_list_widget.isSortingEnabled()
+        self.eigenvalues_choose_matrix_list_widget.setSortingEnabled(False)
+        self.eigenvalues_choose_matrix_list_widget.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.system_of_equations_choose_matrix_listwidget.isSortingEnabled()
+        self.system_of_equations_choose_matrix_listwidget.setSortingEnabled(False)
+        self.system_of_equations_choose_matrix_listwidget.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.system_of_equations_choosevector_list_widget.isSortingEnabled()
+        self.system_of_equations_choosevector_list_widget.setSortingEnabled(False)
+        self.system_of_equations_choosevector_list_widget.setSortingEnabled(__sortingEnabled)
         for x in range(0,20):
-            item = self.draggablematrixListWidget.item(x)
-            item.setText(_translate("MainWindow", self.retranslateUi_listofmatrixnames[x]))
-            item = self.draggablevectorListWidget.item(x)
-            item.setText(_translate("MainWindow", self.retranslateUi_listofvectornames[x]))
-            item = self.eigenvalueschoosematrixListWidget.item(x)
-            item.setText(_translate("MainWindow", self.retranslateUi_listofmatrixnames[x]))
-            item = self.systemofequationschoosematrixListWidget.item(x)
-            item.setText(_translate("MainWindow", self.retranslateUi_listofmatrixnames[x]))
-            item = self.systemofequationschoosevectorListWidget.item(x)
-            item.setText(_translate("MainWindow", self.retranslateUi_listofvectornames[x]))
-            self.choosevectorcomboBox_x.setItemText(x, _translate("MainWindow", self.retranslateUi_listofvectornames[x]))
-            self.choosevectorcomboBox_y.setItemText(x, _translate("MainWindow", self.retranslateUi_listofvectornames[x]))
+            item = self.draggable_matrix_list_widget.item(x)
+            item.setText(_translate("MainWindow", "Matrix"+str(x+1)))
+            item = self.draggable_vector_list_widget.item(x)
+            item.setText(_translate("MainWindow", "Vector"+str(x+1)))
+            item = self.eigenvalues_choose_matrix_list_widget.item(x)
+            item.setText(_translate("MainWindow", "Matrix"+str(x+1)))
+            item = self.system_of_equations_choose_matrix_listwidget.item(x)
+            item.setText(_translate("MainWindow", "Matrix"+str(x+1)))
+            item = self.system_of_equations_choosevector_list_widget.item(x)
+            item.setText(_translate("MainWindow", "Vector"+str(x+1)))
+            self.choose_vector_combobox_x.setItemText(x, _translate("MainWindow", "Vector"+str(x+1)))
+            self.choose_vector_combobox_y.setItemText(x, _translate("MainWindow", "Vector"+str(x+1)))
             if x<12:
-                self.writevectorcolumncomboBox_x.setItemText(x, _translate("MainWindow", str(x+1)))
-                self.writevectorcolumncomboBox_y.setItemText(x, _translate("MainWindow", str(x+1)))
-    def vectorsButtonstate(self):
-        if self.vectorsButton.isChecked():
-            self.matrixButton.setChecked(False)
-            self.anglesButton.setChecked(False)
-            self.eigenvaluesButton.setChecked(False)
-            self.systemofequationButton.setChecked(False)
-            self.eigenvaluesButtonstate()
-            self.systemofequationButtonstate()
-            self.anglesButtonstate()
-            self.matrixButtonstate()
+                self.write_vector_column_combobox_x.setItemText(x, _translate("MainWindow", str(x+1)))
+                self.write_vector_column_combobox_y.setItemText(x, _translate("MainWindow", str(x+1)))
+    def vectorsButtonState(self):
+        if self.tab_buttons_dict["vector_tab_button"].isChecked():
+            for x in range(0,5):
+                if self.tab_buttons_name_list[x] == "vector_tab_button":
+                    pass
+                else:
+                    self.tab_buttons_dict[self.tab_buttons_name_list[x]].setChecked(False)
+            self.eigenvaluesButtonState()
+            self.systemOfEquationButtonState()
+            self.anglesButtonState()
+            self.matrixButtonState()
             self.main_title_label_top.setPixmap(QtGui.QPixmap("icons/Vectorstitle.png"))
-            self.Decorativelabelmiddlebottom.show()
-            for x in self.vectoroperatorsbuttons_names:
-                self.vectoroperatorsbuttons_dict[x].show()
-            for x in self.answer_and_equalbuttons_names: 
-                self.answer_and_equalbuttons_dict[x].show()
-            self.layoutforeqstringwidget.show()
-            self.generaloperatorsframe.show()
-            self.draggablevectorListWidget.show()
-            self.clickndraglabel.show()
-            self.screen_scrollArea.show()
+            self.background_vectors_and_matrices_operators_label.show()
+            for x in self.vector_operators_buttons_names:
+                self.vector_operators_buttons_dict[x].show()
+            for x in self.answer_and_equal_buttons_names: 
+                self.answer_and_equal_buttons_dict[x].show()
+            self.eq_string_layout_widget.show()
+            self.general_operators_frame.show()
+            self.draggable_vector_list_widget.show()
+            self.click_and_drag_label.show()
+            self.main_vector_matrix_screen_scrollarea.show()
         else:
             self.main_title_label_top.clear()
-            self.Decorativelabelmiddlebottom.hide()
-            for x in self.vectoroperatorsbuttons_names:
-                self.vectoroperatorsbuttons_dict[x].hide() 
-            for x in self.answer_and_equalbuttons_names: 
-                self.answer_and_equalbuttons_dict[x].hide()
-            self.layoutforeqstringwidget.hide()
-            self.generaloperatorsframe.hide()
-            self.draggablevectorListWidget.hide()
-            self.clickndraglabel.hide()
-            self.screen_scrollArea.hide()
+            self.background_vectors_and_matrices_operators_label.hide()
+            for x in self.vector_operators_buttons_names:
+                self.vector_operators_buttons_dict[x].hide() 
+            for x in self.answer_and_equal_buttons_names: 
+                self.answer_and_equal_buttons_dict[x].hide()
+            self.eq_string_layout_widget.hide()
+            self.general_operators_frame.hide()
+            self.draggable_vector_list_widget.hide()
+            self.click_and_drag_label.hide()
+            self.main_vector_matrix_screen_scrollarea.hide()
             return
-    def matrixButtonstate(self):
-        if self.matrixButton.isChecked():
-            self.vectorsButton.setChecked(False)
-            self.anglesButton.setChecked(False)
-            self.eigenvaluesButton.setChecked(False)
-            self.systemofequationButton.setChecked(False)
-            self.eigenvaluesButtonstate()
-            self.systemofequationButtonstate()
-            self.vectorsButtonstate()
-            self.anglesButtonstate()
+    def matrixButtonState(self):
+        if self.tab_buttons_dict["matrix_tab_button"].isChecked():
+            for x in range(0,5):
+                if self.tab_buttons_name_list[x] == "matrix_tab_button":
+                    pass
+                else:
+                    self.tab_buttons_dict[self.tab_buttons_name_list[x]].setChecked(False)
+            self.eigenvaluesButtonState()
+            self.systemOfEquationButtonState()
+            self.vectorsButtonState()
+            self.anglesButtonState()
             self.main_title_label_top.setPixmap(QtGui.QPixmap("icons/Matrixtitle.png"))
-            self.Decorativelabelmiddlebottom.show()
-            for x in self.matrixoperatorsbuttons_names:
-                self.matrixoperatorsbuttons_dict[x].show()
-            for x in self.answer_and_equalbuttons_names: 
-                self.answer_and_equalbuttons_dict[x].show()
-            self.layoutforeqstringwidget.show()
-            self.generaloperatorsframe.show()
-            self.draggablematrixListWidget.show()
-            self.clickndraglabel.show()
-            self.screen_scrollArea.show()
+            self.background_vectors_and_matrices_operators_label.show()
+            for x in self.matrix_operators_buttons_names:
+                self.matrix_operators_buttons_dict[x].show()
+            for x in self.answer_and_equal_buttons_names: 
+                self.answer_and_equal_buttons_dict[x].show()
+            self.eq_string_layout_widget.show()
+            self.general_operators_frame.show()
+            self.draggable_matrix_list_widget.show()
+            self.click_and_drag_label.show()
+            self.main_vector_matrix_screen_scrollarea.show()
         else:
             self.main_title_label_top.clear()
-            self.Decorativelabelmiddlebottom.hide()
-            for x in self.matrixoperatorsbuttons_names:
-                self.matrixoperatorsbuttons_dict[x].hide()
-            for x in self.answer_and_equalbuttons_names: 
-                self.answer_and_equalbuttons_dict[x].hide()
-            self.layoutforeqstringwidget.hide()
-            self.generaloperatorsframe.hide()
-            self.draggablematrixListWidget.hide()
-            self.clickndraglabel.hide()
-            self.screen_scrollArea.hide()
+            self.background_vectors_and_matrices_operators_label.hide()
+            for x in self.matrix_operators_buttons_names:
+                self.matrix_operators_buttons_dict[x].hide()
+            for x in self.answer_and_equal_buttons_names: 
+                self.answer_and_equal_buttons_dict[x].hide()
+            self.eq_string_layout_widget.hide()
+            self.general_operators_frame.hide()
+            self.draggable_matrix_list_widget.hide()
+            self.click_and_drag_label.hide()
+            self.main_vector_matrix_screen_scrollarea.hide()
             return
-    def anglesButtonstate(self):
-        if self.anglesButton.isChecked():
-            self.matrixButton.setChecked(False)
-            self.vectorsButton.setChecked(False)
-            self.eigenvaluesButton.setChecked(False)
-            self.systemofequationButton.setChecked(False)
-            self.eigenvaluesButtonstate()
-            self.systemofequationButtonstate()
-            self.vectorsButtonstate()
-            self.matrixButtonstate()
+    def anglesButtonState(self):
+        if self.tab_buttons_dict["angles_tab_button"].isChecked():
+            for x in range(0,5):
+                if self.tab_buttons_name_list[x] == "angles_tab_button":
+                    pass
+                else:
+                    self.tab_buttons_dict[self.tab_buttons_name_list[x]].setChecked(False)
+            self.eigenvaluesButtonState()
+            self.systemOfEquationButtonState()
+            self.vectorsButtonState()
+            self.matrixButtonState()
             self.main_title_label_top.setPixmap(QtGui.QPixmap("icons/Angletitle.png"))
-            self.Angleshorizontalslidervaluechanged()
-            self.Anglesvectorxcomboboxvaluechanged()
-            self.Anglesvectorycomboboxvaluechanged()
-            self.WritevectorcolumncomboBox_yvaluechanged()
-            self.WritevectorcolumncomboBox_xvaluechanged()
-            self.angleresultFrame.show()
-            self.angleshorizontalSlider.show()
-            self.anglesimportLabel.show()
-            self.angleswriteLabel.show()
-            self.bakcgrounddecorativeslideLabel.show()
+            self.chooseTypeHorizontalSliderValueChanged()
+            self.anglesVectorXComboboxValueChanged()
+            self.anglesVectorYComboboxValueChanged()
+            self.writeVectorColumnComboboxYValueChanged()
+            self.writeVectorColumnComboboxXValueChanged()
+            self.angle_result_frame.show()
+            self.choose_type_horizontal_slider.show()
+            self.vector_import_label.show()
+            self.vector_write_label.show()
+            self.background_decorative_slide_label.show()
         else:
             self.main_title_label_top.clear()
-            self.generaloperatorsframe.hide()
-            self.angleswritevectorFrame.hide()
-            self.angleschoosevectorFrame.hide()
-            self.angleresultFrame.hide()
-            self.angleshorizontalSlider.hide()
-            self.anglesimportLabel.hide()
-            self.angleswriteLabel.hide()
-            self.bakcgrounddecorativeslideLabel.hide()
+            self.general_operators_frame.hide()
+            self.write_vector_frame.hide()
+            self.choose_vector_frame.hide()
+            self.angle_result_frame.hide()
+            self.choose_type_horizontal_slider.hide()
+            self.vector_import_label.hide()
+            self.vector_write_label.hide()
+            self.background_decorative_slide_label.hide()
             return
-    def eigenvaluesButtonstate(self):
-        if self.eigenvaluesButton.isChecked():
-            self.anglesButton.setChecked(False)
-            self.matrixButton.setChecked(False)
-            self.vectorsButton.setChecked(False)
-            self.systemofequationButton.setChecked(False)
-            self.systemofequationButtonstate()
-            self.anglesButtonstate()
-            self.vectorsButtonstate()
-            self.matrixButtonstate()
+    def eigenvaluesButtonState(self):
+        if self.tab_buttons_dict["eigenvalues_tab_button"].isChecked():
+            for x in range(0,5):
+                if self.tab_buttons_name_list[x] == "eigenvalues_tab_button":
+                    pass
+                else:
+                    self.tab_buttons_dict[self.tab_buttons_name_list[x]].setChecked(False)
+            self.systemOfEquationButtonState()
+            self.anglesButtonState()
+            self.vectorsButtonState()
+            self.matrixButtonState()
             self.main_title_label_top.setPixmap(QtGui.QPixmap("icons/Eigenvectorstitle.png"))
-            self.eigenvaluesframe.show()
+            self.eigenvalues_frame.show()
         else:
             self.main_title_label_top.clear()
-            self.generaloperatorsframe.hide()
-            self.eigenvaluesframe.hide()
+            self.general_operators_frame.hide()
+            self.eigenvalues_frame.hide()
             return
-    def systemofequationButtonstate(self):
-        if self.systemofequationButton.isChecked():
-            self.anglesButton.setChecked(False)
-            self.matrixButton.setChecked(False)
-            self.vectorsButton.setChecked(False)
-            self.eigenvaluesButton.setChecked(False)
-            self.eigenvaluesButtonstate()
-            self.anglesButtonstate()
-            self.vectorsButtonstate()
-            self.matrixButtonstate()
+    def systemOfEquationButtonState(self):
+        if self.tab_buttons_dict["system_of_equations_tab_button"].isChecked():
+            for x in range(0,5):
+                if self.tab_buttons_name_list[x] == "system_of_equations_tab_button":
+                    pass
+                else:
+                    self.tab_buttons_dict[self.tab_buttons_name_list[x]].setChecked(False)
+            self.eigenvaluesButtonState()
+            self.anglesButtonState()
+            self.vectorsButtonState()
+            self.matrixButtonState()
             self.main_title_label_top.setPixmap(QtGui.QPixmap("icons/Systemofequationstitle.png"))
-            self.systemofequationsframe.show()
+            self.system_of_equations_frame.show()
         else:
-            self.systemofequationsframe.hide()
+            self.system_of_equations_frame.hide()
             self.main_title_label_top.clear()
-            self.generaloperatorsframe.hide()
+            self.general_operators_frame.hide()
             return
-    def showassign_window(self):
-        global assignvaluewindowhidden
-        global startupmatrices
-        if assignvaluewindowhidden:
-            if startupmatrices:
-                self.fillvectorstreeview()
-                self.fillmatricestreeview()
-                self.admin.window.assignvalueswindow.ui.NumberofmatrixcomboBox.setCurrentIndex(19)
-                self.admin.window.assignvalueswindow.ui.hideandshowmatrixitems()
-                self.admin.window.assignvalueswindow.show()
-                startupmatrices=False
+    def showAssignWindow(self):
+        global ASSIGNVALUEWINDOWHIDDEN
+        global FIRSTTIMELOADINGMATRICES
+        if ASSIGNVALUEWINDOWHIDDEN:
+            if FIRSTTIMELOADINGMATRICES:
+                self.fillVectorsTreeview()
+                self.fillMatricesTreeview()
+                self.admin.window.assign_values_window.ui.number_of_matrix_combobox.setCurrentIndex(19)
+                self.admin.window.assign_values_window.ui.hideAndShowMatrixItems()
+                self.admin.window.assign_values_window.show()
+                FIRSTTIMELOADINGMATRICES=False
             else:
-                self.admin.window.assignvalueswindow.show()
-            assignvaluewindowhidden=False
+                self.admin.window.assign_values_window.show()
+            ASSIGNVALUEWINDOWHIDDEN=False
         else:
-            self.admin.window.assignvalueswindow.hide()
-            assignvaluewindowhidden=True
-    def updatematrixtreeitemsontabchange(self):
-        global firsttabchange
-        if firsttabchange:
-            self.admin.window.assignvalueswindow.ui.NumberofmatrixcomboBox.setCurrentIndex(19)
-            self.admin.window.assignvalueswindow.ui.hideandshowmatrixitems()
-            self.fillmatricestreeview()
-            self.admin.window.assignvalueswindow.ui.NumberofmatrixcomboBox.setCurrentIndex(0)
-            self.admin.window.assignvalueswindow.ui.hideandshowmatrixitems()
-            firsttabchange = False
+            self.admin.window.assign_values_window.hide()
+            ASSIGNVALUEWINDOWHIDDEN=True
+    def updateMatrixTreeItemsOnTabChange(self):
+        global FIRSTTABCHANGE
+        if FIRSTTABCHANGE:
+            self.admin.window.assign_values_window.ui.number_of_matrix_combobox.setCurrentIndex(19)
+            self.admin.window.assign_values_window.ui.hideAndShowMatrixItems()
+            self.fillMatricesTreeview()
+            self.admin.window.assign_values_window.ui.number_of_matrix_combobox.setCurrentIndex(0)
+            self.admin.window.assign_values_window.ui.hideAndShowMatrixItems()
+            FIRSTTABCHANGE = False
         else:
             pass
-    def converttofloat(self,frac_str):
+    def convertToFloat(self,frac_str):
         try:
             return float(frac_str)
         except ValueError:
@@ -1542,506 +1388,504 @@ class Ui_MainWindow(object):
                 whole = 0
             frac = float(num) / float(denom)
             return whole - frac if whole < 0 else whole + frac
-    def fillmatricestreeview(self):
-        self.admin.updatematricestree()
+    def fillMatricesTreeview(self):
+        self.admin.updateMatricesTree()
         for z in range (0,20):
-            numberofmatrix = z
-            arrayofselectedmatrix = self.admin.matricesarrays[numberofmatrix]
+            number_of_matrix = z
+            array_of_selected_matrix = self.admin.matrices_arrays[number_of_matrix]
             spacing="   "
 
-            for x in range(0, self.admin.matricesrows[numberofmatrix]):
-                for y in range(0, self.admin.matricescolumns[numberofmatrix]):
-                    self.admin.window.assignvalueswindow.ui.matriceslabelcell_dict["matrix"+str(numberofmatrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
-                    if y == (self.admin.matricescolumns[numberofmatrix]-1):
-                        self.admin.window.assignvalueswindow.ui.matriceslabelcell_dict["matrix"+str(numberofmatrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setText(str(arrayofselectedmatrix[x][y]))
+            for x in range(0, self.admin.matrices_rows[number_of_matrix]):
+                for y in range(0, self.admin.matrices_columns[number_of_matrix]):
+                    self.admin.window.assign_values_window.ui.matrices_label_cell_dict["matrix"+str(number_of_matrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
+                    if y == (self.admin.matrices_columns[number_of_matrix]-1):
+                        self.admin.window.assign_values_window.ui.matrices_label_cell_dict["matrix"+str(number_of_matrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setText(str(array_of_selected_matrix[x][y]))
                     else:
-                        self.admin.window.assignvalueswindow.ui.matriceslabelcell_dict["matrix"+str(numberofmatrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setText(str(arrayofselectedmatrix[x][y])+spacing)
+                        self.admin.window.assign_values_window.ui.matrices_label_cell_dict["matrix"+str(number_of_matrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setText(str(array_of_selected_matrix[x][y])+spacing)
 
             for x in range(0,10):
                 for y in range(0,10):
-                    if (x+1) > self.admin.matricesrows[numberofmatrix]:
-                        self.admin.window.assignvalueswindow.ui.matriceslabelcell_dict["matrix"+str(numberofmatrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
-                    elif (y+1) > self.admin.matricescolumns[numberofmatrix]:
-                        self.admin.window.assignvalueswindow.ui.matriceslabelcell_dict["matrix"+str(numberofmatrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
+                    if (x+1) > self.admin.matrices_rows[number_of_matrix]:
+                        self.admin.window.assign_values_window.ui.matrices_label_cell_dict["matrix"+str(number_of_matrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
+                    elif (y+1) > self.admin.matrices_columns[number_of_matrix]:
+                        self.admin.window.assign_values_window.ui.matrices_label_cell_dict["matrix"+str(number_of_matrix+1)+"labelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
                     else:
                         pass
 
-        Comboboxselectionneedeed=self.admin.window.assignvalueswindow.ui.NumberofmatrixcomboBox.currentText()
-        self.admin.window.assignvalueswindow.ui.NumberofmatrixcomboBox.setCurrentText(str(int(Comboboxselectionneedeed)-1))
-        self.admin.window.assignvalueswindow.ui.hideandshowmatrixitems()
-        self.admin.window.assignvalueswindow.ui.NumberofmatrixcomboBox.setCurrentText(Comboboxselectionneedeed)
-        self.admin.window.assignvalueswindow.ui.hideandshowmatrixitems()
-    def fillvectorstreeview(self):
-        self.admin.updatevectorstree()
+        combobox_selection_needeed=self.admin.window.assign_values_window.ui.number_of_matrix_combobox.currentText()
+        self.admin.window.assign_values_window.ui.number_of_matrix_combobox.setCurrentText(str(int(combobox_selection_needeed)-1))
+        self.admin.window.assign_values_window.ui.hideAndShowMatrixItems()
+        self.admin.window.assign_values_window.ui.number_of_matrix_combobox.setCurrentText(combobox_selection_needeed)
+        self.admin.window.assign_values_window.ui.hideAndShowMatrixItems()
+    def fillVectorsTreeview(self):
+        self.admin.updateVectorsTree()
         for x in range (0,20):
-            stringlist=""
-            listofthings=[]
-            numberofvector = x
-            for y in range(0,(self.admin.vectorsrows[numberofvector])):
-                listofthings.append(list(self.admin.vectorsarrays[numberofvector][y]))
-            for z in range(0, len(listofthings)):
-                for w in range(0,self.admin.vectorscolumns[numberofvector]):
-                    thing=listofthings[z][w]
-                    stringlist = stringlist + str(thing)
-                    if w == (self.admin.vectorscolumns[numberofvector]-1):
+            vector_values_string=""
+            vector_values_list=[]
+            number_of_vector = x
+            for y in range(0,(self.admin.vectors_rows[number_of_vector])):
+                vector_values_list.append(list(self.admin.vectors_arrays[number_of_vector][y]))
+            for z in range(0, len(vector_values_list)):
+                for w in range(0,self.admin.vectors_columns[number_of_vector]):
+                    individual_vector_value=vector_values_list[z][w]
+                    vector_values_string = vector_values_string + str(individual_vector_value)
+                    if w == (self.admin.vectors_columns[number_of_vector]-1):
                         pass
                     else:
-                        stringlist = stringlist + "   "
-                if z == (len(listofthings)-1):
+                        vector_values_string = vector_values_string + "   "
+                if z == (len(vector_values_list)-1):
                     pass
                 else:
-                    stringlist = stringlist + "\n"
+                    vector_values_string = vector_values_string + "\n"
 
-            self.admin.window.assignvalueswindow.ui.vectorslabel_dict["vector"+str(x+1)+"label"].setText(stringlist)
-        Comboboxselectionneedeed=self.admin.window.assignvalueswindow.ui.NumberofvectorscomboBox.currentText()
-        self.admin.window.assignvalueswindow.ui.NumberofvectorscomboBox.setCurrentText(str(int(Comboboxselectionneedeed)-1))
-        self.admin.window.assignvalueswindow.ui.hideandshowvectoritems()
-        self.admin.window.assignvalueswindow.ui.NumberofvectorscomboBox.setCurrentText(Comboboxselectionneedeed)
-        self.admin.window.assignvalueswindow.ui.hideandshowvectoritems()
-    def Allclearbuttonclicked(self):
-        if self.vectorsButton.isChecked() or self.matrixButton.isChecked():
-            self.eqstringtextEdit.clear()
+            self.admin.window.assign_values_window.ui.vectors_label_dict["vector"+str(x+1)+"label"].setText(vector_values_string)
+        combobox_selection_needeed=self.admin.window.assign_values_window.ui.number_of_vectors_combobox.currentText()
+        self.admin.window.assign_values_window.ui.number_of_vectors_combobox.setCurrentText(str(int(combobox_selection_needeed)-1))
+        self.admin.window.assign_values_window.ui.hideAndShowVectorItems()
+        self.admin.window.assign_values_window.ui.number_of_vectors_combobox.setCurrentText(combobox_selection_needeed)
+        self.admin.window.assign_values_window.ui.hideAndShowVectorItems()
+    def allClearButtonClicked(self):
+        if self.tab_buttons_dict["vector_tab_button"].isChecked() or self.tab_buttons_dict["matrix_tab_button"].isChecked():
+            self.eq_string_text_edit.clear()
             for x, y in itools.product(range(1,11), range(1,11)):
-                self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
-            self.resultmatrixparentesisopenlabel.setHidden(True)
-            self.resultmatrixparentesisclosedlabel.setHidden(True)
-            self.resultlabelerror.setHidden(True)
-            self.resultlabelintorfloat.setHidden(True)
-        if self.anglesButton.isChecked():
-            self.anglesscreen_scrollArearesultLabel.clear()
-        if self.eigenvaluesButton.isChecked():
+                self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x)+"_"+str(y)].setHidden(True)
+            self.result_matrix_parentesis_open_label.setHidden(True)
+            self.result_matrix_parentesis_closed_label.setHidden(True)
+            self.result_label_error.setHidden(True)
+            self.result_label_int_or_float.setHidden(True)
+        if self.tab_buttons_dict["angles_tab_button"].isChecked():
+            self.angle_result_screen_scrollarea_label.clear()
+        if self.tab_buttons_dict["eigenvalues_tab_button"].isChecked():
             for x in range(0, 10):
-                self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setHidden(True)
-                self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(True)
-                self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setHidden(True)
-        if self.systemofequationButton.isChecked():
-            self.systemofequationsresultscrollArearesultLabel.clear()
+                self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setHidden(True)
+                self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(True)
+                self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setHidden(True)
+        if self.tab_buttons_dict["system_of_equations_tab_button"].isChecked():
+            self.system_of_equations_result_scrollarea_result_label.clear()
     def formatNumber(self,num):
         if num % 1 == 0:
             return int(num)
         else:
             return num
-    def converttofraction(self,num):
+    def convertToFraction(self,num):
         frac = Fraction(num).limit_denominator()
         if frac.denominator > 300:
             return num
         else:
             return frac
-    def Equalbuttonclicked(self):
-        equation_string = self.eqstringtextEdit.toPlainText()
+    def equalButtonClicked(self):
+        equation_string = self.eq_string_text_edit.toPlainText()
         if equation_string == "":
             return
-        self.admin.calculatestringequation(equation_string,self.degorrad)
-        if self.admin.is_equationresult_matrix==True:
-            self.resultlabelerror.setHidden(True)
+        self.admin.calculateStringEquation(equation_string,self.deg_or_rad)
+        if self.admin.is_equation_result_matrix==True:
+            self.result_label_error.setHidden(True)
             for j in range(0, (self.admin.equation_final_result.row)):
                 for k in range(0,(self.admin.equation_final_result.column)):
-                    self.result_matrixlabelcelldict["result_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText(str(self.converttofraction(self.formatNumber(self.converttofloat(self.admin.equation_final_result.values[j][k])))))
+                    self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText(str(self.convertToFraction(self.formatNumber(self.convertToFloat(self.admin.equation_final_result.values[j][k])))))
             for x in range(0,10):
                 for y in range(0,10):
-                    self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
+                    self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
             for x in range(0, (self.admin.equation_final_result.row)):
                 for y in range(0, (self.admin.equation_final_result.column)):
-                    self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
-            self.resultmatrixparentesisopenlabel.setHidden(False)
-            self.resultmatrixparentesisclosedlabel.setHidden(False)
-        if self.admin.is_equationresult_matrix==False:
+                    self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
+            self.result_matrix_parentesis_open_label.setHidden(False)
+            self.result_matrix_parentesis_closed_label.setHidden(False)
+        if self.admin.is_equation_result_matrix==False:
             for x in range(0, 10):
                 for y in range(0, 10):
-                    self.result_matrixlabelcelldict["result_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
-            self.resultmatrixparentesisopenlabel.setHidden(True)
-            self.resultmatrixparentesisclosedlabel.setHidden(True)
+                    self.result_matrix_label_cell_dict["result_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
+            self.result_matrix_parentesis_open_label.setHidden(True)
+            self.result_matrix_parentesis_closed_label.setHidden(True)
 
-        if self.admin.is_equationresult_intorfloat==True or self.admin.is_equationresult_complex==True:
-            self.resultlabelerror.setHidden(True)
-            self.resultlabelintorfloat.setHidden(False)
+        if self.admin.is_equation_result_int_or_float==True or self.admin.is_equation_result_complex==True:
+            self.result_label_error.setHidden(True)
+            self.result_label_int_or_float.setHidden(False)
             try:
-                self.resultlabelintorfloat.setText(str(self.formatNumber(self.admin.equation_final_result)))
+                self.result_label_int_or_float.setText(str(self.formatNumber(self.admin.equation_final_result)))
             except:
-                self.resultlabelintorfloat.setText(str(self.admin.equation_final_result))
+                self.result_label_int_or_float.setText(str(self.admin.equation_final_result))
 
-        if self.admin.is_equationresult_intorfloat==False and self.admin.is_equationresult_complex==False:
-            self.resultlabelintorfloat.setHidden(True)
+        if self.admin.is_equation_result_int_or_float==False and self.admin.is_equation_result_complex==False:
+            self.result_label_int_or_float.setHidden(True)
 
-        if self.admin.is_equationresult_intorfloat==False and self.admin.is_equationresult_matrix==False and self.admin.is_equationresult_complex==False:
-            self.resultlabelerror.setHidden(False)
-            self.resultlabelerror.setText(str(self.admin.equation_final_result))
+        if self.admin.is_equation_result_int_or_float==False and self.admin.is_equation_result_matrix==False and self.admin.is_equation_result_complex==False:
+            self.result_label_error.setHidden(False)
+            self.result_label_error.setText(str(self.admin.equation_final_result))
 
-    def Answerbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("Ans")
-    def Additionbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("+")
-    def Subtractionbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("-")
-    def Matrixproductbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("*")
-    def Determinantbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("det()")
-    def Transposebuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("tr()")
-    def Scalarbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("@")
-    def Vectorproductbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("&")
-    def Magnitudebuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("norm()")
-    def Generaladdbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("+")
-    def Generalsubbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("-")
-    def Generalmultiplybuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("*")
-    def Generaldivisionbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("/")
-    def Generalpowerbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("^")
-    def Generalrootbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("√()")
-    def Generalebuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("ℇ")
-    def Generalpibuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("π")
-    def Generalsinbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("sin()")
-    def Generalcosbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("cos()")
-    def Generaltanbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("tan()")
-    def Generalsinhbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("sinh()")
-    def Generalcoshbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("cosh()")
-    def Generaltanhbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("tanh()")
-    def Generalsininvbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("arcsin()")
-    def Generalcosinvbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("arccos()")
-    def Generaltaninvbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("arctan()")
-    def Generalsinhinvbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("arcsinh()")
-    def Generalcoshinvbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("arccosh()")
-    def Generaltanhinvbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("arctanh()")
-    def Generallogbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("Log()")
-    def Generalinbuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("In()")
-    def Generallogchoosebuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("Logchoosebase(base,argument)")
-    def Generalabsolutebuttonclicked(self):
-        self.eqstringtextEdit.insertPlainText("absolute()")
-    def Vectorandmatrixlistwidgetdoubleclicked(self):
-        texttoadd=""
-        if self.admin.window.ui.matrixButton.isChecked():
-            texttoadd=str(self.admin.window.ui.draggablematrixListWidget.currentItem().text())
-            self.admin.window.ui.eqstringtextEdit.insertPlainText(texttoadd)
-        elif self.admin.window.ui.vectorsButton.isChecked():
-            texttoadd=str(self.admin.window.ui.draggablevectorListWidget.currentItem().text())
-            self.admin.window.ui.eqstringtextEdit.insertPlainText(texttoadd)
+    def answerButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("Ans")
+    def additionButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("+")
+    def subtractionButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("-")
+    def matrixProductButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("*")
+    def determinantButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("det()")
+    def transposeButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("tr()")
+    def scalarButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("@")
+    def vectorProductButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("&")
+    def magnitudeButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("norm()")
+    def generalAddButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("+")
+    def generalSubButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("-")
+    def generalMultiplyButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("*")
+    def generalDivisionButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("/")
+    def generalPowerButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("^")
+    def generalRootButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("√()")
+    def generalEButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("ℇ")
+    def generalPiButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("π")
+    def generalSinButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("sin()")
+    def generalCosButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("cos()")
+    def generalTanButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("tan()")
+    def generalSinhButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("sinh()")
+    def generalCoshButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("cosh()")
+    def generalTanhButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("tanh()")
+    def generalSinInvButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("arcsin()")
+    def generalCosInvButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("arccos()")
+    def generalTanInvButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("arctan()")
+    def generalSinhInvButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("arcsinh()")
+    def generalCoshInvButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("arccosh()")
+    def generalTanhInvButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("arctanh()")
+    def generalLogButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("Log()")
+    def generalInButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("In()")
+    def generalLogChooseButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("Logchoosebase(base,argument)")
+    def generalAbsoluteButtonClicked(self):
+        self.eq_string_text_edit.insertPlainText("absolute()")
+
+    def vectorAndMatrixListWidgetDoubleClicked(self):
+        text_to_add=""
+        if self.admin.window.ui.tab_buttons_dict["matrix_tab_button"].isChecked():
+            text_to_add=str(self.admin.window.ui.draggable_matrix_list_widget.currentItem().text())
+            self.admin.window.ui.eq_string_text_edit.insertPlainText(text_to_add)
+        elif self.admin.window.ui.tab_buttons_dict["vector_tab_button"].isChecked():
+            text_to_add=str(self.admin.window.ui.draggable_vector_list_widget.currentItem().text())
+            self.admin.window.ui.eq_string_text_edit.insertPlainText(text_to_add)
         else:
             return
-
-    def Degandradverticalslidervaluechanged(self):
-        if self.degandradverticalSlider.value() == 1:
-            self.degorrad = "DEG"
-            self.radLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+    def degAndRadVerticalSliderValueChanged(self):
+        if self.deg_and_rad_vertical_slider.value() == 1:
+            self.deg_or_rad = "DEG"
+            self.rad_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "color: rgb(96, 96, 96);\n"
 "background-color:transparent;\n"
 "border:0px;\n"
 "margin:0px;")
-            self.degreeLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+            self.degree_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "color: rgb(126, 126, 126);\n"
 "background-color:transparent;\n"
 "border:0px;\n"
 "margin:0px;")
-            self.ddordmshorizontalSlider.show()
-            self.decimaldegreeLabel.show()
-            self.degreesminutessecondsLabel.show()
-        if self.degandradverticalSlider.value() == 0:
-            self.degorrad = "RAD"
-            self.degreeLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+            self.dd_or_dms_horizontal_slider.show()
+            self.decimal_degree_label.show()
+            self.degrees_minutes_seconds_label.show()
+        if self.deg_and_rad_vertical_slider.value() == 0:
+            self.deg_or_rad = "RAD"
+            self.degree_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "color: rgb(96, 96, 96);\n"
 "background-color:transparent;\n"
 "border:0px;\n"
 "margin:0px;")
-            self.radLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+            self.rad_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "color: rgb(126, 126, 126);\n"
 "background-color:transparent;\n"
 "border:0px;\n"
 "margin:0px;")
-            self.ddordmshorizontalSlider.hide()
-            self.decimaldegreeLabel.hide()
-            self.degreesminutessecondsLabel.hide()
+            self.dd_or_dms_horizontal_slider.hide()
+            self.decimal_degree_label.hide()
+            self.degrees_minutes_seconds_label.hide()
 
-    def Ddordmshorizontalslidervaluechanged(self):
-        if self.ddordmshorizontalSlider.value() == 1:
-            self.ddordms = "DD"
-            self.decimaldegreeLabel.setStyleSheet("font: 7pt \"Alice\";\n"
+    def ddOrDmsHorizontalSliderValueChanged(self):
+        if self.dd_or_dms_horizontal_slider.value() == 1:
+            self.dd_or_dms = "DD"
+            self.decimal_degree_label.setStyleSheet("font: 7pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(126, 126, 126);")
-            self.degreesminutessecondsLabel.setStyleSheet("font: 7pt \"Alice\";\n"
+            self.degrees_minutes_seconds_label.setStyleSheet("font: 7pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(96, 96, 96);")
-        if self.ddordmshorizontalSlider.value() == 0:
-            self.ddordms = "DMS"
-            self.decimaldegreeLabel.setStyleSheet("font: 7pt \"Alice\";\n"
+        if self.dd_or_dms_horizontal_slider.value() == 0:
+            self.dd_or_dms = "DMS"
+            self.decimal_degree_label.setStyleSheet("font: 7pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(96, 96, 96);")
-            self.degreesminutessecondsLabel.setStyleSheet("font: 7pt \"Alice\";\n"
+            self.degrees_minutes_seconds_label.setStyleSheet("font: 7pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(126, 126, 126);")
 
-    def Angleshorizontalslidervaluechanged(self):
-        if self.angleshorizontalSlider.value() == 1:
-            self.angleswritevectorFrame.show()
-            self.angleschoosevectorFrame.hide()
-            self.anglesimportLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+    def chooseTypeHorizontalSliderValueChanged(self):
+        if self.choose_type_horizontal_slider.value() == 1:
+            self.write_vector_frame.show()
+            self.choose_vector_frame.hide()
+            self.vector_import_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(96, 96, 96);")
-            self.angleswriteLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+            self.vector_write_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(126, 126, 126);")
-        if self.angleshorizontalSlider.value() == 0:
-            self.angleswritevectorFrame.hide()
-            self.angleschoosevectorFrame.show()
-            self.anglesimportLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+        if self.choose_type_horizontal_slider.value() == 0:
+            self.write_vector_frame.hide()
+            self.choose_vector_frame.show()
+            self.vector_import_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(126, 126, 126);")
-            self.angleswriteLabel.setStyleSheet("font: 8pt \"Alice\";\n"
+            self.vector_write_label.setStyleSheet("font: 8pt \"Alice\";\n"
 "background-color: transparent;\n"
 "color: rgb(96, 96, 96);")
 
-    def Anglesvectorxcomboboxvaluechanged(self):
-        chosenvector = self.choosevectorcomboBox_x.currentText()
-        chosenvectorvalues = self.admin.getangleschosenvector(chosenvector)
-        stringforchosenloop = "(    "
-        for x in chosenvectorvalues[0]:
-            valueofcell = str(self.converttofraction(self.formatNumber(self.converttofloat(x))))
-            stringofchosenvectorvalues = stringforchosenloop + valueofcell + "    "
-            stringforchosenloop = stringofchosenvectorvalues
-        stringofchosenvectorvalues = stringofchosenvectorvalues + ")"
-        self.valueschoosexLabel.setText("        "+stringofchosenvectorvalues)
+    def anglesVectorXComboboxValueChanged(self):
+        chosen_vector = self.choose_vector_combobox_x.currentText()
+        chosen_vector_values = self.admin.getAnglesChosenVector(chosen_vector)
+        string_for_chosen_loop = "(    "
+        for x in chosen_vector_values[0]:
+            valueofcell = str(self.convertToFraction(self.formatNumber(self.convertToFloat(x))))
+            stringofchosen_vector_values = string_for_chosen_loop + valueofcell + "    "
+            string_for_chosen_loop = stringofchosen_vector_values
+        stringofchosen_vector_values = stringofchosen_vector_values + ")"
+        self.values_chosen_x_label.setText("        "+stringofchosen_vector_values)
 
-    def Anglesvectorycomboboxvaluechanged(self):
-        chosenvector = self.choosevectorcomboBox_y.currentText()
-        chosenvectorvalues = self.admin.getangleschosenvector(chosenvector)
-        stringforchosenloop = "(    "
-        for x in chosenvectorvalues[0]:
-            valueofcell = str(self.converttofraction(self.formatNumber(self.converttofloat(x))))
-            stringofchosenvectorvalues = stringforchosenloop + valueofcell + "    "
-            stringforchosenloop = stringofchosenvectorvalues
-        stringofchosenvectorvalues = stringofchosenvectorvalues + ")"
-        self.valueschooseyLabel.setText("        "+stringofchosenvectorvalues)
+    def anglesVectorYComboboxValueChanged(self):
+        chosen_vector = self.choose_vector_combobox_y.currentText()
+        chosen_vector_values = self.admin.getAnglesChosenVector(chosen_vector)
+        string_for_chosen_loop = "(    "
+        for x in chosen_vector_values[0]:
+            valueofcell = str(self.convertToFraction(self.formatNumber(self.convertToFloat(x))))
+            stringofchosen_vector_values = string_for_chosen_loop + valueofcell + "    "
+            string_for_chosen_loop = stringofchosen_vector_values
+        stringofchosen_vector_values = stringofchosen_vector_values + ")"
+        self.values_chosen_y_label.setText("        "+stringofchosen_vector_values)
 
-    def WritevectorcolumncomboBox_xvaluechanged(self):
-        numberofcolumnsselected=int(self.writevectorcolumncomboBox_x.currentText())
-        self.writevectorcolumncomboBox_y.setItemText(self.writevectorcolumncomboBox_y.currentIndex(),self.writevectorcolumncomboBox_x.currentText())
-        self.WritevectorcolumncomboBox_yvaluechanged()
-        for x in range (1,numberofcolumnsselected+1):
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].show()
-        for x in range (numberofcolumnsselected+1,13):
-            self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].hide()
+    def writeVectorColumnComboboxXValueChanged(self):
+        number_of_columns_selected=int(self.write_vector_column_combobox_x.currentText())
+        self.write_vector_column_combobox_y.setItemText(self.write_vector_column_combobox_y.currentIndex(),self.write_vector_column_combobox_x.currentText())
+        self.writeVectorColumnComboboxYValueChanged()
+        for x in range (1,number_of_columns_selected+1):
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].show()
+        for x in range (number_of_columns_selected+1,13):
+            self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].hide()
 
-    def WritevectorcolumncomboBox_yvaluechanged(self):
-        numberofcolumnsselected=int(self.writevectorcolumncomboBox_y.currentText())
-        for x in range (1,numberofcolumnsselected+1):
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].show()
-        for x in range (numberofcolumnsselected+1,13):
-            self.writevectorylineEdit_dict["writevectorylineEdit_"+str(x)].hide()
+    def writeVectorColumnComboboxYValueChanged(self):
+        number_of_columns_selected=int(self.write_vector_column_combobox_y.currentText())
+        for x in range (1,number_of_columns_selected+1):
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].show()
+        for x in range (number_of_columns_selected+1,13):
+            self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(x)].hide()
 
-    def Angleswritevectorscreatearray(self):
+    def anglesWriteVectorsCreateArray(self):
         try:
-            self.writenvectorsfilled=True
-            self.listofvectorxvalues=[[]]
-            self.listofvectoryvalues=[[]]
-            self.vectorxnumbercolumns=int(self.writevectorcolumncomboBox_x.currentText())
-            self.vectorynumbercolumns=int(self.writevectorcolumncomboBox_y.currentText())
-            for x in range(1,self.vectorxnumbercolumns+1):
-                if self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].text() == "":
-                    self.admin.window.errorwindow.show()
-                    self.admin.window.errorwindow.ui.Errorwindowbodylabel.setText("All Vector I cells must be filled.")
-                    self.writenvectorsfilled=False
+            self.writen_vectors_filled=True
+            self.list_of_vector_x_values=[[]]
+            self.list_of_vector_y_values=[[]]
+            self.vector_x_number_columns=int(self.write_vector_column_combobox_x.currentText())
+            self.vector_y_number_columns=int(self.write_vector_column_combobox_y.currentText())
+            for x in range(1,self.vector_x_number_columns+1):
+                if self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].text() == "":
+                    self.admin.window.error_window.show()
+                    self.admin.window.error_window.ui.error_window_body_label.setText("All Vector I cells must be filled.")
+                    self.writen_vectors_filled=False
                 else:
-                    self.listofvectorxvalues[0].append(self.converttofloat(self.writevectorxlineEdit_dict["writevectorxlineEdit_"+str(x)].text()))
-            for y in range(1,self.vectorynumbercolumns+1):
-                if self.writevectorylineEdit_dict["writevectorylineEdit_"+str(y)].text() == "":
-                    self.admin.window.errorwindow.show()
-                    self.admin.window.errorwindow.ui.Errorwindowbodylabel.setText("All Vector II cells must be filled.")
-                    self.writenvectorsfilled=False
+                    self.list_of_vector_x_values[0].append(self.convertToFloat(self.write_vector_x_lineedit_dict["writevectorxlineEdit_"+str(x)].text()))
+            for y in range(1,self.vector_y_number_columns+1):
+                if self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(y)].text() == "":
+                    self.admin.window.error_window.show()
+                    self.admin.window.error_window.ui.error_window_body_label.setText("All Vector II cells must be filled.")
+                    self.writen_vectors_filled=False
                 else:
-                    self.listofvectoryvalues[0].append(self.converttofloat(self.writevectorylineEdit_dict["writevectorylineEdit_"+str(y)].text()))
-            self.admin.angleswritevectorscreatearray(self.listofvectorxvalues,self.listofvectoryvalues,self.vectorxnumbercolumns,self.vectorynumbercolumns)
+                    self.list_of_vector_y_values[0].append(self.convertToFloat(self.write_vector_y_lineedit_dict["writevectorylineEdit_"+str(y)].text()))
+            self.admin.anglesWriteVectorsCreateArray(self.list_of_vector_x_values,self.list_of_vector_y_values,self.vector_x_number_columns,self.vector_y_number_columns)
         except:
             pass
 
-    def AnglescalculatepushButtonclicked(self):
-        if self.angleshorizontalSlider.value() == 0:
-            result = self.admin.calculateangles(self.choosevectorcomboBox_x.currentText(),self.choosevectorcomboBox_y.currentText(),self.degorrad,self.ddordms)
-            if self.degorrad=="RAD":
-                self.anglesscreen_scrollArearesultLabel.setText(result+" rad")
-            if self.degorrad=="DEG":
-                self.anglesscreen_scrollArearesultLabel.setText(result+" degrees")
-        if self.angleshorizontalSlider.value() == 1:
-            self.Angleswritevectorscreatearray()
-            result = self.admin.calculateangles("VectorI","VectorII",self.degorrad,self.ddordms)
-            if self.degorrad=="RAD":
-                self.anglesscreen_scrollArearesultLabel.setText(result+" rad")
-            if self.degorrad=="DEG":
-                self.anglesscreen_scrollArearesultLabel.setText(result+" degrees")
-            if self.writenvectorsfilled == False:
-                self.anglesscreen_scrollArearesultLabel.clear()
-    def Eigenvalueschoosematrixlistwidgetitemchanged(self):
-        chosenmatrixtoshow = self.eigenvalueschoosematrixListWidget.currentItem().text()
-        self.admin.geteigenchosenmatrix(chosenmatrixtoshow)
-        self.emptystring=""
+    def anglesCalculatePushbuttonClicked(self):
+        if self.choose_type_horizontal_slider.value() == 0:
+            result = self.admin.calculateAngles(self.choose_vector_combobox_x.currentText(),self.choose_vector_combobox_y.currentText(),self.deg_or_rad,self.dd_or_dms)
+            if self.deg_or_rad=="RAD":
+                self.angle_result_screen_scrollarea_label.setText(result+" rad")
+            if self.deg_or_rad=="DEG":
+                self.angle_result_screen_scrollarea_label.setText(result+" degrees")
+        if self.choose_type_horizontal_slider.value() == 1:
+            self.anglesWriteVectorsCreateArray()
+            result = self.admin.calculateAngles("VectorI","VectorII",self.deg_or_rad,self.dd_or_dms)
+            if self.deg_or_rad=="RAD":
+                self.angle_result_screen_scrollarea_label.setText(result+" rad")
+            if self.deg_or_rad=="DEG":
+                self.angle_result_screen_scrollarea_label.setText(result+" degrees")
+            if self.writen_vectors_filled == False:
+                self.angle_result_screen_scrollarea_label.clear()
+    def eigenvaluesChooseMatrixListWidgetItemChanged(self):
+        chosen_matrix_to_show = self.eigenvalues_choose_matrix_list_widget.currentItem().text()
+        self.admin.getChosenMatrix(chosen_matrix_to_show)
+        self.empty_string=""
 
         for j in range(0, 10):
             for k in range(0,10):
-                self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText("")
+                self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText("")
 
-        for j in range(0, (self.admin.eigenchosenmatrixobject.row)):
-            for k in range(0,(self.admin.eigenchosenmatrixobject.column)):
-                self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText(str(self.converttofraction(self.formatNumber(self.converttofloat(self.admin.eigenchosenmatrixobject.values[j][k])))))
+        for j in range(0, (self.admin.chosen_matrix_object.row)):
+            for k in range(0,(self.admin.chosen_matrix_object.column)):
+                self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText(str(self.convertToFraction(self.formatNumber(self.convertToFloat(self.admin.chosen_matrix_object.values[j][k])))))
 
         for x in range(0,10):
             for y in range(0,10):
-                self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
+                self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
 
-        for x in range(0, (self.admin.eigenchosenmatrixobject.row)):
-            for y in range(0, (self.admin.eigenchosenmatrixobject.column)):
-                self.eigenchosen_matrixlabelcelldict["eigenchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
+        for x in range(0, (self.admin.chosen_matrix_object.row)):
+            for y in range(0, (self.admin.chosen_matrix_object.column)):
+                self.eigenchosen_matrix_label_cell_dict["eigenchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
 
-        self.eigenvalueschosenmatrixparentesisopenlabel.setHidden(False)
-        self.eigenvalueschosenmatrixparentesisclosedlabel.setHidden(False)
+        self.eigenvalues_chosen_matrix_parentesis_open_label.setHidden(False)
+        self.eigenvalues_chosen_matrix_parentesis_closed_label.setHidden(False)
 
 
-    def Eigenvaluescalculatepushbuttonclicked(self):
+    def eigenvaluesCalculatePushbuttonClicked(self):
         try:
-            chosenmatrixtoeigen = self.eigenvalueschoosematrixListWidget.currentItem().text()
+            chosen_matrix_to_eigen = self.eigenvalues_choose_matrix_list_widget.currentItem().text()
         except:
-            self.admin.window.errorwindow.show()
-            self.admin.window.errorwindow.ui.Errorwindowbodylabel.setText("Select a Matrix")
+            self.admin.window.error_window.show()
+            self.admin.window.error_window.ui.error_window_body_label.setText("Select a Matrix")
             return
 
-        self.admin.geteigenvectors(chosenmatrixtoeigen)
+        self.admin.getEigenVectors(chosen_matrix_to_eigen)
 
-        if self.admin.eigenvectorsresult == []:
+        if self.admin.eigen_vectors_result == []:
             return
         else:
-            for x in range(0,len(self.admin.eigenvectorsresult)):
-                self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setHidden(False)
+            for x in range(0,len(self.admin.eigen_vectors_result)):
+                self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setHidden(False)
 
             try:
-                for x in range(0,len(self.admin.eigenvectorsresult)):
-                    self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setText("λ = "+str(self.converttofraction(self.formatNumber(self.converttofloat(self.admin.eigenvectorsresult[x][0])))))
+                for x in range(0,len(self.admin.eigen_vectors_result)):
+                    self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setText("λ = "+str(self.convertToFraction(self.formatNumber(self.convertToFloat(self.admin.eigen_vectors_result[x][0])))))
 
             except:
-                for x in range(0,len(self.admin.eigenvectorsresult)):
-                    self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setText("λ = "+str(self.admin.eigenvectorsresult[x][0]))
+                for x in range(0,len(self.admin.eigen_vectors_result)):
+                    self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setText("λ = "+str(self.admin.eigen_vectors_result[x][0]))
 
-            for x in range(len(self.admin.eigenvectorsresult),10):
-                self.eigenvalueLabel_dict["eigenvalueLabel_"+str(x+1)].setHidden(True)
+            for x in range(len(self.admin.eigen_vectors_result),10):
+                self.eigenvalue_label_dict["eigenvalueLabel_"+str(x+1)].setHidden(True)
 
-            for x in range(0,len(self.admin.eigenvectorsresult)):
-                self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(False)
+            for x in range(0,len(self.admin.eigen_vectors_result)):
+                self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(False)
 
-            for x in range(0,len(self.admin.eigenvectorsresult)):
-                self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setText("Algebraic multiplicity: "+str(self.converttofraction(self.formatNumber(self.converttofloat(self.admin.eigenvectorsresult[x][1])))))
+            for x in range(0,len(self.admin.eigen_vectors_result)):
+                self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setText("Algebraic multiplicity: "+str(self.convertToFraction(self.formatNumber(self.convertToFloat(self.admin.eigen_vectors_result[x][1])))))
 
-            for x in range(len(self.admin.eigenvectorsresult),10):
-                self.eigenvaluemultiplicityLabel_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(True)
+            for x in range(len(self.admin.eigen_vectors_result),10):
+                self.eigenvalue_multiplicity_label_dict["eigenvaluemultiplicityLabel_"+str(x+1)].setHidden(True)
 
-            for x in range(0,len(self.admin.eigenvectorsresult)):
-                self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setHidden(False)
+            for x in range(0,len(self.admin.eigen_vectors_result)):
+                self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setHidden(False)
 
-            for x in range(0,len(self.admin.eigenvectorsresult)):
-                self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setText(str(self.admin.eigenvectorsresult[x][2]))
+            for x in range(0,len(self.admin.eigen_vectors_result)):
+                self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setText(str(self.admin.eigen_vectors_result[x][2]))
 
-            for x in range(len(self.admin.eigenvectorsresult),10):
-                self.eigenvectorsLabel_dict["eigenvectorsLabel_"+str(x+1)].setHidden(True)
+            for x in range(len(self.admin.eigen_vectors_result),10):
+                self.eigenvectors_label_dict["eigenvectorsLabel_"+str(x+1)].setHidden(True)
 
-    def SystemofequationschoosematrixListWidgetitemchanged(self):
-        chosenmatrixtoshow = self.systemofequationschoosematrixListWidget.currentItem().text()
-        self.admin.geteigenchosenmatrix(chosenmatrixtoshow)
-        self.emptystring=""
+    def systemOfEquationsChooseMatrixListWidgetItemChanged(self):
+        chosen_matrix_to_show = self.system_of_equations_choose_matrix_listwidget.currentItem().text()
+        self.admin.getChosenMatrix(chosen_matrix_to_show)
+        self.empty_string=""
 
         for j in range(0, 10):
             for k in range(0,10):
-                self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText("")
+                self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText("")
 
-        for j in range(0, (self.admin.eigenchosenmatrixobject.row)):
-            for k in range(0,(self.admin.eigenchosenmatrixobject.column)):
-                self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText(str(self.converttofraction(self.formatNumber(self.converttofloat(self.admin.eigenchosenmatrixobject.values[j][k])))))
+        for j in range(0, (self.admin.chosen_matrix_object.row)):
+            for k in range(0,(self.admin.chosen_matrix_object.column)):
+                self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(j+1)+"_"+str(k+1)].setText(str(self.convertToFraction(self.formatNumber(self.convertToFloat(self.admin.chosen_matrix_object.values[j][k])))))
 
         for x in range(0,10):
             for y in range(0,10):
-                self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
+                self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(True)
 
-        for x in range(0, (self.admin.eigenchosenmatrixobject.row)):
-            for y in range(0, (self.admin.eigenchosenmatrixobject.column)):
-                self.systemmatrixchosen_matrixlabelcelldict["systemmatrixchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
+        for x in range(0, (self.admin.chosen_matrix_object.row)):
+            for y in range(0, (self.admin.chosen_matrix_object.column)):
+                self.system_matrix_chosen_matrix_label_cell_dict["systemmatrixchosen_matrixlabelcell"+str(x+1)+"_"+str(y+1)].setHidden(False)
 
-        self.systemofequationschoosematrixparentesisopenlabel.setHidden(False)
-        self.systemofequationschoosematrixparentesisclosedlabel.setHidden(False)
+        self.system_of_equations_choose_matrix_parentesis_open_label.setHidden(False)
+        self.system_of_equations_choose_matrix_parentesis_closed_label.setHidden(False)
 
-    def SystemofequationschoosevectorListWidgetitemchanged(self):
-        chosenmatrixtoshow = self.systemofequationschoosevectorListWidget.currentItem().text()
-        self.admin.geteigenchosenmatrix(chosenmatrixtoshow)
-        self.emptystring=""
+    def systemOfEquationsChooseVectorListWidgetItemChanged(self):
+        chosen_matrix_to_show = self.system_of_equations_choosevector_list_widget.currentItem().text()
+        self.admin.getChosenMatrix(chosen_matrix_to_show)
+        self.empty_string=""
 
         for k in range(0,10):
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(k+1)+"_1"].setText("")
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(k+1)+"_1"].setText("")
 
-        for j in range(0, (self.admin.eigenchosenmatrixobject.row)):
-            for k in range(0,(self.admin.eigenchosenmatrixobject.column)):
-                self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(k+1)+"_1"].setText(str(self.converttofraction(self.formatNumber(self.converttofloat(self.admin.eigenchosenmatrixobject.values[j][k])))))
+        for j in range(0, (self.admin.chosen_matrix_object.row)):
+            for k in range(0,(self.admin.chosen_matrix_object.column)):
+                self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(k+1)+"_1"].setText(str(self.convertToFraction(self.formatNumber(self.convertToFloat(self.admin.chosen_matrix_object.values[j][k])))))
 
         for x in range(0,10):
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x+1)+"_1"].setHidden(True)
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x+1)+"_1"].setHidden(True)
 
-        for x in range(0, (self.admin.eigenchosenmatrixobject.column)):
-            self.systemvectorchosen_vectorlabelcell_dict["systemvectorchosen_vectorlabelcell"+str(x+1)+"_1"].setHidden(False)
+        for x in range(0, (self.admin.chosen_matrix_object.column)):
+            self.system_vector_chosen_vector_label_cell_dict["systemvectorchosen_vectorlabelcell"+str(x+1)+"_1"].setHidden(False)
 
-        self.systemofequationschoosevectorparentesisopenlabel.setHidden(False)
-        self.systemofequationschoosevectorparentesisclosedlabel.setHidden(False)
+        self.system_of_equations_choose_vector_parentesis_open_label.setHidden(False)
+        self.system_of_equations_choose_vector_parentesis_closed_label.setHidden(False)
 
-    def Systemofequationscalculatepushbuttonclicked(self):
+    def systemOfEquationsCalculatePushbuttonClicked(self):
         try:
-            systemchosenmatrix,systemchosenvector = self.systemofequationschoosematrixListWidget.currentItem().text(),self.systemofequationschoosevectorListWidget.currentItem().text()
+            system_chosen_matrix,system_chosen_vector = self.system_of_equations_choose_matrix_listwidget.currentItem().text(),self.system_of_equations_choosevector_list_widget.currentItem().text()
         except:
-            self.admin.window.errorwindow.show()
-            self.admin.window.errorwindow.ui.Errorwindowbodylabel.setText("Select a matrix and a vector.")
+            self.admin.window.error_window.show()
+            self.admin.window.error_window.ui.error_window_body_label.setText("Select a matrix and a vector.")
             return
-        self.admin.getsystemofequationsresult(systemchosenmatrix,systemchosenvector)
-        self.systemofequationsresultscrollArearesultLabel.setText(self.admin.systemsofequationsresult)
-
-    def Infobuttonclicked(self):
-        self.admin.window.infowindow.show()
-    def Setstylesheetspoststart(self):
-        self.systemofequationschoosematrixListWidget.setStyleSheet(mvssps.systemofequationschoosematrixListWidget_stylesheet)
-        self.systemofequationschoosevectorListWidget.setStyleSheet(mvssps.systemofequationschoosevectorListWidget_stylesheet)
-        self.eigenvaluesresultscreen_scrollArea.setStyleSheet(mvssps.eigenvaluesresultscreen_scrollArea_stylesheet)
-        self.systemofequationsresultscrollArea.setStyleSheet(mvssps.systemofequationsresultscrollArea_stylesheet)
-        self.systemofequationschoosevectorScrollArea.setStyleSheet(mvssps.systemofequationschoosevectorScrollArea_stylesheet)
-        self.systemofequationschoosematrixScrollArea.setStyleSheet(mvssps.systemofequationschoosematrixScrollArea_stylesheet)
-        self.eigenvalueschoosematrixListWidget.setStyleSheet(mvssps.eigenvalueschoosematrixListWidget_stylesheet)
-        self.eigenvalueschosenmatrixscreen_scrollArea.setStyleSheet(mvssps.eigenvalueschosenmatrixscreen_scrollArea_stylesheet)
-        self.screen_scrollArea.setStyleSheet(mvssps.screen_scrollArea_stylesheet)
-        self.draggablematrixListWidget.setStyleSheet(mvssps.draggablematrixListWidget_stylesheet)
-        self.anglesscreen_scrollArea.setStyleSheet(mvssps.anglesscreen_scrollArea_stylesheet)
-        self.draggablevectorListWidget.setStyleSheet(mvssps.draggablevectorListWidget_stylesheet)
-        self.eqstringtextEdit.setStyleSheet(mvssps.eqstringtextEdit_stylesheet)
+        self.admin.getSystemOfEquationsResult(system_chosen_matrix,system_chosen_vector)
+        self.system_of_equations_result_scrollarea_result_label.setText(self.admin.systems_of_equations_result)
+    def infoButtonClicked(self):
+        self.admin.window.info_window.show()
+    def setStylesheetsPoststart(self):
+        self.system_of_equations_choose_matrix_listwidget.setStyleSheet(mvssps.system_of_equations_choose_matrix_listwidget_stylesheet)
+        self.system_of_equations_choosevector_list_widget.setStyleSheet(mvssps.system_of_equations_choosevector_list_widget_stylesheet)
+        self.eigenvalues_result_screen_scrollarea.setStyleSheet(mvssps.eigenvalues_result_screen_scrollarea_stylesheet)
+        self.system_of_equations_result_scrollarea.setStyleSheet(mvssps.system_of_equations_result_scrollarea_stylesheet)
+        self.system_of_equations_choose_vector_scrollarea.setStyleSheet(mvssps.system_of_equations_choose_vector_scrollarea_stylesheet)
+        self.system_of_equations_choose_matrix_scrollarea.setStyleSheet(mvssps.system_of_equations_choose_matrix_scrollarea_stylesheet)
+        self.eigenvalues_choose_matrix_list_widget.setStyleSheet(mvssps.eigenvalues_choose_matrix_list_widget_stylesheet)
+        self.eigenvalues_chosen_matrix_screen_scrollarea.setStyleSheet(mvssps.eigenvalues_chosen_matrix_screen_scrollarea_stylesheet)
+        self.main_vector_matrix_screen_scrollarea.setStyleSheet(mvssps.main_vector_matrix_screen_scrollarea_stylesheet)
+        self.draggable_matrix_list_widget.setStyleSheet(mvssps.draggable_matrix_list_widget_stylesheet)
+        self.angle_result_screen_scrollarea.setStyleSheet(mvssps.angle_result_screen_scrollarea_stylesheet)
+        self.draggable_vector_list_widget.setStyleSheet(mvssps.draggable_vector_list_widget_stylesheet)
+        self.eq_string_text_edit.setStyleSheet(mvssps.eq_string_text_edit_stylesheet)
 ###########################
 #### CLASES DE WIDGETS ####
 ###########################
-
-class QTextEditdropenabled(QtWidgets.QTextEdit):
+class QTextEditDropEnabled(QtWidgets.QTextEdit):
     def __init__(self,admin):
         self.admin = admin
-        super(QTextEditdropenabled, self).__init__()
+        super(QTextEditDropEnabled, self).__init__()
         self.setAcceptDrops(True)
         self.blinking_colors = itools.cycle([
             QtGui.QColor(50, 50, 50, 255),
@@ -2069,9 +1913,9 @@ class QTextEditdropenabled(QtWidgets.QTextEdit):
             QtGui.QColor(50, 50, 50, 255),
             QtGui.QColor(15, 16, 15, 255)
         ])
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.change_color)
-        self.timer.start(32)
+        self.cursor_painter_timer = QtCore.QTimer()
+        self.cursor_painter_timer.timeout.connect(self.changeColor)
+        self.cursor_painter_timer.start(32)
 
     def dragEnterEvent(self, e):
         e.accept()
@@ -2080,19 +1924,19 @@ class QTextEditdropenabled(QtWidgets.QTextEdit):
         e.accept()
 
     def dropEvent(self, e):
-        texttoadd=""
-        if self.admin.window.ui.matrixButton.isChecked():
-            texttoadd=str(self.admin.window.ui.draggablematrixListWidget.currentItem().text())
-            self.admin.window.ui.eqstringtextEdit.insertPlainText(texttoadd)
-        elif self.admin.window.ui.vectorsButton.isChecked():
-            texttoadd=str(self.admin.window.ui.draggablevectorListWidget.currentItem().text())
-            self.admin.window.ui.eqstringtextEdit.insertPlainText(texttoadd)
+        text_to_add=""
+        if self.admin.window.ui.tab_buttons_dict["matrix_tab_button"].isChecked():
+            text_to_add=str(self.admin.window.ui.draggable_matrix_list_widget.currentItem().text())
+            self.admin.window.ui.eq_string_text_edit.insertPlainText(text_to_add)
+        elif self.admin.window.ui.tab_buttons_dict["vector_tab_button"].isChecked():
+            text_to_add=str(self.admin.window.ui.draggable_vector_list_widget.currentItem().text())
+            self.admin.window.ui.eq_string_text_edit.insertPlainText(text_to_add)
         else:
             return
         e.accept()
 
-    def change_color(self):
-        self._colorofcursor = next(self.blinking_colors)
+    def changeColor(self):
+        self.color_of_cursor = next(self.blinking_colors)
         self.update()
 
     def paintEvent(self, event):
@@ -2100,8 +1944,7 @@ class QTextEditdropenabled(QtWidgets.QTextEdit):
         if self.hasFocus():
             rect = self.cursorRect(self.textCursor())
             painter = QtGui.QPainter(self.viewport())
-            painter.fillRect(rect, self._colorofcursor)
-
+            painter.fillRect(rect, self.color_of_cursor)
 
 ############################
 #### CLASES DE VENTANAS ####
@@ -2113,12 +1956,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self,self.admin)
         self.setWindowTitle("O.V.C.")
-        self.assignvalueswindow = AssignWindow(self,self.admin)
-        self.assignvalueswindow.setWindowTitle("Assign")
-        self.assignvalueswindow.hide()
-        global assignvaluewindowhidden
-        assignvaluewindowhidden=True
-        self.ui.eqstringtextEdit.installEventFilter(self)
+        self.assign_values_window = AssignWindow(self,self.admin)
+        self.assign_values_window.setWindowTitle("Assign")
+        self.assign_values_window.hide()
+        global ASSIGNVALUEWINDOWHIDDEN
+        ASSIGNVALUEWINDOWHIDDEN=True
+        self.ui.eq_string_text_edit.installEventFilter(self)
         self.installEventFilter(self)
 
         def moveWindow(event):
@@ -2127,43 +1970,42 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.dragPos = event.globalPos()
                 event.accept()
 
-        self.ui.Titlebarframe.mouseMoveEvent = moveWindow
+        self.ui.title_bar_frame.mouseMoveEvent = moveWindow
 
-        self.ui.Minimize_Button.clicked.connect(lambda: self.showMinimized())
-        self.ui.Exit_Button.clicked.connect(lambda: self.close())
+        self.ui.minimize_button.clicked.connect(lambda: self.showMinimized())
+        self.ui.exit_button.clicked.connect(lambda: self.close())
 
-        self.errorwindow=ErrorWindow()
-        self.infowindow=InfoWindow()
-
+        self.error_window=ErrorWindow()
+        self.info_window=InfoWindow()
 
     def moveEvent(self, e):
-        global Mainposx
-        global Mainposy
-        Mainposx=self.pos().x()
-        Mainposy=self.pos().y()
-        global assignvaluewindowhidden
-        if not assignvaluewindowhidden:
-            x = Mainposx - 330
-            y = Mainposy
-            self.assignvalueswindow.move(x,y)
+        global MAINWINDOWPOSITIONXAXIS
+        global MAINWINDOWPOSITIONYAXIS
+        MAINWINDOWPOSITIONXAXIS=self.pos().x()
+        MAINWINDOWPOSITIONYAXIS=self.pos().y()
+        global ASSIGNVALUEWINDOWHIDDEN
+        if not ASSIGNVALUEWINDOWHIDDEN:
+            x = MAINWINDOWPOSITIONXAXIS - 330
+            y = MAINWINDOWPOSITIONYAXIS
+            self.assign_values_window.move(x,y)
         else:
             pass
         super(MainWindow, self).moveEvent(e)
     def closeEvent(self, event):
-        self.assignvalueswindow.close()
-        global assignvaluewindowhidden
-        assignvaluewindowhidden=True
-        self.assignvalueswindow.valueswindow.close()
-        self.errorwindow.close()
-        self.infowindow.close()
+        self.assign_values_window.close()
+        global ASSIGNVALUEWINDOWHIDDEN
+        ASSIGNVALUEWINDOWHIDDEN=True
+        self.assign_values_window.valueswindow.close()
+        self.error_window.close()
+        self.info_window.close()
         event.accept()
 
     def changeEvent(self, event):
         if event.type() == QtCore.QEvent.WindowStateChange:
             if QtCore.Qt.WindowMinimized:
-                self.assignvalueswindow.hide()
-                global assignvaluewindowhidden
-                assignvaluewindowhidden=True
+                self.assign_values_window.hide()
+                global ASSIGNVALUEWINDOWHIDDEN
+                ASSIGNVALUEWINDOWHIDDEN=True
             else:
                 pass
 
@@ -2171,80 +2013,80 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dragPos = event.globalPos()
 
     def eventFilter(self, obj, event):
-        if event.type() == QtCore.QEvent.KeyPress and obj is self.ui.eqstringtextEdit:
-            if event.key() == QtCore.Qt.Key_Return and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.Equalbuttonclicked()
+        if event.type() == QtCore.QEvent.KeyPress and obj is self.ui.eq_string_text_edit:
+            if event.key() == QtCore.Qt.Key_Return and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.equalButtonClicked()
                 return True
-            if event.key() == QtCore.Qt.Key_Enter and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.Equalbuttonclicked()
+            if event.key() == QtCore.Qt.Key_Enter and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.equalButtonClicked()
                 return True
-            if event.key() == QtCore.Qt.Key_1 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("1")
+            if event.key() == QtCore.Qt.Key_1 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("1")
                 return True
-            if event.key() == QtCore.Qt.Key_2 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("2")
+            if event.key() == QtCore.Qt.Key_2 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("2")
                 return True
-            if event.key() == QtCore.Qt.Key_3 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("3")
+            if event.key() == QtCore.Qt.Key_3 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("3")
                 return True
-            if event.key() == QtCore.Qt.Key_4 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("4")
+            if event.key() == QtCore.Qt.Key_4 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("4")
                 return True
-            if event.key() == QtCore.Qt.Key_5 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("5")
+            if event.key() == QtCore.Qt.Key_5 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("5")
                 return True
-            if event.key() == QtCore.Qt.Key_6 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("6")
+            if event.key() == QtCore.Qt.Key_6 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("6")
                 return True
-            if event.key() == QtCore.Qt.Key_7 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("7")
+            if event.key() == QtCore.Qt.Key_7 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("7")
                 return True
-            if event.key() == QtCore.Qt.Key_8 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("8")
+            if event.key() == QtCore.Qt.Key_8 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("8")
                 return True
-            if event.key() == QtCore.Qt.Key_9 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("9")
+            if event.key() == QtCore.Qt.Key_9 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("9")
                 return True
-            if event.key() == QtCore.Qt.Key_0 and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("0")
+            if event.key() == QtCore.Qt.Key_0 and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("0")
                 return True
-            if event.key() == QtCore.Qt.Key_Space and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText(" ")
+            if event.key() == QtCore.Qt.Key_Space and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText(" ")
                 return True
-            if event.key() == QtCore.Qt.Key_Backspace and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.textCursor().deletePreviousChar()
+            if event.key() == QtCore.Qt.Key_Backspace and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.textCursor().deletePreviousChar()
                 return True
-            if event.key() == QtCore.Qt.Key_Left and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.moveCursor(QtGui.QTextCursor.Left)
+            if event.key() == QtCore.Qt.Key_Left and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.moveCursor(QtGui.QTextCursor.Left)
                 return True
-            if event.key() == QtCore.Qt.Key_Right and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.moveCursor(QtGui.QTextCursor.Right)
+            if event.key() == QtCore.Qt.Key_Right and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.moveCursor(QtGui.QTextCursor.Right)
                 return True
-            if event.key() == QtCore.Qt.Key_M and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("Matrix")
+            if event.key() == QtCore.Qt.Key_M and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("Matrix")
                 return True
-            if event.key() == QtCore.Qt.Key_V and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("Vector")
+            if event.key() == QtCore.Qt.Key_V and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("Vector")
                 return True
-            if event.key() == QtCore.Qt.Key_A and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("Ans")
+            if event.key() == QtCore.Qt.Key_A and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("Ans")
                 return True
-            if event.key() == QtCore.Qt.Key_ParenLeft and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText("(")
+            if event.key() == QtCore.Qt.Key_ParenLeft and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText("(")
                 return True
-            if event.key() == QtCore.Qt.Key_ParenRight and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText(")")
+            if event.key() == QtCore.Qt.Key_ParenRight and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText(")")
                 return True
-            if event.key() == QtCore.Qt.Key_Period and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText(".")
+            if event.key() == QtCore.Qt.Key_Period and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText(".")
                 return True
-            if event.key() == QtCore.Qt.Key_Comma and self.ui.eqstringtextEdit.hasFocus():
-                self.ui.eqstringtextEdit.insertPlainText(".")
+            if event.key() == QtCore.Qt.Key_Comma and self.ui.eq_string_text_edit.hasFocus():
+                self.ui.eq_string_text_edit.insertPlainText(".")
                 return True
 
         if event.type() == QtCore.QEvent.WindowActivate:
-            global assignvaluewindowhidden
-            if assignvaluewindowhidden == False:
-                self.assignvalueswindow.raise_()
+            global ASSIGNVALUEWINDOWHIDDEN
+            if ASSIGNVALUEWINDOWHIDDEN == False:
+                self.assign_values_window.raise_()
             return True
         return super().eventFilter(obj, event)

@@ -9,8 +9,8 @@ from pyparsing import (Literal, CaselessLiteral, Word, Combine, Group, Optional,
 import math
 import operator
 
-DEGORRAD="RAD"
-DDORDMS= "DMS"
+DEG_OR_RAD="RAD"
+DD_OR_DMS= "DMS"
 
 
 class Matrix:
@@ -20,21 +20,21 @@ class Matrix:
         self.values = values
         self.name = vmname
 
-    def createarray(self):
-        self.matrixoffloats = []
+    def createArray(self):
+        self.matrix_of_floats = []
 
         for x in range(0,self.row):
-            listofrows=[]
+            list_of_rows=[]
             for y in range(0,self.column):
-                cellvalue=""
-                cellvalue = str(self.values[x][y])
-                cellvalueconverted = self.converttofloat(cellvalue)
-                listofrows.append(cellvalueconverted)
-            self.matrixoffloats.append(listofrows)
+                cell_value=""
+                cell_value = str(self.values[x][y])
+                cell_value_converted = self.convertToFloat(cell_value)
+                list_of_rows.append(cell_value_converted)
+            self.matrix_of_floats.append(list_of_rows)
 
-        self.array = np.array(self.matrixoffloats)
+        self.array = np.array(self.matrix_of_floats)
 
-    def converttofloat(self,frac_str):
+    def convertToFloat(self,frac_str):
         try:
             return float(frac_str)
         except ValueError:
@@ -52,7 +52,7 @@ class Matrix:
         if isinstance (other, Matrix):
             if other.array.shape == self.array.shape:
                 result_of_addition.values = self.array + other.array
-                result_of_addition.createarray()   
+                result_of_addition.createArray()   
             else:
                 raise ValueError('Tried to add diferent sizes matrices')
         elif isinstance (other, (int, float)):
@@ -69,7 +69,7 @@ class Matrix:
         if isinstance (other, Matrix):
             if other.array.shape == self.array.shape:
                 result_of_subtraction.values = self.array - other.array
-                result_of_subtraction.createarray()   
+                result_of_subtraction.createArray()   
             else:
                 raise ValueError('Tried to subtract diferent sizes matrices')
         elif isinstance (other, (int, float)):
@@ -85,10 +85,10 @@ class Matrix:
         result_of_multiplication=Matrix(self.name,self.row,self.column,self.values)
         if isinstance (other, Matrix):
             result_of_multiplication.values = np.matmul(self.array,other.array)
-            result_of_multiplication.createarray()   
+            result_of_multiplication.createArray()   
         elif isinstance (other, (int, float)):
             result_of_multiplication.values = self.array * other
-            result_of_multiplication.createarray() 
+            result_of_multiplication.createArray() 
         elif isinstance (other, (np.complex_,complex)):
             raise ValueError("Can't multiply matrix to complex")
         return result_of_multiplication
@@ -98,7 +98,7 @@ class Matrix:
 
     def __pow__(self, other):
         result_of_power=Matrix(self.name,self.row,self.column,self.values)
-        result_of_power.createarray()
+        result_of_power.createArray()
         other = formatNumber(other)
         if isinstance (other, int):
             if self.row == self.column:
@@ -134,12 +134,12 @@ class Matrix:
         return self.__matmul__(other)
 
     def __and__(self, other):
-        resultcrossvalues=[]
+        result_cross_values=[]
         result_of_crossproduct=Matrix(self.name,self.row,self.column,self.values)
         if isinstance (other, Matrix) and self.row==1 and other.row==1:
-            resultcrossvalues.append(np.cross(self.array[0],other.array[0]))
-            result_of_crossproduct.values = resultcrossvalues
-            result_of_crossproduct.createarray()
+            result_cross_values.append(np.cross(self.array[0],other.array[0]))
+            result_of_crossproduct.values = result_cross_values
+            result_of_crossproduct.createArray()
         else:
             raise ValueError("Can't use cross product with non-vector")
         return result_of_crossproduct
@@ -157,170 +157,170 @@ def formatNumber(num):
 
 
 matrix1 = Matrix('matrix1', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix1.createarray()
+matrix1.createArray()
 
 matrix2 = Matrix('matrix2', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix2.createarray()
+matrix2.createArray()
 
 matrix3 = Matrix('matrix3', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix3.createarray()
+matrix3.createArray()
 
 matrix4 = Matrix('matrix4', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix4.createarray()
+matrix4.createArray()
 
 matrix5 = Matrix('matrix5', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix5.createarray()
+matrix5.createArray()
 
 matrix6 = Matrix('matrix6', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix6.createarray()
+matrix6.createArray()
 
 matrix7 = Matrix('matrix7', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix7.createarray()
+matrix7.createArray()
 
 matrix8 = Matrix('matrix8', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix8.createarray()
+matrix8.createArray()
 
 matrix9 = Matrix('matrix9', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix9.createarray()
+matrix9.createArray()
 
 matrix10 = Matrix('matrix10', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix10.createarray()
+matrix10.createArray()
 
 matrix11 = Matrix('matrix11', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix11.createarray()
+matrix11.createArray()
 
 matrix12 = Matrix('matrix12', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix12.createarray()
+matrix12.createArray()
 
 matrix13 = Matrix('matrix13', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix13.createarray()
+matrix13.createArray()
 
 matrix14 = Matrix('matrix14', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix14.createarray()
+matrix14.createArray()
 
 matrix15 = Matrix('matrix15', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix15.createarray()
+matrix15.createArray()
 
 matrix16 = Matrix('matrix16', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix16.createarray()
+matrix16.createArray()
 
 matrix17 = Matrix('matrix17', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix17.createarray()
+matrix17.createArray()
 
 matrix18 = Matrix('matrix18', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix18.createarray()
+matrix18.createArray()
 
 matrix19 = Matrix('matrix19', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix19.createarray()
+matrix19.createArray()
 
 matrix20 = Matrix('matrix20', 3, 3, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-matrix20.createarray()
+matrix20.createArray()
 
 #################
 #### VECTORS ####
 #################
 
 vector1 = Matrix('vector1', 1, 5, [[1, 0, 0, 0, 0], ])
-vector1.createarray()
+vector1.createArray()
 
 vector2 = Matrix('vector2', 1, 5, [[1, 0, 0, 0, 0], ])
-vector2.createarray()
+vector2.createArray()
 
 vector3 = Matrix('vector3', 1, 5, [[1, 0, 0, 0, 0], ])
-vector3.createarray()
+vector3.createArray()
 
 vector4 = Matrix('vector4', 1, 5, [[1, 0, 0, 0, 0], ])
-vector4.createarray()
+vector4.createArray()
 
 vector5 = Matrix('vector5', 1, 5, [[1, 0, 0, 0, 0], ])
-vector5.createarray()
+vector5.createArray()
 
 vector6 = Matrix('vector6', 1, 5, [[1, 0, 0, 0, 0], ])
-vector6.createarray()
+vector6.createArray()
 
 vector7 = Matrix('vector7', 1, 5, [[1, 0, 0, 0, 0], ])
-vector7.createarray()
+vector7.createArray()
 
 vector8 = Matrix('vector8', 1, 5, [[1, 0, 0, 0, 0], ])
-vector8.createarray()
+vector8.createArray()
 
 vector9 = Matrix('vector9', 1, 5, [[1, 0, 0, 0, 0], ])
-vector9.createarray()
+vector9.createArray()
 
 vector10 = Matrix('vector10', 1, 5, [[1, 0, 0, 0, 0], ])
-vector10.createarray()
+vector10.createArray()
 
 vector11 = Matrix('vector11', 1, 5, [[1, 0, 0, 0, 0], ])
-vector11.createarray()
+vector11.createArray()
 
 vector12 = Matrix('vector12', 1, 5, [[1, 0, 0, 0, 0], ])
-vector12.createarray()
+vector12.createArray()
 
 vector13 = Matrix('vector13', 1, 5, [[1, 0, 0, 0, 0], ])
-vector13.createarray()
+vector13.createArray()
 
 vector14 = Matrix('vector14', 1, 5, [[1, 0, 0, 0, 0], ])
-vector14.createarray()
+vector14.createArray()
 
 vector15 = Matrix('vector15', 1, 5, [[1, 0, 0, 0, 0], ])
-vector15.createarray()
+vector15.createArray()
 
 vector16 = Matrix('vector16', 1, 5, [[1, 0, 0, 0, 0], ])
-vector16.createarray()
+vector16.createArray()
 
 vector17 = Matrix('vector17', 1, 5, [[1, 0, 0, 0, 0], ])
-vector17.createarray()
+vector17.createArray()
 
 vector18 = Matrix('vector18', 1, 5, [[1, 0, 0, 0, 0], ])
-vector18.createarray()
+vector18.createArray()
 
 vector19 = Matrix('vector19', 1, 5, [[1, 0, 0, 0, 0], ])
-vector19.createarray()
+vector19.createArray()
 
 vector20 = Matrix('vector20', 1, 5, [[1, 0, 0, 0, 0], ])
-vector20.createarray()
+vector20.createArray()
 
 vectorI = Matrix('vector20', 1, 5, [[1, 0, 0, 0, 0], ])
-vectorI.createarray()
+vectorI.createArray()
 
 vectorII = Matrix('vector20', 1, 5, [[1, 0, 0, 0, 0], ])
-vectorII.createarray()
+vectorII.createArray()
 
 #####################
 ## PREVIOUS ANSWER ##
 #####################
 
-previousanswer = []
+previous_answer = []
 
-def vectorsvalues(admin):
-    listofvectors=[vector1.values, vector2.values, vector3.values, vector4.values, vector5.values, vector6.values, vector7.values, vector8.values, vector9.values, vector10.values, vector11.values, vector12.values, vector13.values, vector14.values, vector15.values, vector16.values, vector17.values, vector18.values, vector19.values, vector20.values]
-    listofvectorsrows=[vector1.row, vector2.row, vector3.row, vector4.row, vector5.row, vector6.row, vector7.row, vector8.row, vector9.row, vector10.row, vector11.row, vector12.row, vector13.row, vector14.row, vector15.row, vector16.row, vector17.row, vector18.row, vector19.row, vector20.row]
-    listofvectorscolumns=[vector1.column, vector2.column, vector3.column, vector4.column, vector5.column, vector6.column, vector7.column, vector8.column, vector9.column, vector10.column, vector11.column, vector12.column, vector13.column, vector14.column, vector15.column, vector16.column, vector17.column, vector18.column, vector19.column, vector20.column]
-    admin.vectorsarrays = listofvectors
-    admin.vectorsrows = listofvectorsrows
-    admin.vectorscolumns = listofvectorscolumns
+def vectorsValues(admin):
+    list_of_vectors=[vector1.values, vector2.values, vector3.values, vector4.values, vector5.values, vector6.values, vector7.values, vector8.values, vector9.values, vector10.values, vector11.values, vector12.values, vector13.values, vector14.values, vector15.values, vector16.values, vector17.values, vector18.values, vector19.values, vector20.values]
+    list_of_vectors_rows=[vector1.row, vector2.row, vector3.row, vector4.row, vector5.row, vector6.row, vector7.row, vector8.row, vector9.row, vector10.row, vector11.row, vector12.row, vector13.row, vector14.row, vector15.row, vector16.row, vector17.row, vector18.row, vector19.row, vector20.row]
+    list_of_vectors_columns=[vector1.column, vector2.column, vector3.column, vector4.column, vector5.column, vector6.column, vector7.column, vector8.column, vector9.column, vector10.column, vector11.column, vector12.column, vector13.column, vector14.column, vector15.column, vector16.column, vector17.column, vector18.column, vector19.column, vector20.column]
+    admin.vectors_arrays = list_of_vectors
+    admin.vectors_rows = list_of_vectors_rows
+    admin.vectors_columns = list_of_vectors_columns
 
-def matricesvalues(admin):
-    listofmatrices=[matrix1.values, matrix2.values, matrix3.values, matrix4.values, matrix5.values, matrix6.values, matrix7.values, matrix8.values, matrix9.values, matrix10.values, matrix11.values, matrix12.values, matrix13.values, matrix14.values, matrix15.values, matrix16.values, matrix17.values, matrix18.values, matrix19.values, matrix20.values]
-    listofmatricesrows=[matrix1.row, matrix2.row, matrix3.row, matrix4.row, matrix5.row, matrix6.row, matrix7.row, matrix8.row, matrix9.row, matrix10.row, matrix11.row, matrix12.row, matrix13.row, matrix14.row, matrix15.row, matrix16.row, matrix17.row, matrix18.row, matrix19.row, matrix20.row]
-    listofmatricescolumns=[matrix1.column, matrix2.column, matrix3.column, matrix4.column, matrix5.column, matrix6.column, matrix7.column, matrix8.column, matrix9.column, matrix10.column, matrix11.column, matrix12.column, matrix13.column, matrix14.column, matrix15.column, matrix16.column, matrix17.column, matrix18.column, matrix19.column, matrix20.column]
-    admin.matricesarrays = listofmatrices
-    admin.matricesrows = listofmatricesrows
-    admin.matricescolumns = listofmatricescolumns
+def matricesValues(admin):
+    list_of_matrices=[matrix1.values, matrix2.values, matrix3.values, matrix4.values, matrix5.values, matrix6.values, matrix7.values, matrix8.values, matrix9.values, matrix10.values, matrix11.values, matrix12.values, matrix13.values, matrix14.values, matrix15.values, matrix16.values, matrix17.values, matrix18.values, matrix19.values, matrix20.values]
+    list_of_matrices_rows=[matrix1.row, matrix2.row, matrix3.row, matrix4.row, matrix5.row, matrix6.row, matrix7.row, matrix8.row, matrix9.row, matrix10.row, matrix11.row, matrix12.row, matrix13.row, matrix14.row, matrix15.row, matrix16.row, matrix17.row, matrix18.row, matrix19.row, matrix20.row]
+    list_of_matrices_columns=[matrix1.column, matrix2.column, matrix3.column, matrix4.column, matrix5.column, matrix6.column, matrix7.column, matrix8.column, matrix9.column, matrix10.column, matrix11.column, matrix12.column, matrix13.column, matrix14.column, matrix15.column, matrix16.column, matrix17.column, matrix18.column, matrix19.column, matrix20.column]
+    admin.matrices_arrays = list_of_matrices
+    admin.matrices_rows = list_of_matrices_rows
+    admin.matrices_columns = list_of_matrices_columns
 
-def modifymatricesarrays(admin,numberofmatrix,rows,columns,values):
-    listofmatricesobjects = [matrix1, matrix2, matrix3, matrix4, matrix5, matrix6, matrix7, matrix8, matrix9, matrix10, matrix11, matrix12, matrix13, matrix14, matrix15, matrix16, matrix17, matrix18, matrix19, matrix20]
-    listofmatricesobjects[numberofmatrix].row = rows
-    listofmatricesobjects[numberofmatrix].column = columns
-    listofmatricesobjects[numberofmatrix].values = values
-    listofmatricesobjects[numberofmatrix].createarray()
+def modifyMatricesArrays(admin,numberofmatrix,rows,columns,values):
+    list_of_matrices_objects = [matrix1, matrix2, matrix3, matrix4, matrix5, matrix6, matrix7, matrix8, matrix9, matrix10, matrix11, matrix12, matrix13, matrix14, matrix15, matrix16, matrix17, matrix18, matrix19, matrix20]
+    list_of_matrices_objects[numberofmatrix].row = rows
+    list_of_matrices_objects[numberofmatrix].column = columns
+    list_of_matrices_objects[numberofmatrix].values = values
+    list_of_matrices_objects[numberofmatrix].createArray()
 
-def modifyvectorsarrays(admin,numberofvector,rows,columns,values):
-    listofvectorsobjects = [vector1, vector2, vector3, vector4, vector5, vector6, vector7, vector8, vector9, vector10, vector11, vector12, vector13, vector14, vector15, vector16, vector17, vector18, vector19, vector20]
-    listofvectorsobjects[numberofvector].row = rows
-    listofvectorsobjects[numberofvector].column = columns
-    listofvectorsobjects[numberofvector].values = values
-    listofvectorsobjects[numberofvector].createarray()
+def modifyVectorsArrays(admin,numberofvector,rows,columns,values):
+    list_of_vectors_objects = [vector1, vector2, vector3, vector4, vector5, vector6, vector7, vector8, vector9, vector10, vector11, vector12, vector13, vector14, vector15, vector16, vector17, vector18, vector19, vector20]
+    list_of_vectors_objects[numberofvector].row = rows
+    list_of_vectors_objects[numberofvector].column = columns
+    list_of_vectors_objects[numberofvector].values = values
+    list_of_vectors_objects[numberofvector].createArray()
 
 def det(matrixtocalculatedeterminant):
     if isinstance (matrixtocalculatedeterminant, Matrix):
@@ -331,14 +331,14 @@ def det(matrixtocalculatedeterminant):
 
 def tr(matrixtotranspose):
     if isinstance (matrixtotranspose, Matrix):
-        resultmatrixvalues=[]
+        result_matrix_values=[]
         result = Matrix('result', matrixtotranspose.row, matrixtotranspose.column, [[1,0,0],])
         for x in range(0,matrixtotranspose.column):
-            resultmatrixvalues.append(matrixtotranspose.array.transpose()[x])
+            result_matrix_values.append(matrixtotranspose.array.transpose()[x])
         result.row=matrixtotranspose.column
         result.column=matrixtotranspose.row
-        result.values = resultmatrixvalues
-        result.createarray()
+        result.values = result_matrix_values
+        result.createArray()
         return result
     else:
         raise ValueError("Can't transpose non-matrix")
@@ -355,9 +355,9 @@ def norm(vectortocalculatemagnitude):
 
 def sin(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.sin(argument)
         return result
@@ -366,9 +366,9 @@ def sin(angle):
 
 def cos(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.cos(argument)
         return result
@@ -377,9 +377,9 @@ def cos(angle):
 
 def tan(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.tan(argument)
         return result
@@ -388,9 +388,9 @@ def tan(angle):
 
 def arcsin(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.arcsin(argument)
         return result
@@ -399,9 +399,9 @@ def arcsin(angle):
 
 def arccos(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.arccos(argument)
         return result
@@ -410,9 +410,9 @@ def arccos(angle):
 
 def arctan(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.arctan(argument)
         return result
@@ -421,9 +421,9 @@ def arctan(angle):
 
 def sinh(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.sinh(argument)
         return result
@@ -432,9 +432,9 @@ def sinh(angle):
 
 def cosh(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.cosh(argument)
         return result
@@ -443,9 +443,9 @@ def cosh(angle):
 
 def tanh(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.tanh(argument)
         return result
@@ -454,9 +454,9 @@ def tanh(angle):
 
 def arcsinh(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.arcsinh(argument)
         return result
@@ -465,9 +465,9 @@ def arcsinh(angle):
 
 def arccosh(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.arccosh(argument)
         return result
@@ -476,9 +476,9 @@ def arccosh(angle):
 
 def arctanh(angle):
     try:
-        if DEGORRAD == "DEG":
+        if DEG_OR_RAD == "DEG":
             argument = angle * (np.pi / 180)
-        if DEGORRAD == "RAD":
+        if DEG_OR_RAD == "RAD":
             argument = angle
         result = np.arctanh(argument)
         return result
@@ -523,16 +523,16 @@ def absolute(argument):
     except Exception as e:
         admin.equation_final_result = repr(e)
 
-def loadchosenvectorvalues(admin,chosenvector):
+def loadChosenVectorValues(admin,chosenvector):
     chosenvector= chosenvector.replace("Vector", "vector")
-    finalchosenvector = nsp.eval(chosenvector)
-    admin.chosenvectorvalues = finalchosenvector.array
+    final_chosen_vector = nsp.parse(chosenvector)
+    admin.chosen_vector_values = final_chosen_vector.array
 
 
-def normalizevector(vectortonormalize):
+def normalizeVector(vectortonormalize):
     return vectortonormalize / np.linalg.norm(vectortonormalize)
 
-def ddtodms(dd):
+def ddToDms(dd):
    is_positive = dd >= 0
    dd = abs(dd)
    minutes,seconds = divmod(dd*3600,60)
@@ -540,145 +540,143 @@ def ddtodms(dd):
    degrees = degrees if is_positive else -degrees
    return [degrees,minutes,seconds]
 
-def angleofvectors(vectorx, vectory):
+def angleOfVectors(vectorx, vectory):
     try:
         vectorx=vectorx.replace("Vector", "vector")
         vectory=vectory.replace("Vector", "vector")
-        vectorxparsed = nsp.eval(vectorx)
-        vectoryparsed = nsp.eval(vectory)
-        vectorx_normalized = normalizevector(vectorxparsed.array)
-        vectory_normalized = normalizevector(vectoryparsed.array)
-        result = np.arccos(np.clip(np.dot(vectorx_normalized[0], vectory_normalized[0]), -1.0, 1.0))
-        if DEGORRAD == "DEG":
-            if DDORDMS == "DD":
-                finalresult = result * (180 / np.pi)
-            if DDORDMS == "DMS":
-                dmsresult = ddtodms(result* (180 / np.pi))
-                finalresult = str(dmsresult[0])+"° "+str(dmsresult[1])+"\' "+str(dmsresult[2])+"\'\'"
-        if DEGORRAD == "RAD":
-            finalresult = result
-        return ("The angle between the vectors is "+str(finalresult))
+        vector_x_parsed = nsp.parse(vectorx)
+        vector_y_parsed = nsp.parse(vectory)
+        vector_x_normalized = normalizeVector(vector_x_parsed.array)
+        vector_y_normalized = normalizeVector(vector_y_parsed.array)
+        result = np.arccos(np.clip(np.dot(vector_x_normalized[0], vector_y_normalized[0]), -1.0, 1.0))
+        if DEG_OR_RAD == "DEG":
+            if DD_OR_DMS == "DD":
+                final_result = result * (180 / np.pi)
+            if DD_OR_DMS == "DMS":
+                dmsresult = ddToDms(result* (180 / np.pi))
+                final_result = str(dmsresult[0])+"° "+str(dmsresult[1])+"\' "+str(dmsresult[2])+"\'\'"
+        if DEG_OR_RAD == "RAD":
+            final_result = result
+        return ("The angle between the vectors is "+str(final_result))
     except Exception as e:
         return repr(e)
 
-def createarrayforvectorsInII(vectorxvalues,vectoryvalues,vectorxcolumn,vectorycolumn):
+def createArrayForVectorsIAndII(vectorxvalues,vectoryvalues,vectorxcolumn,vectorycolumn):
     vectorI.values=vectorxvalues
     vectorI.column=vectorxcolumn
-    vectorI.createarray()
+    vectorI.createArray()
     vectorII.values=vectoryvalues
     vectorII.column=vectorycolumn
-    vectorII.createarray()
+    vectorII.createArray()
 
 
-def geteigenchosenmatrixvalues(admin,eigenchosenmatrix):
-    eigenchosenmatrix = eigenchosenmatrix.replace("Matrix", "matrix")
-    admin.eigenchosenmatrixobject = nsp.eval(eigenchosenmatrix)
+def getChosenMatrixValues(admin,chosenmatrix):
+    chosenmatrix = chosenmatrix.replace("Matrix", "matrix")
+    admin.chosen_matrix_object = nsp.parse(chosenmatrix)
 
-def checkeigenvaluestype(listofeigenvalues):
+def checkEigenvaluesType(listofeigenvalues):
     if all(isinstance(x, (sp.core.numbers.Integer,sp.core.numbers.One,sp.core.numbers.Float,sp.core.numbers.Zero,sp.core.numbers.NegativeOne)) for x in list(listofeigenvalues.keys())): 
         return "Go for Sympy"
     else:
         return "Go for Numpy"
 
-def calculateeigenvectors(admin,matrixtoeigenize):
+def calculateEigenvectors(admin,matrixtoeigenize):
     matrixtoeigenize = matrixtoeigenize.replace("Matrix", "matrix")
-    matrixtoeigenizeparsed = nsp.eval(matrixtoeigenize)
-    matrixeigenarray = matrixtoeigenizeparsed.array
+    matrix_to_eigenize_parsed = nsp.parse(matrixtoeigenize)
+    matrix_eigen_array = matrix_to_eigenize_parsed.array
 
-    num_rows, num_cols = matrixeigenarray.shape
+    num_rows, num_cols = matrix_eigen_array.shape
 
-    longestdecimal=1
+    longest_decimal=1
 
     for x in range(0,num_rows):
         for y in range(0,num_cols):
             try:
-                afterdotplaces = str(matrixeigenarray[x][y]).split(".",1)[1]
-                if len(afterdotplaces) > longestdecimal:
-                    longestdecimal = len(afterdotplaces)
+                after_dot_places = str(matrix_eigen_array[x][y]).split(".",1)[1]
+                if len(after_dot_places) > longest_decimal:
+                    longest_decimal = len(after_dot_places)
                 else:
                     pass
             except:
                 pass
 
-    matrixeigenarray = matrixeigenarray*(10**longestdecimal)
-    matrixeigenarray = matrixeigenarray.astype(int)
+    matrix_eigen_array = matrix_eigen_array*(10**longest_decimal)
+    matrix_eigen_array = matrix_eigen_array.astype(int)
 
-    matrixtoeigenizesymp = sp.Matrix(matrixeigenarray)
+    matrix_to_eigenize_symp = sp.Matrix(matrix_eigen_array)
     try:
-        eigenchosemodule = checkeigenvaluestype(matrixtoeigenizesymp.eigenvals())
+        eigen_choose_module = checkEigenvaluesType(matrix_to_eigenize_symp.eigenvals())
     except:
-        eigenchosemodule = "Go for Numpy"
-    if eigenchosemodule == "Go for Sympy":
-        eigenvectorsofmatrix = matrixtoeigenizesymp.eigenvects()
-        result = eigenvectorsofmatrix
-        finaleigenvectors = []
+        eigen_choose_module = "Go for Numpy"
+    if eigen_choose_module == "Go for Sympy":
+        eigenvectors_of_matrix = matrix_to_eigenize_symp.eigenvects()
+        result = eigenvectors_of_matrix
+        final_eigenvectors = []
         for x in range(0,len(result)):
-            vectorsinmatrixform = np.array(result[x][2]).tolist()
-            vectorsforvaluelist=[]
-            for y in range(0,len(vectorsinmatrixform)):
-                individualstringvectorlist="(  "
-                for z in range(0,len(vectorsinmatrixform[y])):
-                    individualstringvectorlist = individualstringvectorlist + str(vectorsinmatrixform[y][z][0])+"  "
-                individualstringvectorlist = individualstringvectorlist + ")"
-                vectorsforvaluelist.append(individualstringvectorlist)
-            finaleigenvectors.append(vectorsforvaluelist)
+            vectors_in_matrix_form = np.array(result[x][2]).tolist()
+            vectors_for_value_list=[]
+            for y in range(0,len(vectors_in_matrix_form)):
+                individual_string_vector_list="(  "
+                for z in range(0,len(vectors_in_matrix_form[y])):
+                    individual_string_vector_list = individual_string_vector_list + str(vectors_in_matrix_form[y][z][0])+"  "
+                individual_string_vector_list = individual_string_vector_list + ")"
+                vectors_for_value_list.append(individual_string_vector_list)
+            final_eigenvectors.append(vectors_for_value_list)
         for x in range(0,len(result)):
             result[x] = list(result[x])
         for x in range(0,len(result)):
-            result[x][2] = finaleigenvectors[x]
+            result[x][2] = final_eigenvectors[x]
         for x in range(0,len(result)):
-            result[x][0] = result[x][0]/(10**longestdecimal)
-    if eigenchosemodule == "Go for Numpy":
-        resulteigenvalues, resulteigenvectors = np.linalg.eig(matrixeigenarray)
-        finalresult=[]
-        lengthofeigenvals=list(range(0,len(resulteigenvalues)))
-        for x in resulteigenvalues:
-            individualeigenvaluelist = [str(next(iter(resulteigenvalues))),"1",list(resulteigenvectors[:,next(iter(lengthofeigenvals))])]
-            finalresult.append(individualeigenvaluelist)
-        result = finalresult
+            result[x][0] = result[x][0]/(10**longest_decimal)
+    if eigen_choose_module == "Go for Numpy":
+        result_eigenvalues, result_eigenvectors = np.linalg.eig(matrix_eigen_array)
+        final_result=[]
+        length_of_eigenvals=list(range(0,len(result_eigenvalues)))
+        for x in result_eigenvalues:
+            individualeigenvaluelist = [str(next(iter(result_eigenvalues))),"1",list(result_eigenvectors[:,next(iter(length_of_eigenvals))])]
+            final_result.append(individualeigenvaluelist)
+        result = final_result
+       
+    admin.eigen_vectors_result=result
 
 
-        
-    admin.eigenvectorsresult=result
-
-
-def calculatesystemofequationsresult(admin,matrixofconstants,vectorofresults):
+def calculateSystemOfEquationsResult(admin,matrixofconstants,vectorofresults):
     matrixofconstants = matrixofconstants.replace("Matrix", "matrix")
     vectorofresults = vectorofresults.replace("Vector", "vector")
-    matrixofconstantsparsed = nsp.eval(matrixofconstants)
-    vectorofresultsparsed = nsp.eval(vectorofresults)
+    matrix_of_constants_parsed = nsp.parse(matrixofconstants)
+    vector_of_results_parsed = nsp.parse(vectorofresults)
     try:
-        result = np.linalg.solve(matrixofconstantsparsed.array,vectorofresultsparsed.array[0])
-        listofints = list(range(1,len(result)+1))
-        for x in range(0,len(listofints)):
-                listofints[x] = str(listofints[x])
+        result = np.linalg.solve(matrix_of_constants_parsed.array,vector_of_results_parsed.array[0])
+        list_of_ints = list(range(1,len(result)+1))
+        for x in range(0,len(list_of_ints)):
+                list_of_ints[x] = str(list_of_ints[x])
 
-        listofints = iter(listofints)
-        finalresult=""
+        list_of_ints = iter(list_of_ints)
+        final_result=""
 
         for x in result:
-                stringofresult = "X"+next(listofints)+" = "+str(x)+"        "
-                finalresult = finalresult +stringofresult
+                string_of_result = "X"+next(list_of_ints)+" = "+str(x)+"        "
+                final_result = final_result +string_of_result
                 
-        admin.systemsofequationsresult = finalresult
+        admin.systems_of_equations_result = final_result
     except:
         try:
-            result, residuals, rank, sing= np.linalg.lstsq(matrixofconstantsparsed.array,vectorofresultsparsed.array[0],rcond=None)
-            listofints = list(range(1,len(result)+1))
-            for x in range(0,len(listofints)):
-                    listofints[x] = str(listofints[x])
+            result, residuals, rank, sing= np.linalg.lstsq(matrix_of_constants_parsed.array,vector_of_results_parsed.array[0],rcond=None)
+            list_of_ints = list(range(1,len(result)+1))
+            for x in range(0,len(list_of_ints)):
+                    list_of_ints[x] = str(list_of_ints[x])
 
-            listofints = iter(listofints)
-            finalresult="Couldn't calculate exact result, one result using the least squares method is:\n "
+            list_of_ints = iter(list_of_ints)
+            final_result="Couldn't calculate exact result, one result using the least squares method is:\n "
 
             for x in result:
-                    stringofresult = "X"+next(listofints)+" = "+str(x)+" "
-                    finalresult = finalresult +stringofresult
+                    string_of_result = "X"+next(list_of_ints)+" = "+str(x)+" "
+                    final_result = final_result +string_of_result
                     
-            finalresult = finalresult + "\n\nthe residuals are: \n {} \n\nthe rank of the coefficient matrix is: \n {} \n\nthe singular values of the coefficient matrix are: \n {} \n".format(residuals, rank, sing)
-            admin.systemsofequationsresult = finalresult
+            final_result = final_result + "\n\nthe residuals are: \n {} \n\nthe rank of the coefficient matrix is: \n {} \n\nthe singular values of the coefficient matrix are: \n {} \n".format(residuals, rank, sing)
+            admin.systems_of_equations_result = final_result
         except Exception as e:
-            admin.systemsofequationsresult = repr(e)
+            admin.systems_of_equations_result = repr(e)
 
 
 ################################
@@ -782,10 +780,10 @@ class NumericStringParser(object):
         vector1 = CaselessLiteral("vector1")
         vectorII = CaselessLiteral("vectorII")
         vectorI = CaselessLiteral("vectorI")
-        previousanswer = CaselessLiteral("previousanswer")
+        previous_answer = CaselessLiteral("previous_answer")
         expr = Forward()
         atom = ((Optional(oneOf("- +")) +
-                 (ident + lpar + expr + rpar | pi | e | fnumber | matrix20 | matrix19 | matrix18 | matrix17 | matrix16 | matrix15 | matrix14 | matrix13 | matrix12 | matrix11 | matrix10 | matrix9 | matrix8 | matrix7 | matrix6 | matrix5 | matrix4 | matrix3 | matrix2 | matrix1 | vector20 | vector19 | vector18 | vector17 | vector16 | vector15 | vector14 | vector13 | vector12 | vector11 | vector10 | vector9 | vector8 | vector7 | vector6 | vector5 | vector4 | vector3 | vector2 | vector1 | previousanswer | vectorII | vectorI ).setParseAction(self.pushFirst))
+                 (ident + lpar + expr + rpar | pi | e | fnumber | matrix20 | matrix19 | matrix18 | matrix17 | matrix16 | matrix15 | matrix14 | matrix13 | matrix12 | matrix11 | matrix10 | matrix9 | matrix8 | matrix7 | matrix6 | matrix5 | matrix4 | matrix3 | matrix2 | matrix1 | vector20 | vector19 | vector18 | vector17 | vector16 | vector15 | vector14 | vector13 | vector12 | vector11 | vector10 | vector9 | vector8 | vector7 | vector6 | vector5 | vector4 | vector3 | vector2 | vector1 | previous_answer | vectorII | vectorI ).setParseAction(self.pushFirst))
                 | Optional(oneOf("- +")) + Group(lpar + expr + rpar)
                 ).setParseAction(self.pushUMinus)
         # by defining exponentiation as "atom [ ^ factor ]..." instead of
@@ -933,8 +931,8 @@ class NumericStringParser(object):
             return vectorII
         elif op == "vectorI":
             return vectorI
-        elif op == "previousanswer":
-            return previousanswer
+        elif op == "previous_answer":
+            return previous_answer
         elif op in self.fn:
             return self.fn[op](self.evaluateStack(s))
         elif op[0].isalpha():
@@ -942,7 +940,7 @@ class NumericStringParser(object):
         else:
             return float(op)
 
-    def eval(self, num_string, parseAll=True):
+    def parse(self, num_string, parseAll=True):
         self.exprStack = []
         results = self.bnf.parseString(num_string, parseAll)
         val = self.evaluateStack(self.exprStack[:])
@@ -950,23 +948,19 @@ class NumericStringParser(object):
 
 nsp = NumericStringParser()
 
-
-
 ##############################
 ##############################
 #### FUNCTION TO PARSE EQ ####
 ##############################
 ##############################
 
-
-
-def getequationresult (admin,equation):
-    global previousanswer
+def getEquationResult(admin,equation):
+    global previous_answer
     equation = equation.replace("√", "root")
     equation = equation.replace("Vector", "vector")
     equation = equation.replace("Matrix", "matrix")
-    equation = equation.replace("ans", "previousanswer")
-    equation = equation.replace("Ans", "previousanswer")
+    equation = equation.replace("ans", "previous_answer")
+    equation = equation.replace("Ans", "previous_answer")
     equation = equation.replace("print", " ")
     equation = equation.replace("__", " ")
     equation = equation.replace("import", " ")
@@ -980,27 +974,26 @@ def getequationresult (admin,equation):
     equation = equation.replace("exe", " ")
     equation = equation.replace("return", " ")
     try:
-        equation_result = nsp.eval(equation)
+        equation_result = nsp.parse(equation)
         if isinstance (equation_result, Matrix):
-            admin.is_equationresult_matrix = True
-            admin.is_equationresult_intorfloat = False
-            admin.is_equationresult_complex = False
-            previousanswer = equation_result
+            admin.is_equation_result_matrix = True
+            admin.is_equation_result_int_or_float = False
+            admin.is_equation_result_complex = False
+            previous_answer = equation_result
         elif isinstance (equation_result, (int, float)):
-            admin.is_equationresult_intorfloat = True
-            admin.is_equationresult_matrix = False
-            admin.is_equationresult_complex = False
-            previousanswer = equation_result
+            admin.is_equation_result_int_or_float = True
+            admin.is_equation_result_matrix = False
+            admin.is_equation_result_complex = False
+            previous_answer = equation_result
         elif isinstance (equation_result, np.complex_):
-            admin.is_equationresult_intorfloat = False
-            admin.is_equationresult_matrix = False
-            admin.is_equationresult_complex = True
-            previousanswer = equation_result
+            admin.is_equation_result_int_or_float = False
+            admin.is_equation_result_matrix = False
+            admin.is_equation_result_complex = True
+            previous_answer = equation_result
         else:
-            admin.is_equationresult_intorfloat = False
-            admin.is_equationresult_matrix = False
-            admin.is_equationresult_complex = False
+            admin.is_equation_result_int_or_float = False
+            admin.is_equation_result_matrix = False
+            admin.is_equation_result_complex = False
         admin.equation_final_result = equation_result
     except Exception as e:
         admin.equation_final_result = repr(e)
-

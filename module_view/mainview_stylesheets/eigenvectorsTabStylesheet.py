@@ -1,4 +1,4 @@
-eigenvaluescalculatepushButton_stylesheet=("QPushButton {\n"
+eigenvalues_calculate_pushbutton_stylesheet=("QPushButton {\n"
 "    background-color: rgb(22, 23, 22);\n"
 "    border-style: outset;\n"
 "    border-width: 2px;\n"

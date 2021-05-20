@@ -1,8 +1,4 @@
-##############################
-#### CLASES DE ITERADORES ####
-##############################
-
-class bidirectional_iterator(object):
+class BidirectionalIterator(object):
     def __init__(self, collection):
         self.collection = collection
         self.index = 0

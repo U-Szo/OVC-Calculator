@@ -1,5 +1,5 @@
 # <img style ='width:40px;' src="icons//Windowicon.png" align="left" /> &nbsp;**OVC CALCULATOR**
-<img style ='width:180px;' src="icons//Decorativegraph.png" align="right" />
+<img style ='width:90px;' src="icons//Decorativegraph.png" align="right" />
 <div style ='margin-right:180px' >
 
 *A vectors and matrices calculator.*

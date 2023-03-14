@@ -30,7 +30,7 @@ This methodology will allow you to alter the result without changing every matri
 <br/>
 <br/>
 
-- Eigenvectos, angles and systems of equations:
+- Eigenvectors, angles and systems of equations:
 
 Each of the special features has a dedicated tab on the left bar of the calculator.
 <br/> 
